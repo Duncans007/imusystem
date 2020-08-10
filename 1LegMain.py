@@ -33,9 +33,6 @@ toggleFlagDict = {
     "rThigh": True,
     "rShank": True,
     "rHeel": True,
-    "lThigh": True,
-    "lShank": True,
-    "lHeel": True,
     "lowBack": True,
 }
 
@@ -51,9 +48,6 @@ dataDict = {
     "rThigh":  [],
     "rShank":  [],
     "rHeel":  [],
-    "lThigh": [],
-    "lShank": [],
-    "lHeel": [],
     "lowBack":  [],
 }
 
@@ -62,9 +56,6 @@ flagDict = {
     "rThigh": False,
     "rShank": False,
     "rHeel": False,
-    "lThigh": False,
-    "lShank": False,
-    "lHeel": False,
     "lowBack": False,
 }
 
@@ -73,9 +64,6 @@ addressDict = {
     "10": "rThigh",
     "11": "rShank",
     "12": "rHeel",
-    "30": "lThigh",
-    "31": "lShank",
-    "32": "lHeel",
     "20": "lowBack",
 }
 
@@ -84,10 +72,7 @@ orderDict = {
     0: "rThigh",
     1: "rShank",
     2: "rHeel",
-    3: "lThigh",
-    4: "lShank",
-    5: "lHeel",
-    6: "lowBack",
+    3: "lowBack",
 }
 
 
@@ -95,9 +80,6 @@ passToAlgorithm = {
     "rt_raw": [],
     "rs_raw": [],
     "rh_raw": [],
-    "lt_raw": [],
-    "ls_raw": [],
-    "lh_raw": [],
     "b_raw": [],
 }
 
@@ -145,9 +127,6 @@ def data_handler(address, *args):
         passToAlgorithm["rt_raw"] = dataDict["rThigh"]
         passToAlgorithm["rs_raw"] = dataDict["rShank"]
         passToAlgorithm["rh_raw"] = dataDict["rHeel"]
-        passToAlgorithm["lt_raw"] = dataDict["lThigh"]
-        passToAlgorithm["ls_raw"] = dataDict["lShank"]
-        passToAlgorithm["lh_raw"] = dataDict["lHeel"]
         passToAlgorithm["b_raw"]  = dataDict["lowBack"]
         
         packetReady = True
@@ -167,9 +146,6 @@ def data_handler(address, *args):
         rt_raw = passToAlgorithm['rt_raw']
         rs_raw = passToAlgorithm['rs_raw']
         rh_raw = passToAlgorithm['rh_raw']
-        lt_raw = passToAlgorithm['lt_raw']
-        ls_raw = passToAlgorithm['ls_raw']
-        lh_raw = passToAlgorithm['lh_raw']
         b_raw  = passToAlgorithm['b_raw']
         
         #Values are moved around to equalize the axes of the IMUs.
@@ -214,45 +190,6 @@ def data_handler(address, *args):
         objRHeel.mgX = -rh_raw[7]
         objRHeel.mgY = rh_raw[6]
         objRHeel.mgZ = rh_raw[8]
-		
-        #Left Thigh - X and Z values negated
-        objLThigh.gyX = -lt_raw[0]
-        objLThigh.gyY =  lt_raw[1]
-        objLThigh.gyZ = -lt_raw[2]
-                               
-        objLThigh.acX = -lt_raw[3]
-        objLThigh.acY =  lt_raw[4]
-        objLThigh.acZ = -lt_raw[5]
-                               
-        objLThigh.mgX = -lt_raw[6]
-        objLThigh.mgY =  lt_raw[7]
-        objLThigh.mgZ = -lt_raw[8]
-        
-        #Left Shank - X and Z values negated		
-        objLShank.gyX = -ls_raw[0]
-        objLShank.gyY =  ls_raw[1]
-        objLShank.gyZ = -ls_raw[2]
-                               
-        objLShank.acX = -ls_raw[3]
-        objLShank.acY =  ls_raw[4]
-        objLShank.acZ = -ls_raw[5]
-                               
-        objLShank.mgX = -ls_raw[6]
-        objLShank.mgY =  ls_raw[7]
-        objLShank.mgZ = -ls_raw[8]
-                  
-        #Left Heel - X and Y axes flipped, then X, Y, and Z values negated.
-        objLHeel.gyX = -lh_raw[1]
-        objLHeel.gyY =  lh_raw[0]
-        objLHeel.gyZ = -lh_raw[2]
-                              
-        objLHeel.acX = -lh_raw[4]
-        objLHeel.acY =  lh_raw[3]
-        objLHeel.acZ = -lh_raw[5]
-                              
-        objLHeel.mgX = -lh_raw[7]
-        objLHeel.mgY =  lh_raw[6]
-        objLHeel.mgZ = -lh_raw[8]
         
         #Lower Back - X and Z values flipped, X value negated
         objLowBack.gyX = -b_raw[2]
@@ -276,15 +213,10 @@ def data_handler(address, *args):
         objRThigh.angleCalc(gaitDetectRight)
         objRShank.angleCalc(gaitDetectRight)
         objRHeel.angleCalc(gaitDetectRight)
-		
-        objLThigh.angleCalc(gaitDetectLeft)
-        objLShank.angleCalc(gaitDetectLeft)
-        objLHeel.angleCalc(gaitDetectLeft)
         
         gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ)
-        gaitDetectLeft.testVal(objLShank.gyZ, objLHeel.gyZ)
         
-        outputString = f"{timeToRun}\t{gaitDetectRight.gaitStage}\t{gaitDetectLeft.gaitStage}\t\t"
+        outputString = f"{timeToRun}\t{gaitDetectRight.gaitStage}\t\t"
 		
         for x in objects:
             outputString += f"{x.gyX}\t"
@@ -302,11 +234,10 @@ def data_handler(address, *args):
         for x in objects:
             outputString += f"{x.zAngle}\t"
 		
+		outputString += f"{slipAlgorithm(objLowBack.acX, objRHeel.acX, 1)}\t"
+		
         print(outputString)
         fileDump.write(f"{outputString}")
-        
-        fileDump.write(slipAlgorithm(objLowBack.acX, objRHeel.acX, 1))
-        fileDump.write(slipAlgorithm(objLowBack.acX, objLHeel.acX, 1))
 
         fileDump.write("\n")
 
@@ -335,23 +266,18 @@ if __name__ == "__main__":
     objRShank = sensorObject()
     objRHeel = sensorObject()
 	
-    objLThigh = sensorObject()
-    objLShank = sensorObject()
-    objLHeel = sensorObject()
-	
     objLowBack = sensorObject()
     
     gaitDetectRight = gaitDetect()
-    gaitDetectLeft = gaitDetect()
 	
-    objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
-    stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
+    objects = [objRThigh, objRShank, objRHeel, objLowBack]
+    stringObjects = ["RThigh", "RShank", "RHeel", "LowBack"]
     stringAxes = ["x","y","z"]
     stringSensors = ["gy","ac","mg"]
 	
 	
     fileDump = open("algDump.txt", "w+")
-    header = "timeToRun\tgaitStageR\tgaitStageL\t\t"
+    header = "timeToRun\tgaitStageR\t\t"
     for x in stringObjects:
         for y in stringSensors:
             for z in stringAxes:
@@ -362,7 +288,7 @@ if __name__ == "__main__":
     for x in stringObjects:
         header += f"zAngle{x}\t"
 		
-    header += f"slipRight\tslipLeft"
+    header += f"slipRight\t"
 	
     header += f"\n"
     fileDump.write(header)
