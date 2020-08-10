@@ -30,13 +30,13 @@ height = 180 #cm
 
 
 toggleFlagDict = {
-	"rThigh": True,
-	"rShank": True,
-	"rHeel": True,
-	"lThigh": True,
-	"lShank": True,
-	"lHeel": True,
-	"lowBack": True,
+    "rThigh": True,
+    "rShank": True,
+    "rHeel": True,
+    "lThigh": True,
+    "lShank": True,
+    "lHeel": True,
+    "lowBack": True,
 }
 
 
@@ -48,57 +48,57 @@ timeCurrent = time.time()
 
 
 dataDict = {
-	"rThigh":  [],
-	"rShank":  [],
-	"rHeel":  [],
-	"lThigh": [],
-	"lShank": [],
-	"lHeel": [],
-	"lowBack":  [],
+    "rThigh":  [],
+    "rShank":  [],
+    "rHeel":  [],
+    "lThigh": [],
+    "lShank": [],
+    "lHeel": [],
+    "lowBack":  [],
 }
 
 
 flagDict = {
-	"rThigh": False,
-	"rShank": False,
-	"rHeel": False,
-	"lThigh": False,
-	"lShank": False,
-	"lHeel": False,
+    "rThigh": False,
+    "rShank": False,
+    "rHeel": False,
+    "lThigh": False,
+    "lShank": False,
+    "lHeel": False,
     "lowBack": False,
 }
 
 
 addressDict = {
-	"10": "rThigh",
-	"11": "rShank",
-	"12": "rHeel",
-	"30": "lThigh",
-	"31": "lShank",
-	"32": "lHeel",
-	"20": "lowBack",
+    "10": "rThigh",
+    "11": "rShank",
+    "12": "rHeel",
+    "30": "lThigh",
+    "31": "lShank",
+    "32": "lHeel",
+    "20": "lowBack",
 }
 
 
 orderDict = {
-	0: "rThigh",
-	1: "rShank",
-	2: "rHeel",
-	3: "lThigh",
-	4: "lShank",
-	5: "lHeel",
-	6: "lowBack",
+    0: "rThigh",
+    1: "rShank",
+    2: "rHeel",
+    3: "lThigh",
+    4: "lShank",
+    5: "lHeel",
+    6: "lowBack",
 }
 
 
 passToAlgorithm = {
-	"rt_raw": [],
-	"rs_raw": [],
-	"rh_raw": [],
-	"lt_raw": [],
-	"ls_raw": [],
-	"lh_raw": [],
-	"b_raw": [],
+    "rt_raw": [],
+    "rs_raw": [],
+    "rh_raw": [],
+    "lt_raw": [],
+    "ls_raw": [],
+    "lh_raw": [],
+    "b_raw": [],
 }
 
 
