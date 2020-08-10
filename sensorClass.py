@@ -48,6 +48,8 @@ class sensorObject:
         
         
     def angularAccCalc(self):
+        import time
+        import numpy as np
         self.gyZarray.append(self.gyZ)
         
         while len(self.gyZarray) > self.angularAccelerationMovingAvgAccuracy:
@@ -64,6 +66,8 @@ class sensorObject:
 
         
     def angleCalc(self, gaitDetectObject):
+        import time
+        import numpy as np
         self.timeLastValue = self.currentTime
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
