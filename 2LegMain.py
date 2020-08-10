@@ -160,10 +160,9 @@ def data_handler(address, *args):
     
     if packetReady:
         packetReady = False
-		
-		timeLastRun = timeCurrent
-		timeCurrent = time.time()
-		timeToRun = timeCurrent - timeLastRun
+        timeLastRun = timeCurrent
+        timeCurrent = time.time()
+        timeToRun = timeCurrent - timeLastRun
         
         #Update data
         rt_raw = passToAlgorithm['rt_raw']
@@ -272,9 +271,6 @@ def data_handler(address, *args):
         
         #Run actual calculations contained in the objects
         
-        objRShank.testVal()
-        objLShank.testVal()
-		
         objRThigh.angleCalc(gaitDetectRight)
         objRShank.angleCalc(gaitDetectRight)
         objRHeel.angleCalc(gaitDetectRight)
