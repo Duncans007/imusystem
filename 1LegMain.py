@@ -140,20 +140,20 @@ def data_handler(address, *args):
     if packetReady:
         packetReady = False
 		
-		timeLastRun = timeCurrent
-		timeCurrent = time.time()
-		timeToRun = timeCurrent - timeLastRun
+        timeLastRun = timeCurrent
+        timeCurrent = time.time()
+        timeToRun = timeCurrent - timeLastRun
         
         #Update data
         rt_raw = passToAlgorithm['rt_raw']
         rs_raw = passToAlgorithm['rs_raw']
         rh_raw = passToAlgorithm['rh_raw']
         b_raw  = passToAlgorithm['b_raw']
-        
+
         #Values are moved around to equalize the axes of the IMUs.
         #Does not put IMUs on a global coordinate system.
         #Only sets local axes to be the same.
-		
+
         #Right Thigh - no flipped values
         objRThigh.gyX = rt_raw[0]
         objRThigh.gyY = rt_raw[1]
