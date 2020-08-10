@@ -61,7 +61,7 @@ class gaitDetect:
                 self.timeLastHeelStrike = time.time()
                 self.gaitStage = 0
             elif np.mean(np.diff(self.movingArrHeel)) < -20 and self.gaitStage == 0:
-                if self.lastDiffHeel <= 20 and self.lastDiffHeel >= -20:
+                if self.lastDiffHeel <= 25 and self.lastDiffHeel >= -25:
                     self.timeLastHeelOff = time.time()
                     self.significance = 2
                     self.gaitStage = 1
@@ -71,7 +71,7 @@ class gaitDetect:
         elif self.significance != 0:
             if time.time() - self.timeLastHeelStrike > self.eventTimer and time.time() - self.timeLastToeOff > self.eventTimer:
                 self.significance = 0
-            if self.significance == 2 and time.time() - self.timeLast:
+            if self.significance == 2:
                 self.significance = 0
         
         #Implement other leg IMU - other leg heel strike must occur before measured leg toe off. (and vice versa)
