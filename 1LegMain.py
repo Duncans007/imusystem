@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import gaitDetectClass #class gaitDetect, func testVal(shank gyZ, heel gyZ)
 import packageHandlerFunc #package_handler_raw(tup)
 import sensorClass #class sensorObject, newValues(valueArray), angularAccCalc(), angleCalc(gaitDetectObject)
