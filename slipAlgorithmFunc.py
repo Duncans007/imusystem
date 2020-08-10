@@ -3,7 +3,7 @@ def slipAlgorithm(pelvisAcc, forwardFootAcc, L_hh):
 
     slip_constant = 2.83 #or 1.87
     beta = 2.718
-    gamma = -562 #or -377 #deg/s	
+    gamma = 40 #-562 or -377 #deg/s	
     
     dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
     
