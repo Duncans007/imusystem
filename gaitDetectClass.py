@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 class gaitDetect:
-    def __init__(self):       
+    def __init__(self):
+        import time
+        import numpy as np
         self.firstVar = 0
         self.movingArrShank = [0]
         self.movingArrHeel = [0]
