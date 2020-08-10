@@ -33,16 +33,16 @@ class sensorObject:
     
     def newValues(self, valueArray):
         self.gyX = valueArray[0]
-        self.gyY = valueArray[0]
-        self.gyZ = valueArray[0]
+        self.gyY = valueArray[1]
+        self.gyZ = valueArray[2]
         
-        self.acX = valueArray[0]
-        self.acY = valueArray[0]
-        self.acZ = valueArray[0]
+        self.acX = valueArray[3]
+        self.acY = valueArray[4]
+        self.acZ = valueArray[5]
         
-        self.mgX = valueArray[0]
-        self.mgY = valueArray[0]
-        self.mgZ = valueArray[0]
+        self.mgX = valueArray[6]
+        self.mgY = valueArray[7]
+        self.mgZ = valueArray[8]
         
         
     def angularAccCalc(self):
