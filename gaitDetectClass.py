@@ -25,6 +25,8 @@ class gaitDetect:
         
                 
     def testVal(self, shank, heel):
+        import time
+        import numpy as np
         self.movingArrShank.append(shank)
         self.movingArrHeel.append(heel)
         
