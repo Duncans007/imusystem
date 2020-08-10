@@ -13,7 +13,7 @@ import time
 from math import sin, cos, sqrt, atan2
 import numpy as np
 
-global timeCurrent, varType
+global timeCurrent, varType, timeStart
 global dataDict, flagDict, toggleFlagDict
 global packetReady, rPacketReady, passToAlgorithm
 global fileDump
@@ -44,6 +44,7 @@ toggleFlagDict = {
 packetReady = False
 rPacketReady = False
 timeCurrent = time.time()
+timeStart = time.time()
 
 
 dataDict = {
@@ -87,7 +88,7 @@ passToAlgorithm = {
 
 
 def data_handler(address, *args):
-    global timeCurrent, varType
+    global timeCurrent, varType, timeStart
     global dataDict, flagDict, toggleFlagDict
     global packetReady, rPacketReady, passToAlgorithm
     global fileDump
@@ -215,7 +216,7 @@ def data_handler(address, *args):
         
         gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ)
         
-        outputString = f"{timeToRun}\t{gaitDetectRight.gaitStage}\t\t"
+        outputString = f"{time.time() - timeStart}\t{timeToRun}\t{gaitDetectRight.gaitStage}\t\t"
 		
         for x in objects:
             outputString += f"{x.gyX}\t"
@@ -276,7 +277,7 @@ if __name__ == "__main__":
 	
 	
     fileDump = open("algDump.txt", "w+")
-    header = "timeToRun\tgaitStageR\t\t"
+    header = "time\ttimeToRun\tgaitStageR\t\t"
     for x in stringObjects:
         for y in stringSensors:
             for z in stringAxes:
