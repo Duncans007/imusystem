@@ -209,9 +209,6 @@ def data_handler(address, *args):
         
         #Run actual calculations contained in the objects
         
-        objRShank.testVal()
-        objLShank.testVal()
-		
         objRThigh.angleCalc(gaitDetectRight)
         objRShank.angleCalc(gaitDetectRight)
         objRHeel.angleCalc(gaitDetectRight)
