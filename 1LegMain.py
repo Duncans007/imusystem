@@ -235,8 +235,8 @@ def data_handler(address, *args):
 
         for x in objects:
             outputString += f"{x.zAngle}\t"
-		
-		outputString += f"{slipAlgorithm(objLowBack.acX, objRHeel.acX, 1)}\t"
+	
+        outputString += f"{slipAlgorithm(objLowBack.acX, objRHeel.acX, 1)}\t"
 		
         print(outputString)
         fileDump.write(f"{outputString}")
