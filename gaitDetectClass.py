@@ -23,7 +23,8 @@ class gaitDetect:
         self.concurrentZeroesLimit = 5
         self.lastDiffHeel = 0
         self.gamma = 40 #-562 or -377 #deg/s	
-        self.slipToeOffWaitThreshold = .15
+        self.slipToeOffWaitThreshold = .2
+        self.slipHeelStrikeWaitThreshold = .05
         
                 
     def testVal(self, shank, heel):
@@ -86,7 +87,7 @@ class gaitDetect:
         
     def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
         import time
-        if (self.gaitStage == 0 and time.time() - self.timeLastHeelStrike < self.slipToeOffWaitThreshold) or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipToeOffWaitThreshold):
+        if (self.gaitStage == 0 and time.time() - self.timeLastHeelStrike < self.slipToeOffWaitThreshold) or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipHeelStrikeWaitThreshold):
             dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
             slip_indicator = forwardFootAcc / (2.718 ** (dd_q_hh - self.gamma))
             return slip_indicator
