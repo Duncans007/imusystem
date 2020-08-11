@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+#!/usr/bin/env python3
+
 class gaitDetect:
     def __init__(self):
         import time
@@ -23,8 +25,9 @@ class gaitDetect:
         self.concurrentZeroesLimit = 5
         self.lastDiffHeel = 0
         self.gamma = 40 #-562 or -377 #deg/s	
-        self.slipToeOffWaitThreshold = .2
-        self.slipHeelStrikeWaitThreshold = .05
+        self.slipToeOffWaitThreshold = .25
+        self.slipToeOffEndThreshold = .4
+        self.slipHeelStrikeWaitThreshold = 0
         
                 
     def testVal(self, shank, heel):
@@ -87,7 +90,7 @@ class gaitDetect:
         
     def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
         import time
-        if (self.gaitStage == 0 and time.time() - self.timeLastHeelStrike < self.slipToeOffWaitThreshold) or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipHeelStrikeWaitThreshold):
+        if (self.gaitStage == 0 and time.time() - self.timeLastHeelStrike < self.slipHeelStrikeWaitThreshold) or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipToeOffWaitThreshold and time.time() - self.timeLastToeOff < self.slipToeOffEndThreshold):
             dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
             slip_indicator = forwardFootAcc / (2.718 ** (dd_q_hh - self.gamma))
             return slip_indicator
@@ -97,12 +100,17 @@ class gaitDetect:
 
 
 if __name__ == "__main__":
+    import time
     rightLegGait = gaitDetect()
     gaitStages = []
+    slipI = []
     
     for enum, x in enumerate(inputGyZShank):
-        rightLegGait.testVal(x * .07, inputGyZHeel[enum] * .07)
+        rightLegGait.testVal(x, inputGyZHeel[enum])
+        slipI.append(rightLegGait.slipTrkov(pelvisAcc[enum], heelAcc[enum], 1))
         gaitStages.append(rightLegGait.gaitStage)
+        print(gaitStages[enum])
         time.sleep(timeArray[enum])
         
     print(gaitStages)
+    print(slipI)
