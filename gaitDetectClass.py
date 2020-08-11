@@ -84,12 +84,14 @@ class gaitDetect:
 
         self.lastAvgShank = self.movingAvgShank
         
-    def slipTrkov(pelvisAcc, forwardFootAcc, L_hh):
-    import time
-        if self.gaitStage == 0 or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipToeOffWaitThreshold):
+    def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
+        import time
+        if (self.gaitStage == 0 and time.time() - self.timeLastHeelStrike < self.slipToeOffWaitThreshold) or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipToeOffWaitThreshold):
             dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
             slip_indicator = forwardFootAcc / (2.718 ** (dd_q_hh - self.gamma))
             return slip_indicator
+        else:
+            return 0
 
 
 
