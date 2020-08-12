@@ -22,8 +22,6 @@ class gaitDetect:
         self.eventTimer = .1
         self.standing = False
         self.standingLimit = 200 * .07
-        self.concurrentZeroes = 0
-        self.concurrentZeroesLimit = 5
         self.lastDiffHeel = 0
         self.gamma = 40 #-562 or -377 #deg/s	
         self.slipToeOffWaitThreshold = .2
@@ -31,6 +29,8 @@ class gaitDetect:
         self.indicatorThreshold = 10 ** 30
         self.isSlipping = False
         self.timeSlipStart = 0
+        self.concurrentZeroes = 0
+        self.concurrentZeroesLimit = 5
 
 
         #angleCalc() variables
