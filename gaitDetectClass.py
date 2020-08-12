@@ -26,7 +26,7 @@ class gaitDetect:
         self.concurrentZeroesLimit = 5
         self.lastDiffHeel = 0
         self.gamma = 40 #-562 or -377 #deg/s	
-        self.slipToeOffWaitThreshold = .25
+        self.slipToeOffWaitThreshold = .2
         self.slipToeOffEndThreshold = .4
         self.slipHeelStrikeWaitThreshold = 0
         self.consecutiveIndicators = 0
