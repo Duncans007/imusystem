@@ -234,7 +234,7 @@ def data_handler(address, *args):
         for x in objects:
             outputString += f"{x.zAngle}\t"
 	
-        outputString += f"{slipAlgorithm(objLowBack.acX, objRHeel.acX, 1)}\t"
+        outputString += f"{gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), 1)}\t"
 		
         print(outputString)
         fileDump.write(f"{outputString}")
