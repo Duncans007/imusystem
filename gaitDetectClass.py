@@ -29,6 +29,11 @@ class gaitDetect:
         self.slipToeOffWaitThreshold = .25
         self.slipToeOffEndThreshold = .4
         self.slipHeelStrikeWaitThreshold = 0
+        self.consecutiveIndicators = 0
+        self.consecutiveIndicatorsLimit = 2
+        self.indicatorThreshold = 10 ** 31
+        self.isSlipping = False
+        self.timeSlipStart = 0
 
 
         #angleCalc() variables
@@ -110,10 +115,20 @@ class gaitDetect:
             if time.time() - self.timeLastStanding > 1:
                 dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
                 slip_indicator = forwardFootAcc / (2.718 ** (dd_q_hh - self.gamma))
-                return slip_indicator
+                if slip_indicator >= self.indicatorThreshold:
+                    self.consecutiveIndicators += 1
+                    if self.consecutiveIndicators >= self.consecutiveIndicatorsThreshold:
+                        return slip_indicator
+                    else:
+                        return 0
+                else:
+                    self.consecutiveIndicators = 0
+                    return 0
             else:
-              return 0
+                self.consecutiveIndicators = 0
+                return 0
         else:
+            self.consecutiveIndicators = 0
             return 0
 
 
