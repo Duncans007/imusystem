@@ -303,8 +303,8 @@ def data_handler(address, *args):
         print(outputString)
         fileDump.write(f"{outputString}")
         
-        fileDump.write(slipAlgorithm(objLowBack.acX, objRHeel.acX, 1))
-        fileDump.write(slipAlgorithm(objLowBack.acX, objLHeel.acX, 1))
+        fileDump.write(f"{slipAlgorithm(objLowBack.acX, objRHeel.acX, 1)}\t")
+        fileDump.write(f"{slipAlgorithm(objLowBack.acX, objLHeel.acX, 1)}\t")
 
         fileDump.write("\n")
 
