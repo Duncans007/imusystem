@@ -79,7 +79,7 @@ class sensorObject:
         if len(self.zAngleChangeArray) > self.zAngleChangeArrayLimit:
             self.zAngleChangeArray.pop(0)
     
-        if self.standing == False:
+        if gaitDetectObject.standing == False:
             if self.wasStanding == True:
                 self.wasStanding = False
                 self.zAngle += np.sum(self.zAngleChangeArray)
@@ -92,7 +92,7 @@ class sensorObject:
                 elif np.mean(self.zAngleArray) < 0:
                     self.zAngle += self.calibVal
                 
-        elif self.standing == True:
+        elif gaitDetectObject.standing == True:
             if self.zAngle > 1:
                 self.zAngle -= 1
                 self.zAngle += zAngleChange
