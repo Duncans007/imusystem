@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-#!/usr/bin/env python3
-
 class gaitDetect:
     def __init__(self):
         import time
