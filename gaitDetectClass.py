@@ -27,11 +27,8 @@ class gaitDetect:
         self.lastDiffHeel = 0
         self.gamma = 40 #-562 or -377 #deg/s	
         self.slipToeOffWaitThreshold = .2
-        self.slipToeOffEndThreshold = .4
-        self.slipHeelStrikeWaitThreshold = 0
-        self.consecutiveIndicators = 0
-        self.consecutiveIndicatorsLimit = 2
-        self.indicatorThreshold = 10 ** 31
+        self.slipHeelStrikeWaitThreshold = .1
+        self.indicatorThreshold = 10 ** 30
         self.isSlipping = False
         self.timeSlipStart = 0
 
@@ -111,24 +108,11 @@ class gaitDetect:
         
     def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
         import time
-        if (self.gaitStage == 0 and time.time() - self.timeLastHeelStrike < self.slipHeelStrikeWaitThreshold) or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipToeOffWaitThreshold and time.time() - self.timeLastToeOff < self.slipToeOffEndThreshold):
-            if time.time() - self.timeLastStanding > 1:
-                dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
-                slip_indicator = forwardFootAcc / (2.718 ** (dd_q_hh - self.gamma))
-                if slip_indicator >= self.indicatorThreshold:
-                    self.consecutiveIndicators += 1
-                    if self.consecutiveIndicators >= self.consecutiveIndicatorsThreshold:
-                        return slip_indicator
-                    else:
-                        return 0
-                else:
-                    self.consecutiveIndicators = 0
-                    return 0
-            else:
-                self.consecutiveIndicators = 0
-                return 0
+        if (self.gaitStage == 0 and time.time() - self.timeLastHeelStrike < self.slipHeelStrikeWaitThreshold) or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipToeOffWaitThreshold):
+            dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
+            slip_indicator = forwardFootAcc / (2.718 ** (dd_q_hh - self.gamma))
+            return slip_indicator
         else:
-            self.consecutiveIndicators = 0
             return 0
 
 
