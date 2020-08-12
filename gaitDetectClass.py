@@ -17,6 +17,7 @@ class gaitDetect:
         self.timeLastHeelStrike = 0
         self.timeLastHeelOff = 0
         self.timeLastToeOff = 0
+        self.timeLastStanding = 0
         self.gaitStage = 0 #0-Stance / 1-Heel Off / 2-Toe Off
         self.eventTimer = .1
         self.standing = False
@@ -28,6 +29,20 @@ class gaitDetect:
         self.slipToeOffWaitThreshold = .25
         self.slipToeOffEndThreshold = .4
         self.slipHeelStrikeWaitThreshold = 0
+
+
+        #angleCalc() variables
+        self.timeToRun = 0
+        self.timeLastValue = time.time()
+        self.currentTime = time.time()
+
+        self.zAngleChangeArray = [0]
+        self.zAngleChangeArrayLimit = 5
+        self.zAngleArray = [0]
+        self.zAngleArrayLimit = 50
+        self.wasStanding = False
+        self.calibVal = .1
+        self.zAngle = 0
         
                 
     def testVal(self, shank, heel):
@@ -50,6 +65,7 @@ class gaitDetect:
             self.gaitStage = 0
             if self.movingAvgShank < - self.standingLimit or self.movingAvgShank > self.standingLimit:
                 self.standing = False
+                self.timeLastStanding = time.time()
                 self.lastAvgShank = - self.movingAvgShank
                 
         if self.standing == False:
@@ -91,9 +107,12 @@ class gaitDetect:
     def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
         import time
         if (self.gaitStage == 0 and time.time() - self.timeLastHeelStrike < self.slipHeelStrikeWaitThreshold) or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipToeOffWaitThreshold and time.time() - self.timeLastToeOff < self.slipToeOffEndThreshold):
-            dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
-            slip_indicator = forwardFootAcc / (2.718 ** (dd_q_hh - self.gamma))
-            return slip_indicator
+            if time.time() - self.timeLastStanding > 1:
+                dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
+                slip_indicator = forwardFootAcc / (2.718 ** (dd_q_hh - self.gamma))
+                return slip_indicator
+            else:
+              return 0
         else:
             return 0
 
