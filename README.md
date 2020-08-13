@@ -46,7 +46,9 @@ Setting up internet connection WITHOUT MONITOR/KEYBOARD:
 
 Connecting through a client computer
 1. Run command "ifconfig wlan0" on raspi.
+    
     note: if setting up without a monitor/keyboard, you WILL need to find a way to get the pi's IP address (nmap, wireshark, router access)
+    
     If there is no way of getting the pi's IP, I would recommend a mobile hot-spot (like a phone) that can configure SSID/password to whatever the pi is looking for PLUS show the device's IP address.
 2. Note the first number on the second line - "inet *.*.*.*"
 3. Open terminal on client computer.
