@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-import gaitDetectClass #class gaitDetect, func testVal(shank gyZ, heel gyZ)
-import packageHandlerFunc #package_handler_raw(tup)
-import sensorClass #class sensorObject, newValues(valueArray), angularAccCalc(), angleCalc(gaitDetectObject)
-import serialSend #ardno(msg as string)
-import slipAlgorithmFunc #slipAlgorithm(pelvis_forward_acc, heel_forward_acc, L_hh)
+from gaitDetectClass import * #class gaitDetect, func testVal(shank gyZ, heel gyZ)
+from packageHandlerFunc import * #package_handler_raw(tup)
+from sensorClass import * #class sensorObject, newValues(valueArray), angularAccCalc(), angleCalc(gaitDetectObject)
+from serialSend import * #ardno(msg as string)
+from slipAlgorithmFunc import * #slipAlgorithm(pelvis_forward_acc, heel_forward_acc, L_hh)
 
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import BlockingOSCUDPServer
