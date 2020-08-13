@@ -304,8 +304,8 @@ def data_handler(address, *args):
         print(outputString)
         fileDump.write(f"{outputString}")
         
-        fileDump.write(f"{slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), 1)}\t")
-        fileDump.write(f"{slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngle * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngle * .01745))), 1)}\t")
+        fileDump.write(f"{gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), 1)}\t")
+        fileDump.write(f"{gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngle * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngle * .01745))), 1)}\t")
 
         fileDump.write("\n")
 
