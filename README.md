@@ -7,22 +7,36 @@ Putting on the System:
 1. There are 7x k-ceptors (sensors), 7x cables, 1x hub, 1x Raspberry Pi, 1x battery.
 2. Hub, Pi, Battery attach to back brace with velcro.
 3. Sensors each have designated locations. All information is on label. 
+    
     Left leg (hub slot 3) has red labels.
+    
     Right leg (hub slot 1) has silver labels.
+    
     Back sensors (hub slot 2) have yellow lables. There is only one back sensor in use currently. It attaches to the velcro at the bottom of the back brace.
 4. Sensors also have orientation lablels for X, Y and Z axes. Line these up so that on every sensor the...
+    
     Y arrow points UP
+    
     X arrow points FORWARD
+    
     Z arrow points out of the sagittal plane to the RIGHT
+    
     Try to keep sensors, especially the heel sensor, as aligned as possible to this framework. Make sure that the heel sensor is parallel to the ground.
+    
     Sensors are oriented to go on the outside of the leg. If you would prefer to put them on the inside, switch the left and right legs and still match the coordinate axes.
 5. Once all sensors are attached to the subject and oriented correctly, connect the cables.
+    
     Each sensor has an IN arrow and OUT arrow.
+    
     Cables coming FROM the HUB or sensor before connect to the IN arrow.
+    
     Cables going TO the NEXT SENSOR in the string connect to the OUT arrow.
 6. Put on the back brace and make final connections.
+    
     Before putting on the back brace, make sure that the lower back sensor is plugged in to hub slot 2, and the two longest cables are plugged into hub slots 1 and 3.
+    
     Make sure that the Raspberry Pi is getting power and the blue LED in the lower back sensor is on.
+    
     The easiest way to assemble the system without a helper is to leave these two cables hanging until the back brace is on. Then, they can easily be plugged into the IN arrow on the thigh sensors.
 
 ----------------------------------------------------------------------------
@@ -50,6 +64,7 @@ Connecting through a client computer
     note: if setting up without a monitor/keyboard, you WILL need to find a way to get the pi's IP address (nmap, wireshark, router access)
     
     If there is no way of getting the pi's IP, I would recommend a mobile hot-spot (like a phone) that can configure SSID/password to whatever the pi is looking for PLUS show the device's IP address.
+    
 2. Note the first number on the second line - "inet *.*.*.*"
 3. Open terminal on client computer.
 4. Run "ssh pi@*.*.*.*" with the IP adress from step 2.
@@ -65,6 +80,7 @@ Notochord Executable Location:
 
 /home/pi/notochord/bin/notochord
 
+.
 
 Usage:
 ./notochord [options] [ip*] [port**]
@@ -97,13 +113,16 @@ Useful Flags:
 --odr=[frequency] changes sample rate, default 50Hz, max 100Hz
 --scan creates armature by scanning setup instead of using configuration file.
 
-
+.
 
 Updating the Notochord:
+
 Navigate to the Notochord directory
 
 git checkout develop
+
 git pull
+
 scons -j3 debug=1
 
 ----------------------------------------------------------------------------
@@ -113,15 +132,20 @@ Using the Algorithm
 Installing the Algorithm:
 run "git pull https://github.com/duncan006/imusystem.git"
 
-
+.
 
 Updating the Algorithm:
 
 navigate to /imusystem/
+
 git stash
+
 git pull
+
 sudo chmod 777 *.py
 
+
+.
 
 
 Running the Algorithm:
@@ -134,6 +158,7 @@ note: the algorithm dumps to the same file every time (algDump.txt). If you want
         the algDump.txt output is formatted to be pasted directly into any spreadsheet program with proper spacing and no extra work.
         to grab results from the pi on the computer, use "scp pi@IP:imusystem/algDump.txt desiredLocation.txt"
 
+.
 
 
 Running the Algorithm (Cheat Sheet):
