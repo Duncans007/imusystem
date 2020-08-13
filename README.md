@@ -60,7 +60,9 @@ note: make sure you are connected to the same network.
 Running the Notochord:
 
 Notochord Executable Location:
+
 /home/pi/notochord/bin/notochord
+
 
 Usage:
 ./notochord [options] [ip*] [port**]
@@ -69,19 +71,31 @@ Usage:
 
 Useful Flags:
 -h help, displays more written out version of this short section
+
 -y starts program without waiting for user confirmation
+
 -r gives raw values as output (also --raw)
+
 -x for calibration. Only have one K-Ceptor plugged in (also --calibrate)
+
 -c [path] path to config file. Defaults to home/pi/notochord/Chordata.xsd
+
 -v [0-2] more verbose output, default 0
+
 -l [output] where to redirect log messages
+
 -e [output] where to redirect errors
+
 -t [output] where to redirect data (mostly quaternions)
+
 -s [send_rate] data send rate
+
 
 --no_bundles unbundles code, do not use with algorithm.
 --odr=[frequency] changes sample rate, default 50Hz, max 100Hz
 --scan creates armature by scanning setup instead of using configuration file.
+
+
 
 Updating the Notochord:
 Navigate to the Notochord directory
@@ -98,12 +112,14 @@ Installing the Algorithm:
 run "git pull https://github.com/duncan006/imusystem.git"
 
 
+
 Updating the Algorithm:
 
 navigate to /imusystem/
 git stash
 git pull
 sudo chmod 777 *.py
+
 
 
 Running the Algorithm:
@@ -117,9 +133,11 @@ note: the algorithm dumps to the same file every time (algDump.txt). If you want
         to grab results from the pi on the computer, use "scp pi@IP:imusystem/algDump.txt desiredLocation.txt"
 
 
+
 Running the Algorithm (Cheat Sheet):
 
 Fill in IP
+
 ssh pi@IP ./notochord/bin/notochord --raw --scan --odr=97 --no_bundles -y localhost
 
 ssh pi@IP ./imusystem/2LegMain.py
