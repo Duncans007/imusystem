@@ -7,7 +7,7 @@ def ardno(msg):
 def send_over_serial(msgArray, serialSend):
     sendStr = ""
     for n in msgArray:
-        sendStr += f"{n},"
+        sendStr += f"{truncate(n,2)},"
     
     sendStr = sendStr[:-1]
     sendStr += f"\n"
@@ -16,7 +16,8 @@ def send_over_serial(msgArray, serialSend):
     serialSend.write(sendStr.encode('utf-8'))
     
     
-import math
+
 def truncate(number, digits) -> float:
+    import math
     stepper = 10.0 ** digits
     return math.trunc(stepper * number) / stepper
