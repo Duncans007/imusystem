@@ -121,6 +121,7 @@ Running the Algorithm (Cheat Sheet):
 
 Fill in IP
 ssh pi@IP ./notochord/bin/notochord --raw --scan --odr=97 --no_bundles -y localhost
+
 ssh pi@IP ./imusystem/2LegMain.py
 
 ----------------------------------------------------------------------------
