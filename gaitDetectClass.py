@@ -2,8 +2,6 @@
 
 class gaitDetect:
     def __init__(self):
-        import time
-        import numpy as np
         self.firstVar = 0
         self.movingArrShank = [0]
         self.movingArrHeel = [0]
@@ -29,20 +27,6 @@ class gaitDetect:
         self.timeSlipStart = 0
         self.concurrentZeroes = 0
         self.concurrentZeroesLimit = 5
-
-
-        #angleCalc() variables
-        self.timeToRun = 0
-        self.timeLastValue = time.time()
-        self.currentTime = time.time()
-
-        self.zAngleChangeArray = [0]
-        self.zAngleChangeArrayLimit = 5
-        self.zAngleArray = [0]
-        self.zAngleArrayLimit = 50
-        self.wasStanding = False
-        self.calibVal = .1
-        self.zAngle = 0
         
                 
     def testVal(self, shank, heel):
@@ -51,6 +35,7 @@ class gaitDetect:
         self.movingArrShank.append(shank)
         self.movingArrHeel.append(heel)
         
+#Limits number of previous values in array
         if len(self.movingArrShank) > self.movingAvgAccuracy:
             self.movingArrShank.pop(0)
         self.movingAvgShank = np.mean(self.movingArrShank)
@@ -59,16 +44,20 @@ class gaitDetect:
             self.movingArrHeel.pop(0)
         self.movingAvgHeel = np.mean(self.movingArrHeel)
         
+#When standing, reset sensor's drift back to 0
         if self.standing == True:
             
-            #Locks gait at 0 when standing detected, to prevent additional axes crossings. Recommended to leave on for live use.
+#Locks gait at 0 when standing detected, to prevent additional axes crossings. Recommended to leave on for live use.
             self.gaitStage = 0
             if self.movingAvgShank < - self.standingLimit or self.movingAvgShank > self.standingLimit:
                 self.standing = False
                 self.timeLastStanding = time.time()
                 self.lastAvgShank = - self.movingAvgShank
                 
+#When not standing
         if self.standing == False:
+        
+#Count number of consecutive non-significant values, and activate standing when they pass the threshold
             if self.movingAvgShank < self.standingLimit and self.movingAvgShank > - self.standingLimit:
                 self.concurrentZeroes += 1
             else:
@@ -76,36 +65,45 @@ class gaitDetect:
                 
             if self.concurrentZeroes > self.concurrentZeroesLimit:
                 self.standing = True
-        
+
+#Significance changes for timing reasons. When not zero, it waits for the given timeframe before resetting to zero so that gait change can be detected again
         if self.significance == 0 and not self.standing:
-            if self.movingAvgShank > 0 and self.lastAvgShank < 0 and self.gaitStage == 1: #detects negative to positive, aka toe off or start of swing phase
+
+#detects negative to positive, aka toe off or start of swing phase
+            if self.movingAvgShank > 0 and self.lastAvgShank < 0 and self.gaitStage == 1:
                 self.significance = 1
                 self.timeLastToeOff = time.time()
                 self.gaitStage = 2
-            elif self.movingAvgShank < 0 and self.lastAvgShank > 0 and self.gaitStage == 2: #detects positive to negative, aka heel strike or start of stance phase
+                
+#detects positive to negative, aka heel strike or start of stance phase
+            elif self.movingAvgShank < 0 and self.lastAvgShank > 0 and self.gaitStage == 2: 
                 self.significance = -1
                 self.timeLastHeelStrike = time.time()
                 self.gaitStage = 0
+
+#detects heel off occurrence
             elif np.mean(np.diff(self.movingArrHeel)) < -20 and self.gaitStage == 0:
                 if self.lastDiffHeel <= 25 and self.lastDiffHeel >= -25:
                     self.timeLastHeelOff = time.time()
                     self.significance = 2
                     self.gaitStage = 1
-
+            #Keep records of previous values for checking at the beginning of function
             self.lastDiffHeel = np.mean(np.diff(self.movingArrHeel))
-                
+         
+#When significance has been changed, wait the appropriate amount of time before resetting to allow for next gait update
         elif self.significance != 0:
             if time.time() - self.timeLastHeelStrike > self.eventTimer and time.time() - self.timeLastToeOff > self.eventTimer:
                 self.significance = 0
             if self.significance == 2:
                 self.significance = 0
-        
-        #Implement other leg IMU - other leg heel strike must occur before measured leg toe off. (and vice versa)
 
         self.lastAvgShank = self.movingAvgShank
         
+#Trkov IFAC 2017 slip detection algorithm
     def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
         import time
+        
+#Limits the window of slip detection to [slipToeOffWaitThreshold seconds after toe off -- heel strike]. Note that gait does not reset until after slip is done.
         if (self.gaitStage == 0 and time.time() - self.timeLastHeelStrike < self.slipHeelStrikeWaitThreshold) or (self.gaitStage == 2 and time.time() - self.timeLastToeOff > self.slipToeOffWaitThreshold):
             dd_q_hh = (pelvisAcc - forwardFootAcc) / L_hh
             slip_indicator = forwardFootAcc / (2.718 ** (dd_q_hh - self.gamma))
@@ -114,7 +112,7 @@ class gaitDetect:
             return 0
 
 
-
+#For testing purposes
 if __name__ == "__main__":
     import time
     rightLegGait = gaitDetect()
