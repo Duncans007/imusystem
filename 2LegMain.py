@@ -21,11 +21,19 @@ global objRHeel, objRShank, objRThigh
 global objLHeel, objLShank, objLThigh
 global gaitDetectRight, gaitDetectLeft
 global objects
+global hip_heel_length
+globall intelNUCserial
 
 #-----------------------------------#
 ip = "localhost"
 port = 6565
 
+intelNUCport = ''
+intelNUCbaud = 115200
+
+hip_heel_length = 1 #meters
+
+#Currently unused
 mass = 60 #kg
 height = 180 #cm
 #-----------------------------------#
@@ -114,6 +122,8 @@ def data_handler(address, *args):
     global objLHeel, objLShank, objLThigh
     global gaitDetectRight, gaitDetectLeft
     global objects
+    global hip_heel_length
+    globall intelNUCserial
     
     out = []
     
@@ -130,6 +140,12 @@ def data_handler(address, *args):
         if varType == "r":
             dataDict[limb] = package_handler_raw(args)
             flagDict[limb] = True
+
+#SERIAL SEND
+            serialArr = dataDict[limb]
+			serialArr = serialArr[0:6]
+			serialArr.insert(0,limb[0:2])
+            send_over_serial(serialArr, intelNUCserial)
 
         if flagDict == toggleFlagDict:
             for x in range(len(flagDict) - 1):
@@ -282,6 +298,7 @@ def data_handler(address, *args):
         
         gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ)
         gaitDetectLeft.testVal(objLShank.gyZ, objLHeel.gyZ)
+		
         
         outputString = f"{time.time() - timeStart}\t{timeToRun}\t{gaitDetectRight.gaitStage}\t{gaitDetectLeft.gaitStage}\t\t"
 		
@@ -304,10 +321,16 @@ def data_handler(address, *args):
         print(outputString)
         fileDump.write(f"{outputString}")
         
-        fileDump.write(f"{gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), 1)}\t")
-        fileDump.write(f"{gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngle * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngle * .01745))), 1)}\t")
-
+		slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), 1)
+		slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngle * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngle * .01745))), 1)
+		
+        fileDump.write(f"{slipRight}\t{slipLeft}\t")
         fileDump.write("\n")
+		
+
+        #SERIAL SEND
+        serialArr = ["PR", time.time() - timeStart}, {timeToRun}, {gaitDetectRight.gaitStage}, {gaitDetectLeft.gaitStage}, slipRight / (10**26), slipLeft / (10**26)]
+        send_over_serial(serialArr, intelNUCserial)
 
 
 
@@ -330,7 +353,9 @@ def main_func(ip, port):
 
 
 if __name__ == "__main__":    
-    objRThigh = sensorObject()
+    intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
+	
+	objRThigh = sensorObject()
     objRShank = sensorObject()
     objRHeel = sensorObject()
 	
