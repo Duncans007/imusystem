@@ -25,7 +25,7 @@ global objLHeel, objLShank, objLThigh
 global gaitDetectRight, gaitDetectLeft
 global objects
 global hip_heel_length
-globall intelNUCserial
+global intelNUCserial
 
 #-----------------------------------#
 #USER INPUTS
