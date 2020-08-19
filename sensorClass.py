@@ -140,11 +140,11 @@ class sensorObject:
         
         print(magnitude)
         print(ratio)
-        print(ratio * self.acX / g)
-        print(math.asin(ratio * self.acX / g))
+        #print(ratio * self.acX / g)
+        #print(math.asin(ratio * self.acX / g))
         print(ratio * self.acY / g)
         print(math.acos(ratio * self.acY / g))
         
-        self.angleX = math.degrees(math.asin(ratio * self.acX / g))
+        #self.angleX = math.degrees(math.asin(ratio * self.acX / g))
         self.angleY = math.degrees(math.acos(ratio * self.acY / g))
             
