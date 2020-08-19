@@ -125,5 +125,13 @@ class sensorObject:
         return self.zAngle
     
     
-        def gravityVector():
+    def gravityVectorAngle(self):
+        import math
+        
+        g = 9.81
+        magnitude = ((self.acX ** 2) + (self.acY ** 2)) ** 0.5
+        ratio = magnitude / g
+        
+        angleX = math.degrees(math.asin(ratio * self.acX / g))
+        angleY = math.degrees(math.acos(ratio * self.acY / g))
             
