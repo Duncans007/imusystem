@@ -369,12 +369,12 @@ def main_func(ip, port):
 
 if __name__ == "__main__":    
     
-	#Variable initializations
-	#serial object for NUC. Comment out if not used.
-	intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
+    #Variable initializations
+    #serial object for NUC. Comment out if not used.
+    intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
 	
-	#create objects for sensor operations and value storage.
-	objRThigh = sensorObject()
+    #create objects for sensor operations and value storage.
+    objRThigh = sensorObject()
     objRShank = sensorObject()
     objRHeel = sensorObject()
 	
@@ -384,17 +384,17 @@ if __name__ == "__main__":
 	
     objLowBack = sensorObject()
     
-	#create gait detect objects for each leg
+    #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
 	
-	#create lists that can be cycles through to iterate over every object, as well as create the file data header.
+    #create lists that can be cycles through to iterate over every object, as well as create the file data header.
     objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
     stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
     stringAxes = ["x","y","z"]
     stringSensors = ["gy","ac","mg"]
 	
-	#Create formatted file header
+    #Create formatted file header
     fileDump = open("algDump.txt", "w+")
     header = "time\ttimeToRun\tgaitStageR\tgaitStageL\t\t"
     for x in stringObjects:
