@@ -155,5 +155,5 @@ class sensorObject:
             
         
         #self.angleX = math.degrees(math.asin(ratio * self.acX / g))
-        self.angleY = math.degrees(math.acos(ratio * self.acY / g))
+        self.angleY = math.degrees(math.acos(standinY))
             
