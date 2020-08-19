@@ -334,7 +334,12 @@ def data_handler(address, *args):
         slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngle * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngle * .01745))), hip_heel_length)
 		
 #Appends final values to output string, print, and save to file.
-        outputString += f"{slipRight}\t{slipLeft}\t"
+        outputString += f"{slipRight}\t{slipLeft}\t\t"
+	
+	for x in objects:
+		outputString += f"{x.angleX}\t"
+		outputString += f"{x.angleY}\t"
+	
         outputString += f"\n"
 		
         print(outputString)
