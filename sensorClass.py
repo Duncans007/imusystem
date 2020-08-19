@@ -31,6 +31,10 @@ class sensorObject:
         self.gyZarray = [0]
         self.angularAcceleration = 0
         self.angularAccelerationMovingAvgAccuracy = 4
+        
+        #gravityVectorAngle() variables
+        self.angleX = 0
+        self.angleY = 0
 
 #Function not currently in use b/c 
     def newValues(self, valueArray):
@@ -132,6 +136,6 @@ class sensorObject:
         magnitude = ((self.acX ** 2) + (self.acY ** 2)) ** 0.5
         ratio = magnitude / g
         
-        angleX = math.degrees(math.asin(ratio * self.acX / g))
-        angleY = math.degrees(math.acos(ratio * self.acY / g))
+        self.angleX = math.degrees(math.asin(ratio * self.acX / g))
+        self.angleY = math.degrees(math.acos(ratio * self.acY / g))
             
