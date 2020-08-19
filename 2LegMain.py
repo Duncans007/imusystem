@@ -344,7 +344,7 @@ def data_handler(address, *args):
 #SERIAL SEND--------------------------------------------
 #Sends all processed data over serial.
 #comment send_over_serial to skip
-        serialArr = ["PR", time.time() - timeStart}, {timeToRun}, {gaitDetectRight.gaitStage}, {gaitDetectLeft.gaitStage}, slipRight / (10**26), slipLeft / (10**26)]
+        serialArr = ["PR", time.time() - timeStart, timeToRun, gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, slipRight / (10**26), slipLeft / (10**26)]
         send_over_serial(serialArr, intelNUCserial)
 #---------------------------------------------------
 
