@@ -336,9 +336,9 @@ def data_handler(address, *args):
 #Appends final values to output string, print, and save to file.
         outputString += f"{slipRight}\t{slipLeft}\t\t"
 	
-	for x in objects:
-		outputString += f"{x.angleX}\t"
-		outputString += f"{x.angleY}\t"
+        for x in objects:
+            outputString += f"{x.angleX}\t"
+            outputString += f"{x.angleY}\t"
 	
         outputString += f"\n"
 		
