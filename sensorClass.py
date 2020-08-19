@@ -138,7 +138,7 @@ class sensorObject:
         magnitude = ((self.acX ** 2) + (self.acY ** 2)) ** 0.5
         ratio = magnitude / g
         
-        self.angleX = math.degrees(math.asin(ratio * self.acX / g))
+        self.angleX = math.degrees(math.asin(ratio * abs(self.acX) / g))
         try:
             self.angleY = math.degrees(math.acos(ratio * self.acY / g))
         except ValueError:
