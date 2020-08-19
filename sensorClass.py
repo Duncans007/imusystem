@@ -1,5 +1,6 @@
 class sensorObject:
     def __init__(self):
+        import time
         #State Values from Sensors initialized at 0
         self.gyX = 0
         self.gyY = 0
