@@ -123,3 +123,7 @@ class sensorObject:
             self.zAngleArray.pop(0)
             
         return self.zAngle
+    
+    
+        def gravityVector():
+            
