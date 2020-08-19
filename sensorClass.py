@@ -134,10 +134,13 @@ class sensorObject:
     def gravityVectorAngle(self):
         import math
         
-        g = 9.81
+        g = -9.81
         magnitude = ((self.acX ** 2) + (self.acY ** 2)) ** 0.5
         ratio = magnitude / g
         
         self.angleX = math.degrees(math.asin(ratio * self.acX / g))
-        self.angleY = math.degrees(math.acos(ratio * self.acY / g))
+        try:
+            self.angleY = math.degrees(math.acos(ratio * self.acY / g))
+        except ValueError:
+            print("value error")
             
