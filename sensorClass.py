@@ -136,7 +136,7 @@ class sensorObject:
         
         g = -9.81
         magnitude = ((self.acX ** 2) + (self.acY ** 2)) ** 0.5
-        ratio = magnitude / g
+        ratio = abs(magnitude / g)
         
         print(magnitude)
         print(ratio)
