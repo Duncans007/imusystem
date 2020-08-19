@@ -139,21 +139,27 @@ class sensorObject:
         ratio = abs(magnitude / g)
         
         standinY = ratio * self.acY / g
+        standinX = ratio * self.acX / g
         
         print(magnitude)
         print(ratio)
-        #print(ratio * self.acX / g)
-        #print(math.asin(ratio * self.acX / g))
+        print(standinX)
         print(standinY)
         
         while standinY > 1:
             standinY -= 2
         while standinY < -1:
             standinY += 2
+            
+        while standinX > 1:
+            standinX -= 2
+        while standinX < -1:
+            standinX += 2
         
         print(math.acos(standinY))
+        print(math.asin(standinX))
             
         
-        #self.angleX = math.degrees(math.asin(ratio * self.acX / g))
+        self.angleX = math.degrees(math.asin(standinX))
         self.angleY = math.degrees(math.acos(standinY))
             
