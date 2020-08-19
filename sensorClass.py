@@ -79,7 +79,7 @@ class sensorObject:
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
         
-        gravityVectorAngle()
+        self.gravityVectorAngle()
         
 #Integrates gyroscope to get angle. Includes drift.
         zAngleChange = self.gyZ * self.timeToRun
