@@ -128,7 +128,7 @@ def data_handler(address, *args):
     global gaitDetectRight, gaitDetectLeft
     global objects
     global hip_heel_length
-    globall intelNUCserial
+    global intelNUCserial
     
     out = []
     
