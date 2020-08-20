@@ -33,8 +33,9 @@ class sensorObject:
         self.angularAccelerationMovingAvgAccuracy = 4
         
         #gravityVectorAngle() variables
-        self.angleX = 0
-        self.angleY = 0
+        self.angleFromGravity = 0
+        self.gravAngleArray = []
+        self.gravAngleSmoothed = 0
 
 #Function not currently in use b/c 
     def newValues(self, valueArray):
@@ -133,33 +134,18 @@ class sensorObject:
     
     def gravityVectorAngle(self):
         import math
+        import numpy as np
         
         g = -9.81
         magnitude = ((self.acX ** 2) + (self.acY ** 2)) ** 0.5
         ratio = abs(magnitude / g)
         
-        standinY = (g * self.acY) / (abs(g * magnitude))
-        #standinX = ratio * self.acX / g
+        dotProd = (g * self.acY) / (abs(g * magnitude))
+
+        self.angleFromGravity = math.degrees(math.acos(dotProd))
+        self.gravAngleArray.append(self.angleFromGravity)
+        if len(self.gravAngleArray) > 2:
+            self.gravAngleArray.pop(0)
         
-        #print(magnitude)
-        #print(ratio)
-        #print(standinX)
-        print(standinY)
-        
-        #while standinY > 1:
-        #    standinY -= 2
-        #while standinY < -1:
-        #    standinY += 2
-            
-        #while standinX > 1:
-        #    standinX -= 2
-        #while standinX < -1:
-        #    standinX += 2
-        
-        #print(math.acos(standinY))
-        #print(math.asin(standinX))
-            
-        
-        #self.angleX = math.degrees(math.asin(standinX))
-        self.angleY = math.degrees(math.acos(standinY))
+        self.gravAngleSmoothed = np.mean(self.gravAngleArray)
             
