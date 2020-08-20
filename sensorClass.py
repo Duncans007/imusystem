@@ -36,6 +36,7 @@ class sensorObject:
         self.angleFromGravity = 0
         self.gravAngleArray = []
         self.gravAngleSmoothed = 0
+        self.gravAngleArrayLimit = 5
 
 #Function not currently in use b/c 
     def newValues(self, valueArray):
@@ -144,7 +145,7 @@ class sensorObject:
 
         self.angleFromGravity = math.degrees(math.acos(dotProd))
         self.gravAngleArray.append(self.angleFromGravity)
-        if len(self.gravAngleArray) > 2:
+        if len(self.gravAngleArray) > self.gravAngleArrayLimit:
             self.gravAngleArray.pop(0)
         
         self.gravAngleSmoothed = np.mean(self.gravAngleArray)
