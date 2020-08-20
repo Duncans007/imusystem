@@ -27,6 +27,9 @@ class sensorObject:
         self.calibVal = .1
         self.zAngle = 0
         
+        self.gravAngleWindow = 2
+        self.standingCalibVal = .5
+        
         #angularAcceleration() variables
         self.gyZarray = [0]
         self.angularAcceleration = 0
@@ -106,18 +109,18 @@ class sensorObject:
                 self.zAngle += zAngleChange
                 
         #Drifts degree value towards 0 by 1/10th of a degree per frame.
-                if np.mean(self.zAngleArray) > 0:
+                if np.mean(self.zAngleArray) > self.gravAngleSmoothed:
                     self.zAngle -= self.calibVal
-                elif np.mean(self.zAngleArray) < 0:
+                elif np.mean(self.zAngleArray) < self.gravAngleSmoothed:
                     self.zAngle += self.calibVal
         
     #If standing still, reset angle to zero over time
         elif gaitDetectObject.standing == True:
-            if self.zAngle > 1:
-                self.zAngle -= 1
+            if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
+                self.zAngle -= self.standingCalibVal
                 self.zAngle += zAngleChange
-            elif self.zAngle < -1:
-                self.zAngle += 1
+            elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
+                self.zAngle += self.standingCalibVal
                 self.zAngle += zAngleChange
             else:
                 pass
