@@ -12,8 +12,7 @@ def send_over_serial(msgArray, serialSend):
             x = truncate(n, 2.0)
         except TypeError:
             x = n
-    
-    sendStr += f"{x},"
+        sendStr += f"{x},"
     
     #Cut last comma, add terminating character instead
     sendStr = sendStr[:-1]
