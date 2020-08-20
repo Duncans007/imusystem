@@ -338,6 +338,7 @@ def data_handler(address, *args):
 	
         for x in objects:
             outputString += f"{x.gravAngleSmoothed}\t"
+            outputString += f"{x.angleFromGravity}\t\t"
 	
         outputString += f"\n"
 		
