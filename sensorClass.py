@@ -147,6 +147,8 @@ class sensorObject:
         dotProd = (g * self.acY) / (abs(g * magnitude))
 
         self.angleFromGravity = math.degrees(math.acos(dotProd))
+        if self.acX > 0:
+            self.angleFromGravity = -self.angleFromGravity
         self.gravAngleArray.append(self.angleFromGravity)
         if len(self.gravAngleArray) > self.gravAngleArrayLimit:
             self.gravAngleArray.pop(0)
