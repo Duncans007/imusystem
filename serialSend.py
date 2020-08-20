@@ -8,8 +8,13 @@ def send_over_serial(msgArray, serialSend):
     sendStr = ""
     
     #Pools sensor values into string for conversion to bytes
-    for n in msgArray:
-        sendStr += f"{truncate(n,2)},"
+    for n in msgArray:    
+        try:
+            x = truncate(n, 2.0)
+        except TypeError:
+            x = n
+    
+    sendStr += f"{x},"
     
     #Cut last comma, add terminating character instead
     sendStr = sendStr[:-1]
