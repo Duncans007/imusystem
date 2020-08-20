@@ -337,8 +337,7 @@ def data_handler(address, *args):
         outputString += f"{slipRight}\t{slipLeft}\t\t"
 	
         for x in objects:
-            outputString += f"{x.angleX}\t"
-            outputString += f"{x.angleY}\t"
+            outputString += f"{x.gravAngleSmoothed}\t"
 	
         outputString += f"\n"
 		
