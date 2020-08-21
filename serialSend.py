@@ -18,6 +18,9 @@ def send_over_serial(msgArray, serialSend):
     sendStr = sendStr[:-1]
     sendStr += f"\n"
     
+    if msgArray[0] == "PR":
+        sendStr += f"\r"
+    
     #Encode with UTF-8 and send over serial.
     serialSend.write(sendStr.encode('utf-8'))
     
