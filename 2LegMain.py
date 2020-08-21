@@ -133,10 +133,10 @@ def data_handler(address, *args):
     
     out = []
     
-#If packet just finished sending or if first run, send start character (STX) first.
-	if packetWasReady:
-		packetWasReady = False
-		send_over_serial([f"/x02"], intelNUCserial)
+#If packet just finished sending or if first run, send start character (STX) over serial first.
+    if packetWasReady:
+        packetWasReady = False
+        send_over_serial([f"/x02"], intelNUCserial)
 	
 #Collects variable type and sensor address as numbers
     varType = address[10]
