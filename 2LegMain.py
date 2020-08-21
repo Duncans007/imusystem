@@ -18,7 +18,7 @@ import numpy as np
 #These will all be passed, rather than global eventually.
 global timeCurrent, varType, timeStart
 global dataDict, flagDict, toggleFlagDict
-global packetReady, rPacketReady, passToAlgorithm
+global packetReady, rPacketReady, passToAlgorithm, packetWasReady
 global fileDump
 global objRHeel, objRShank, objRThigh
 global objLHeel, objLShank, objLThigh
@@ -58,6 +58,7 @@ toggleFlagDict = {
 
 packetReady = False
 rPacketReady = False
+packetWasReady = True
 timeCurrent = time.time()
 timeStart = time.time()
 
@@ -121,7 +122,7 @@ passToAlgorithm = {
 def data_handler(address, *args):
     global timeCurrent, varType, timeStart
     global dataDict, flagDict, toggleFlagDict
-    global packetReady, rPacketReady, passToAlgorithm
+    global packetReady, rPacketReady, passToAlgorithm, packetWasReady
     global fileDump
     global objRHeel, objRShank, objRThigh
     global objLHeel, objLShank, objLThigh
@@ -132,6 +133,11 @@ def data_handler(address, *args):
     
     out = []
     
+#If packet just finished sending or if first run, send start character (STX) first.
+	if packetWasReady:
+		packetWasReady = False
+		send_over_serial([f"/x02"], intelNUCserial)
+	
 #Collects variable type and sensor address as numbers
     varType = address[10]
     addr = ''
@@ -183,6 +189,7 @@ def data_handler(address, *args):
         
 #When complete system state is ready, run calculations
     if packetReady:
+        packetWasReady = True
         packetReady = False
         timeLastRun = timeCurrent
         timeCurrent = time.time()
