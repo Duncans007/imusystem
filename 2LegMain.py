@@ -268,15 +268,15 @@ def data_handler(address, *args):
                   
 #Left Heel - X and Y axes flipped, then X, Y, and Z values negated.
         objLHeel.gyX = -lh_raw[1]
-        objLHeel.gyY =  lh_raw[0]
+        objLHeel.gyY = -lh_raw[0]
         objLHeel.gyZ = -lh_raw[2]
                               
         objLHeel.acX = -lh_raw[4]
-        objLHeel.acY =  lh_raw[3]
+        objLHeel.acY = -lh_raw[3]
         objLHeel.acZ = -lh_raw[5]
                               
         objLHeel.mgX = -lh_raw[7]
-        objLHeel.mgY =  lh_raw[6]
+        objLHeel.mgY = -lh_raw[6]
         objLHeel.mgZ = -lh_raw[8]
         
 #Lower Back - X and Z values flipped, X value negated
