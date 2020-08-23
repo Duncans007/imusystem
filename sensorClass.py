@@ -27,10 +27,19 @@ class sensorObject:
         self.calibVal = .1
         self.zAngle = 0
         
+        self.gravAngleWindow = 2
+        self.standingCalibVal = .5
+        
         #angularAcceleration() variables
         self.gyZarray = [0]
         self.angularAcceleration = 0
         self.angularAccelerationMovingAvgAccuracy = 4
+        
+        #gravityVectorAngle() variables
+        self.angleFromGravity = 0
+        self.gravAngleArray = []
+        self.gravAngleSmoothed = 0
+        self.gravAngleArrayLimit = 5
 
 #Function not currently in use b/c 
     def newValues(self, valueArray):
@@ -75,6 +84,8 @@ class sensorObject:
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
         
+        self.gravityVectorAngle()
+        
 #Integrates gyroscope to get angle. Includes drift.
         zAngleChange = self.gyZ * self.timeToRun
         
@@ -98,18 +109,18 @@ class sensorObject:
                 self.zAngle += zAngleChange
                 
         #Drifts degree value towards 0 by 1/10th of a degree per frame.
-                if np.mean(self.zAngleArray) > 0:
+                if np.mean(self.zAngleArray) > self.gravAngleSmoothed:
                     self.zAngle -= self.calibVal
-                elif np.mean(self.zAngleArray) < 0:
+                elif np.mean(self.zAngleArray) < self.gravAngleSmoothed:
                     self.zAngle += self.calibVal
         
     #If standing still, reset angle to zero over time
         elif gaitDetectObject.standing == True:
-            if self.zAngle > 1:
-                self.zAngle -= 1
+            if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
+                self.zAngle -= self.standingCalibVal
                 self.zAngle += zAngleChange
-            elif self.zAngle < -1:
-                self.zAngle += 1
+            elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
+                self.zAngle += self.standingCalibVal
                 self.zAngle += zAngleChange
             else:
                 pass
@@ -123,14 +134,23 @@ class sensorObject:
             self.zAngleArray.pop(0)
             
         return self.zAngle
-
+    
     
     def gravityVectorAngle(self):
         import math
+        import numpy as np
         
-        g = 9.81
+        g = -9.81
         magnitude = ((self.acX ** 2) + (self.acY ** 2)) ** 0.5
-        ratio = magnitude / g
+        ratio = abs(magnitude / g)
         
-        angleX = math.degrees(math.asin(ratio * self.acX / g))
-        angleY = math.degrees(math.acos(ratio * self.acY / g))
+        dotProd = (g * self.acY) / (abs(g * magnitude))
+
+        self.angleFromGravity = math.degrees(math.acos(dotProd))
+        if self.acX > 0:
+            self.angleFromGravity = -self.angleFromGravity
+        self.gravAngleArray.append(self.angleFromGravity)
+        if len(self.gravAngleArray) > self.gravAngleArrayLimit:
+            self.gravAngleArray.pop(0)
+        
+        self.gravAngleSmoothed = np.mean(self.gravAngleArray)
