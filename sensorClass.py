@@ -154,4 +154,3 @@ class sensorObject:
             self.gravAngleArray.pop(0)
         
         self.gravAngleSmoothed = np.mean(self.gravAngleArray)
-            

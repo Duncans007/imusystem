@@ -1,6 +1,5 @@
 def ardno(msg):
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-    ser.flush()
     ser.write(b"{}".format(msg))
 
     
@@ -8,15 +7,21 @@ def send_over_serial(msgArray, serialSend):
     sendStr = ""
     
     #Pools sensor values into string for conversion to bytes
-    for n in msgArray:
-        sendStr += f"{truncate(n,2)},"
+    for n in msgArray:    
+        try:
+            x = truncate(n, 2.0)
+        except TypeError:
+            x = n
+        sendStr += f"{x},"
     
     #Cut last comma, add terminating character instead
     sendStr = sendStr[:-1]
     sendStr += f"\n"
     
+    if msgArray[0] == "PR":
+        sendStr += f"\r"
+    
     #Encode with UTF-8 and send over serial.
-    serialSend.flush()
     serialSend.write(sendStr.encode('utf-8'))
     
     
