@@ -155,10 +155,10 @@ def data_handler(address, *args):
 #SERIAL SEND------------------------------------------------
 #Whenever new data is brought in, it cuts the magnetometer (change 0:6 to 0:9 if you want magnetometer included), inserts the 2-letter sensor code at the beginning, and sends it with function to intelNUCserial.
 #To skip, comment send_over_serial()
-#            serialArr = dataDict[limb]
-#            serialArr = serialArr[0:6]
-#            serialArr.insert(0,limb[0:2])
-#            send_over_serial(serialArr, intelNUCserial)
+            serialArr = dataDict[limb]
+            serialArr = serialArr[0:6]
+            serialArr.insert(0,limb[0:2])
+            send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------------
 
 #Tests if all sensors have been received before assembling packet and sending to algorithm
@@ -356,8 +356,8 @@ def data_handler(address, *args):
 #SERIAL SEND--------------------------------------------
 #Sends all processed data over serial.
 #comment send_over_serial to skip
-#        serialArr = ["PR", time.time() - timeStart, timeToRun, gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, slipRight / (10**26), slipLeft / (10**26)]
-#        send_over_serial(serialArr, intelNUCserial)
+        serialArr = ["PR", time.time() - timeStart, timeToRun, gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, slipRight / (10**26), slipLeft / (10**26)]
+        send_over_serial(serialArr, intelNUCserial)
 #---------------------------------------------------
 
 
