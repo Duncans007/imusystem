@@ -111,6 +111,23 @@ class gaitDetect:
         else:
             return 0
 
+        
+#-----------------------------------------------------------------------------------------------------------------------
+#Begin kneeling detection algorithm
+    def kneelingDetection(self, thighObjR, shankObjR, heelObjR, thighObjL, shankObjL, heelObjL):
+    #Pull angle measurements for full state.
+    #Might make this its own file in the future
+    #Simply because it uses measurements from both legs at the same time, which is not the purpose of the gaitDetect class
+    #Although the gait detect class can definitely be repurposed to take all seven values and calculate for both legs simultaneously.
+        thighAngleR = thighObjR.zAngle
+        shankAngleR = shankObjR.zAngle
+        heelAngleR = heelObjR.zAngle
+        thighAngleR = thighObjL.zAngle
+        shankAngleR = shankObjL.zAngle
+        heelAngleR = heelObjL.zAngle
+        
+        
+        
 
 #For testing purposes
 if __name__ == "__main__":
