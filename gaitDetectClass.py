@@ -122,9 +122,9 @@ class gaitDetect:
         thighAngleR = thighObjR.zAngle
         shankAngleR = shankObjR.zAngle
         heelAngleR = heelObjR.zAngle
-        thighAngleR = thighObjL.zAngle
-        shankAngleR = shankObjL.zAngle
-        heelAngleR = heelObjL.zAngle
+        thighAngleL = thighObjL.zAngle
+        shankAngleL = shankObjL.zAngle
+        heelAngleL = heelObjL.zAngle
         
         legForward = "X"
         
