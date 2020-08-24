@@ -337,6 +337,8 @@ def data_handler(address, *args):
 #Cycle through all sensor objects to append formatted version of every sensor's angle approximation to output string (note, back angle is not calculated and stays at 0)
         for x in objects:
             outputString += f"{x.zAngle}\t"
+
+        outputString += f"\t"
         
 #Calculates Slip Indicator from Trkov IFAC 2017 paper
         slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), hip_heel_length)
@@ -349,8 +351,8 @@ def data_handler(address, *args):
         #    outputString += f"{x.gravAngleSmoothed}\t"
         #    outputString += f"{x.angleFromGravity}\t\t"
 
-        isKneeling, legForward = gaitDetectRight.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
-        outputString += f"{isKneeling}\t{legForward}"
+        legForward, kneeAngleR, KneeAngleL = gaitDetectRight.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
+        outputString += f"{kneeAngleR}\t{kneeAngleL}\t\t{legForward}"
         outputString += f"\n"
 		
         print(outputString)
