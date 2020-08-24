@@ -351,7 +351,7 @@ def data_handler(address, *args):
         #    outputString += f"{x.gravAngleSmoothed}\t"
         #    outputString += f"{x.angleFromGravity}\t\t"
 
-        legForward, kneeAngleR, KneeAngleL = gaitDetectRight.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
+        legForward, kneeAngleR, kneeAngleL = gaitDetectRight.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t\t{legForward}"
         outputString += f"\n"
 		
