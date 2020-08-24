@@ -157,7 +157,7 @@ class gaitDetect:
         if __name__ == "__main__":
             print(f"kneeling: {isKneeling}, legForward: {legForward}")
             
-        return isKneeling, legForward
+        return legForward, rightKneeAngle, leftKneeAngle
         
         
         
