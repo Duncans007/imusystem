@@ -343,10 +343,12 @@ def data_handler(address, *args):
 #Appends final values to output string, print, and save to file.
         outputString += f"{slipRight}\t{slipLeft}\t\t"
 	
-        for x in objects:
-            outputString += f"{x.gravAngleSmoothed}\t"
-            outputString += f"{x.angleFromGravity}\t\t"
-	
+        #for x in objects:
+        #    outputString += f"{x.gravAngleSmoothed}\t"
+        #    outputString += f"{x.angleFromGravity}\t\t"
+
+        isKneeling, legForward = kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
+        outputString += f"{isKneeling}\t{legForward}"
         outputString += f"\n"
 		
         print(outputString)
