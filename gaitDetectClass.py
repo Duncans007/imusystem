@@ -130,7 +130,7 @@ class gaitDetect:
         
     #Calculate knee angle of both legs, with 180 being standing straight and 90 being bent halfway
         leftKneeAngle = 180 - abs(thighAngleL - shankAngleL)
-        rightKneeAnle = 180 - abs(thighAngleR - shankAngleR)
+        rightKneeAngle = 180 - abs(thighAngleR - shankAngleR)
         
     #Test if angle is past a rather large and easy to determine threshold
         if (leftKneeAngle < 100) and (rightKneeAngle < 100):
