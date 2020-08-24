@@ -145,7 +145,7 @@ class gaitDetect:
         
         if isKneeling == True:
             legForwardThreshold = 30
-            if abs(shankAngleR - shankAngleL) > legForwardThreshold:
+            if abs(shankAngleR - shankAngleL) < legForwardThreshold:
                 legForward = "2"            
             else:
                 if shankAngleL > shankAngleR:
