@@ -143,7 +143,7 @@ class gaitDetect:
     #Leg with horizontal shin is backwards, if both shins horizontal then both legs down.
     #To expand for kneeling on an angle, use the difference between the shin angles with a window for how close they can be, and the lesser/greater one is forward once it passes the threshold
         
-        if isKneeling = True:
+        if isKneeling == True:
             legForwardThreshold = 30
             if abs(shankAngleR - shankAngleL) > legForwardThreshold:
                 legForward = "2"            
