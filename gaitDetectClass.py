@@ -126,6 +126,39 @@ class gaitDetect:
         shankAngleR = shankObjL.zAngle
         heelAngleR = heelObjL.zAngle
         
+        legForward = "X"
+        
+    #Calculate knee angle of both legs, with 180 being standing straight and 90 being bent halfway
+        leftKneeAngle = 180 - abs(thighAngleL - shankAngleL)
+        rightKneeAnle = 180 - abs(thighAngleR - shankAngleR)
+        
+    #Test if angle is past a rather large and easy to determine threshold
+        if (leftKneeAngle < 100) and (rightKneeAngle < 100):
+            isKneeling = True
+        else:
+            isKneeling = False
+            
+            
+    #Test which foot is forward (or if both are backwards) using the angle of the shin to the horizontal.
+    #Leg with horizontal shin is backwards, if both shins horizontal then both legs down.
+    #To expand for kneeling on an angle, use the difference between the shin angles with a window for how close they can be, and the lesser/greater one is forward once it passes the threshold
+        
+        if isKneeling = True:
+            legForwardThreshold = 30
+            if abs(shankAngleR - shankAngleL) > legForwardThreshold:
+                legForward = "2"            
+            else:
+                if shankAngleL > shankAngleR:
+                    legForward = "L"
+                if shankAngleR > shankAngleL:
+                    legForward = "R"
+    
+    #if copied and fed data directly, will output values to stdout
+        if __name__ == "__main__":
+            print(f"kneeling: {isKneeling}, legForward: {legForward}")
+            
+        return isKneeling, legForward
+        
         
         
 
