@@ -132,6 +132,8 @@ class gaitDetect:
         
         kneelingGyLimit = 70
         
+        legForward = ""
+        
     #Calculate knee angle of both legs, with 180 being standing straight and 90 being bent halfway
         leftKneeAngle = 180 - abs(thighAngleL - shankAngleL)
         rightKneeAngle = 180 - abs(thighAngleR - shankAngleR)
@@ -158,7 +160,7 @@ class gaitDetect:
                 elif shankAngleR > shankAngleL:
                     legForward = "R"
 #Detect a spike of -70 as the moment that the subject starts to stand up.
-            if (thighLGyZ < - kneelingGyLimit and legForward = "L") or (thighRGyZ < - kneelingGyLimit and legForward = "R"):
+            if (thighLGyZ < - kneelingGyLimit and legForward == "L") or (thighRGyZ < - kneelingGyLimit and legForward == "R"):
                 legForward += "s"
     
     #if copied and fed data directly, will output values to stdout
