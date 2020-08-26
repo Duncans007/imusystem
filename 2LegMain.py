@@ -330,9 +330,9 @@ def data_handler(address, *args):
             outputString += f"{x.acY}\t"
             outputString += f"{x.acZ}\t\t"
 
-            outputString += f"{x.mgX}\t"
-            outputString += f"{x.mgY}\t"
-            outputString += f"{x.mgZ}\t\t\t"
+            #outputString += f"{x.mgX}\t"
+            #outputString += f"{x.mgY}\t"
+            #outputString += f"{x.mgZ}\t\t\t"
 
 #Cycle through all sensor objects to append formatted version of every sensor's angle approximation to output string (note, back angle is not calculated and stays at 0)
         for x in objects:
@@ -410,8 +410,8 @@ if __name__ == "__main__":
     objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
     stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
     stringAxes = ["x","y","z"]
-    stringSensors = ["gy","ac","mg"]
-	
+    #stringSensors = ["gy","ac","mg"]
+    stringSensors = ["gy","ac"]
     #Create formatted file header
     fileDump = open("algDump.txt", "w+")
     header = "time\ttimeToRun\tgaitStageR\tgaitStageL\t\t"
@@ -425,7 +425,9 @@ if __name__ == "__main__":
     for x in stringObjects:
         header += f"zAngle{x}\t"
 		
-    header += f"slipRight\tslipLeft"
+    header += f"\tslipRight\tslipLeft\t"
+    header += f"\tKneeAngleR\tKneeAngleL\t"
+    header += f"\tKneelingIndicator\t"
 	
     header += f"\n"
     fileDump.write(header)
