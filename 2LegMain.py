@@ -334,7 +334,7 @@ def data_handler(address, *args):
             #outputString += f"{x.mgY}\t"
             #outputString += f"{x.mgZ}\t\t"
 			
-			outputString += f"\t"
+            outputString += f"\t"
 
 #Cycle through all sensor objects to append formatted version of every sensor's angle approximation to output string (note, back angle is not calculated and stays at 0)
         for x in objects:
