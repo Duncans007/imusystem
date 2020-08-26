@@ -163,9 +163,9 @@ class gaitDetect:
                 elif shankAngleR > shankAngleL:
                     legForward = "R"
 #Detect a spike of -70 as the moment that the subject starts to stand up.
-            if (thighLAngAc > kneelingGyLimit and legForward == "L"):
+            if (thighLAngAc < - kneelingGyLimit and legForward == "L"):
                 legForward += "s"
-            if (thighRAngAc > kneelingGyLimit and legForward == "R"):
+            if (thighRAngAc < - kneelingGyLimit and legForward == "R"):
                 legForward += "s"
     
     #if copied and fed data directly, will output values to stdout
