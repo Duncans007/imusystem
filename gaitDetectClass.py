@@ -5,28 +5,32 @@ class gaitDetect:
         self.firstVar = 0
         self.movingArrShank = [0]
         self.movingArrHeel = [0]
-        self.significance = 0
-        self.movingAvgAccuracy = 2
         self.movingAvgShank = 0
         self.movingAvgHeel = 0
         self.lastAvgShank = 0
+        self.movingAvgAccuracy = 2
+        
+        self.significance = 0
+        self.gaitStage = 0 #0-Stance / 1-Heel Off / 2-Toe Off
+        self.eventTimer = .1
+        
         self.timeLastHeelStrike = 0
         self.timeLastHeelOff = 0
         self.timeLastToeOff = 0
         self.timeLastStanding = 0
-        self.gaitStage = 0 #0-Stance / 1-Heel Off / 2-Toe Off
-        self.eventTimer = .1
-        self.standing = False
-        self.standingLimit = 200 * .07
-        self.lastDiffHeel = 0
-        self.gamma = 40 #-562 or -377 #deg/s	
+        
         self.slipToeOffWaitThreshold = .2
         self.slipHeelStrikeWaitThreshold = .1
+        self.standing = False
+        self.standingLimit = 14 #deg/s
+        self.concurrentZeroes = 0
+        self.concurrentZeroesLimit = 5
+        
+        self.lastDiffHeel = 0
+        self.gamma = 40 #-562 or -377 #deg/s	
         self.indicatorThreshold = 10 ** 30
         self.isSlipping = False
         self.timeSlipStart = 0
-        self.concurrentZeroes = 0
-        self.concurrentZeroesLimit = 5
         
                 
     def testVal(self, shank, heel):
@@ -114,7 +118,7 @@ class gaitDetect:
         
 #-----------------------------------------------------------------------------------------------------------------------
 #Begin kneeling detection algorithm
-    def kneelingDetection(self, thighObjR, shankObjR, heelObjR, thighObjL, shankObjL, heelObjL):
+    def kneelingDetection(self, thighObjR, shankObjR, heelObjR, thighObjL, shankObjL, heelObjL, thighLGyZ, thighRGyZ):
     #Pull angle measurements for full state.
     #Might make this its own file in the future
     #Simply because it uses measurements from both legs at the same time, which is not the purpose of the gaitDetect class
@@ -126,17 +130,18 @@ class gaitDetect:
         shankAngleL = shankObjL.zAngle
         heelAngleL = heelObjL.zAngle
         
-        legForward = "X"
+        kneelingGyLimit = 70
         
     #Calculate knee angle of both legs, with 180 being standing straight and 90 being bent halfway
         leftKneeAngle = 180 - abs(thighAngleL - shankAngleL)
         rightKneeAngle = 180 - abs(thighAngleR - shankAngleR)
         
     #Test if angle is past a rather large and easy to determine threshold
-        if (leftKneeAngle < 100) and (rightKneeAngle < 100):
+        if (leftKneeAngle < 120) and (rightKneeAngle < 120):
             isKneeling = True
         else:
             isKneeling = False
+            legForward = "X"
             
             
     #Test which foot is forward (or if both are backwards) using the angle of the shin to the horizontal.
@@ -146,12 +151,15 @@ class gaitDetect:
         if isKneeling == True:
             legForwardThreshold = 30
             if abs(shankAngleR - shankAngleL) < legForwardThreshold:
-                legForward = "2"            
+                legForward = "2"
             else:
                 if shankAngleL > shankAngleR:
                     legForward = "L"
-                if shankAngleR > shankAngleL:
+                elif shankAngleR > shankAngleL:
                     legForward = "R"
+#Detect a spike of -70 as the moment that the subject starts to stand up.
+            if (thighLGyZ < - kneelingGyLimit and legForward = "L") or (thighRGyZ < - kneelingGyLimit and legForward = "R"):
+                legForward += "s"
     
     #if copied and fed data directly, will output values to stdout
         if __name__ == "__main__":
