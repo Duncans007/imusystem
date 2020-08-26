@@ -33,7 +33,7 @@ class sensorObject:
         #angularAcceleration() variables
         self.gyZarray = [0]
         self.angularAcceleration = 0
-        self.angularAccelerationMovingAvgAccuracy = 4
+        self.angularAccelerationMovingAvgAccuracy = 2
         
         #gravityVectorAngle() variables
         self.angleFromGravity = 0
@@ -89,6 +89,7 @@ class sensorObject:
         self.timeToRun = self.currentTime - self.timeLastValue
         
         self.gravityVectorAngle()
+        self.AngularAccCalc()
         
 #Integrates gyroscope to get angle. Includes drift.
         zAngleChange = self.gyZ * self.timeToRun
