@@ -130,10 +130,10 @@ class gaitDetect:
         shankAngleL = shankObjL.zAngle
         heelAngleL = heelObjL.zAngle
         
-        thighLAngAc = thighObjL.angularAcceleration
-        thighRAngAc = thighObjR.angularAcceleration
+        thighLAngAc = thighObjL.gyZ
+        thighRAngAc = thighObjR.gyZ
         
-        kneelingGyLimit = 10
+        kneelingGyLimit = 60
         
         legForward = ""
         
@@ -163,7 +163,9 @@ class gaitDetect:
                 elif shankAngleR > shankAngleL:
                     legForward = "R"
 #Detect a spike of -70 as the moment that the subject starts to stand up.
-            if (thighLAngAc > kneelingGyLimit and legForward == "L") or (thighRAngAc > kneelingGyLimit and legForward == "R"):
+            if (thighLAngAc > kneelingGyLimit and legForward == "L"):
+                legForward += "s"
+            if (thighRAngAc > kneelingGyLimit and legForward == "R"):
                 legForward += "s"
     
     #if copied and fed data directly, will output values to stdout
