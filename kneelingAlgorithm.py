@@ -2,7 +2,7 @@
 
 class kneelingDetection:
     def __init__(self):
-        self.movingAvgLen = 0
+        self.movingAvgLen = 50
         self.movingAvgGyThighR = []
         self.movingAvgGyThighL = []
         self.Rcounter = 0
@@ -82,7 +82,7 @@ class kneelingDetection:
             else:
                 self.Lcounter = 0
                 
-            if (self.Rcounter >= 2 and legForward == "R") or (self.Lcounter >= 2 and legForward == "L"):
+            if (self.Rcounter >= 1 and legForward == "R") or (self.Lcounter >= 1 and legForward == "L"):
                 legForward += "s"
 
 
