@@ -8,6 +8,7 @@ class kneelingDetection:
         self.Rcounter = 0
         self.Lcounter = 0
 
+    #def torqueEstimation(self):
         
     def kneelingDetection(self, thighObjR, shankObjR, heelObjR, thighObjL, shankObjL, heelObjL):
         import numpy as np
@@ -33,7 +34,22 @@ class kneelingDetection:
         leftKneeAngle = 180 - abs(thighAngleL - shankAngleL)
         rightKneeAngle = 180 - abs(thighAngleR - shankAngleR)
         
-    #Test if angle is past a rather large and easy to determine threshold
+    #Calculate mean and standard deviation of gyroscope data outside of if statements so that moving array is not compromised.
+        self.movingAvgGyThighR.append(thighRAngV)
+        self.movingAvgGyThighL.append(thighLAngV)
+
+        if len(self.movingAvgGyThighR) > self.movingAvgLen:
+            self.movingAvgGyThighR.pop(0)
+        if len(self.movingAvgGyThighL) > self.movingAvgLen:
+            self.movingAvgGyThighL.pop(0)
+
+        Rmean = np.mean(self.movingAvgGyThighR)
+        Rsd = np.std(self.movingAvgGyThighR) * 4
+            
+        Lmean = np.mean(self.movingAvgGyThighL)
+        Lsd = np.std(self.movingAvgGyThighL) * 4
+        
+    #Test if angle is past a rather large and easy to determine threshold (60 degrees from straight)
         if (leftKneeAngle < 120) and (rightKneeAngle < 120):
             isKneeling = True
         else:
@@ -49,6 +65,8 @@ class kneelingDetection:
             legForwardThreshold = 30
             if abs(shankAngleR - shankAngleL) < legForwardThreshold:
                 legForward = "2"
+                if (rightKneeAngle < 60) and (leftKneeAngle < 60):
+                    legForward += "d"
             else:
                 if shankAngleL > shankAngleR:
                     legForward = "L"
@@ -56,20 +74,6 @@ class kneelingDetection:
                     legForward = "R"
 
 #Detect a spike as the moment that the subject starts to stand up.
-            self.movingAvgGyThighR.append(thighRAngV)
-            self.movingAvgGyThighL.append(thighLAngV)
-
-            if len(self.movingAvgGyThighR) > self.movingAvgLen:
-                self.movingAvgGyThighR.pop(0)
-            if len(self.movingAvgGyThighL) > self.movingAvgLen:
-                self.movingAvgGyThighL.pop(0)
-
-            Rmean = np.mean(self.movingAvgGyThighR)
-            Rsd = np.std(self.movingAvgGyThighR) * 4
-            
-            Lmean = np.mean(self.movingAvgGyThighL)
-            Lsd = np.std(self.movingAvgGyThighL) * 4
-  
             if ((thighRAngV > Rmean + Rsd) or (thighRAngV < Rmean - Rsd)) and len(self.movingAvgGyThighR) > 20:
                 self.movingAvgGyThighR.pop(len(self.movingAvgGyThighR)-1)
                 self.Rcounter = self.Rcounter + 1
@@ -82,7 +86,7 @@ class kneelingDetection:
             else:
                 self.Lcounter = 0
                 
-            if (self.Rcounter >= 1 and legForward == "R") or (self.Lcounter >= 1 and legForward == "L") or ((self.Rcounter >=1 and self.Lcounter >=1) and legForward == "2"):
+            if (self.Rcounter >= 2 and legForward == "R") or (self.Lcounter >= 2 and legForward == "L") or ((self.Rcounter >=1 and self.Lcounter >=1) and legForward == "2"):
                 legForward += "s"
 
 
