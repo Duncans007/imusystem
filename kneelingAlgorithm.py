@@ -10,6 +10,7 @@ class kneelingDetection:
 
         
     def kneelingDetection(self, thighObjR, shankObjR, heelObjR, thighObjL, shankObjL, heelObjL):
+        import numpy as np
     #Pull angle measurements for full state.
     #Might make this its own file in the future
     #Simply because it uses measurements from both legs at the same time, which is not the purpose of the gaitDetect class
