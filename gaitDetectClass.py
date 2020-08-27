@@ -116,64 +116,6 @@ class gaitDetect:
             return 0
 
         
-#-----------------------------------------------------------------------------------------------------------------------
-#Begin kneeling detection algorithm
-    def kneelingDetection(self, thighObjR, shankObjR, heelObjR, thighObjL, shankObjL, heelObjL):
-    #Pull angle measurements for full state.
-    #Might make this its own file in the future
-    #Simply because it uses measurements from both legs at the same time, which is not the purpose of the gaitDetect class
-    #Although the gait detect class can definitely be repurposed to take all seven values and calculate for both legs simultaneously.
-        thighAngleR = thighObjR.zAngle
-        shankAngleR = shankObjR.zAngle
-        heelAngleR = heelObjR.zAngle
-        thighAngleL = thighObjL.zAngle
-        shankAngleL = shankObjL.zAngle
-        heelAngleL = heelObjL.zAngle
-        
-        thighLAngAc = thighObjL.gyZ
-        thighRAngAc = thighObjR.gyZ
-        
-        kneelingGyLimit = 60
-        
-        legForward = ""
-        
-    #Calculate knee angle of both legs, with 180 being standing straight and 90 being bent halfway
-        leftKneeAngle = 180 - abs(thighAngleL - shankAngleL)
-        rightKneeAngle = 180 - abs(thighAngleR - shankAngleR)
-        
-    #Test if angle is past a rather large and easy to determine threshold
-        if (leftKneeAngle < 120) and (rightKneeAngle < 120):
-            isKneeling = True
-        else:
-            isKneeling = False
-            legForward = "X"
-            
-            
-    #Test which foot is forward (or if both are backwards) using the angle of the shin to the horizontal.
-    #Leg with horizontal shin is backwards, if both shins horizontal then both legs down.
-    #To expand for kneeling on an angle, use the difference between the shin angles with a window for how close they can be, and the lesser/greater one is forward once it passes the threshold
-        
-        if isKneeling == True:
-            legForwardThreshold = 30
-            if abs(shankAngleR - shankAngleL) < legForwardThreshold:
-                legForward = "2"
-            else:
-                if shankAngleL > shankAngleR:
-                    legForward = "L"
-                elif shankAngleR > shankAngleL:
-                    legForward = "R"
-#Detect a spike of -70 as the moment that the subject starts to stand up.
-            if (thighLAngAc < - kneelingGyLimit and legForward == "L"):
-                legForward += "s"
-            if (thighRAngAc < - kneelingGyLimit and legForward == "R"):
-                legForward += "s"
-    
-    #if copied and fed data directly, will output values to stdout
-        if __name__ == "__main__":
-            print(f"kneeling: {isKneeling}, legForward: {legForward}")
-            
-        return legForward, rightKneeAngle, leftKneeAngle
-        
         
         
 
