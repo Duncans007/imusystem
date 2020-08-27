@@ -82,7 +82,7 @@ class kneelingDetection:
             else:
                 self.Lcounter = 0
                 
-            if (self.Rcounter >= 1 and legForward == "R") or (self.Lcounter >= 1 and legForward == "L") or ((self.Rcounter >=1 and self.Lcounter >=1) and legForward = "2"):
+            if (self.Rcounter >= 1 and legForward == "R") or (self.Lcounter >= 1 and legForward == "L") or ((self.Rcounter >=1 and self.Lcounter >=1) and legForward == "2"):
                 legForward += "s"
 
 
