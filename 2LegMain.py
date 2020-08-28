@@ -326,7 +326,7 @@ def data_handler(address, *args):
 #Run Kneeling Detection Algorithm
         legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
 
-        kneelingTorqueEstimation = kneelingDetect.torqueEstimation()
+        kneelingTorqueEstimation = kneelingDetect.torqueEstimation(0.15, 80, kneeAngleR, objRThigh.gyZ)
 
 
 #PRINT TO OUTPUT STRING -------------------------------------------------------------------------------------------------------------
