@@ -2,13 +2,28 @@
 
 class kneelingDetection:
     def __init__(self):
+        #Perpetual variables for kneelingDetection()
         self.movingAvgLen = 50
         self.movingAvgGyThighR = []
         self.movingAvgGyThighL = []
         self.Rcounter = 0
         self.Lcounter = 0
+        
+        #Perpetual values for torqueEstimation()
+        self.A = 0.012
+        self.B = -0.002
+        self.C = -0.075
 
-    #def torqueEstimation(self):
+    def torqueEstimation(self, NMKG, mass, kneeAngle, angVel):
+        #NMKG - Newton-meters per kilogram (for initial tests, 0.15, 0.30, 0.45)
+        #mass - kilograms of subject
+        #angVel and kneeAngle are for leg with device. angVel is for thigh.
+        
+        kneeAngleCorrected = 180 - kneeAngle
+        torqueOutput = (A * kneeAngleCorrected) + (B * angVel) + C
+        torqueOutput = torqueOutput * NMKG * mass
+        
+        return torqueOutput
         
     def kneelingDetection(self, thighObjR, shankObjR, heelObjR, thighObjL, shankObjL, heelObjL):
         import numpy as np
