@@ -20,7 +20,7 @@ class kneelingDetection:
         #angVel and kneeAngle are for leg with device. angVel is for thigh.
         
         kneeAngleCorrected = 180 - kneeAngle
-        torqueOutput = (A * kneeAngleCorrected) + (B * angVel) + C
+        torqueOutput = (self.A * kneeAngleCorrected) + (self.B * angVel) + self.C
         torqueOutput = torqueOutput * NMKG * mass
         
         return torqueOutput
