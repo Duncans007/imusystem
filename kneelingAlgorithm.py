@@ -41,6 +41,8 @@ class kneelingDetection:
                 self.timeLastKneeling = time.time()
         else:
             self.deliverTorque = False
+            
+        return self.deliverTorque
         
     def kneelingDetection(self, thighObjR, shankObjR, heelObjR, thighObjL, shankObjL, heelObjL):
         import numpy as np
