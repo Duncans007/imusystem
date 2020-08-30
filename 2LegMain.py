@@ -136,9 +136,9 @@ def data_handler(address, *args):
 
 #SERIAL SEND END OF PACKET------------------------------------------------------------------------------------------------
 #If packet just finished sending or if first run, send start character (STX) over serial first.
-#    if packetWasReady:
-#        packetWasReady = False
-#        send_over_serial([f"/x02"], intelNUCserial)
+    if packetWasReady:
+        packetWasReady = False
+        send_over_serial([f"/x02"], intelNUCserial)
 #--------------------------------------------------------------------------------------------------------------------------
 	
 #Collects variable type and sensor address as numbers
@@ -366,10 +366,12 @@ def data_handler(address, *args):
 #SERIAL SEND--------------------------------------------
 #Sends all processed data over serial.
 #comment send_over_serial to skip
-        #serialArr = ["A", objRThigh.zAngle, objRShank.zAngle, objRHeel.zAngle, objLThigh.zAngle, objLShank.zAngle, objLHeel.zAngle]
-        #send_over_serial(serialArr, intelNUCserial)
+        serialArr = ["A", objRThigh.zAngle, objRShank.zAngle, objRHeel.zAngle, objLThigh.zAngle, objLShank.zAngle, objLHeel.zAngle]
+        send_over_serial(serialArr, intelNUCserial)
         serialArr = ["PR", time.time() - timeStart, timeToRun, gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, slipRight / (10**26), slipLeft / (10**26)]
         send_over_serial(serialArr, intelNUCserial)
+		serialArr = ["Tq", kneelingTorqueEstimation]
+		send_over_serial(serialArr, intelNUCserial)
 #---------------------------------------------------
 
 
