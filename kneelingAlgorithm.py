@@ -21,7 +21,7 @@ class kneelingDetection:
         
         kneeAngleCorrected = 180 - kneeAngle
         torqueOutput = (self.A * kneeAngleCorrected) + (self.B * angVel) + self.C
-        torqueOutput = torqueOutput * NMKG * mass
+        torqueOutput = torqueOutput * NMKG * mass * (12/15)
         
         return torqueOutput
         
