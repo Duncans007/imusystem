@@ -6,6 +6,7 @@ from packageHandlerFunc import * #package_handler_raw(tup)
 from sensorClass import * #class sensorObject, newValues(valueArray), angularAccCalc(), angleCalc(gaitDetectObject)
 from serialSend import * #ardno(msg as string)
 from slipAlgorithmFunc import * #slipAlgorithm(pelvis_forward_acc, heel_forward_acc, L_hh)
+from kneelingAlgorithm import * #kneelingDetection.kneelingDetection(objRT, objRS, objRH, objLT, objLS, objLH)
 
 #Importing python libraries
 from pythonosc.dispatcher import Dispatcher
@@ -132,11 +133,13 @@ def data_handler(address, *args):
     global intelNUCserial
     
     out = []
-    
+
+#SERIAL SEND END OF PACKET------------------------------------------------------------------------------------------------
 #If packet just finished sending or if first run, send start character (STX) over serial first.
-    if packetWasReady:
-        packetWasReady = False
-        send_over_serial([f"/x02"], intelNUCserial)
+#    if packetWasReady:
+#        packetWasReady = False
+#        send_over_serial([f"/x02"], intelNUCserial)
+#--------------------------------------------------------------------------------------------------------------------------
 	
 #Collects variable type and sensor address as numbers
     varType = address[10]
@@ -300,7 +303,8 @@ def data_handler(address, *args):
         objLowBack.mgZ =  b_raw[6]
         
         
-#Run actual calculations contained in the objects
+#RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
+
 #Right and Left Gait Detection
         gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ)
         gaitDetectLeft.testVal(objLShank.gyZ, objLHeel.gyZ)
@@ -314,39 +318,45 @@ def data_handler(address, *args):
         objLThigh.angleCalc(gaitDetectLeft)
         objLShank.angleCalc(gaitDetectLeft)
         objLHeel.angleCalc(gaitDetectLeft)
-		
-#Append beginning of output string - time, time between measurements, right gait stage, left gait stage
-        outputString = f"{time.time() - timeStart}\t{timeToRun}\t{gaitDetectRight.gaitStage}\t{gaitDetectLeft.gaitStage}\t\t"
+
+#Calculates Slip Indicator from Trkov IFAC 2017 paper
+        slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), hip_heel_length)
+        slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngle * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngle * .01745))), hip_heel_length)
+
+#Run Kneeling Detection Algorithm
+        legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
+
+        kneelingTorqueEstimation = kneelingDetect.torqueEstimation(0.15, 80, kneeAngleR, objRThigh.gyZ)
+
+
+#PRINT TO OUTPUT STRING -------------------------------------------------------------------------------------------------------------
+
+#Append beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
+        outputString = f"{time.time() - timeStart}\t{timeToRun}\t{gaitDetectRight.gaitStage}\t{gaitDetectLeft.gaitStage}\t{slipRight}\t{slipLeft}\t{legForward}\t\t"
 
 #Cycle through all sensor objects to append formatted version of every sensor's raw data to output string
         for x in objects:
             outputString += f"{x.gyX}\t"
             outputString += f"{x.gyY}\t"
-            outputString += f"{x.gyZ}\t\t"
+            outputString += f"{x.gyZ}\t"
 
             outputString += f"{x.acX}\t"
             outputString += f"{x.acY}\t"
-            outputString += f"{x.acZ}\t\t"
+            outputString += f"{x.acZ}\t"
 
-            outputString += f"{x.mgX}\t"
-            outputString += f"{x.mgY}\t"
-            outputString += f"{x.mgZ}\t\t\t"
-
-#Cycle through all sensor objects to append formatted version of every sensor's angle approximation to output string (note, back angle is not calculated and stays at 0)
-        for x in objects:
             outputString += f"{x.zAngle}\t"
-        
-#Calculates Slip Indicator from Trkov IFAC 2017 paper
-        slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), hip_heel_length)
-        slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngle * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngle * .01745))), hip_heel_length)
-		
-#Appends final values to output string, print, and save to file.
-        outputString += f"{slipRight}\t{slipLeft}\t\t"
-	
-        for x in objects:
-            outputString += f"{x.gravAngleSmoothed}\t"
-            outputString += f"{x.angleFromGravity}\t\t"
-	
+
+            #outputString += f"{x.mgX}\t"
+            #outputString += f"{x.mgY}\t"
+            #outputString += f"{x.mgZ}\t\t"
+			
+            outputString += f"\t"
+
+        #for x in objects:
+        #    outputString += f"{x.gravAngleSmoothed}\t"
+        #    outputString += f"{x.angleFromGravity}\t\t"
+
+        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimation}"
         outputString += f"\n"
 		
         print(outputString)
@@ -401,27 +411,25 @@ if __name__ == "__main__":
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
+    kneelingDetect = kneelingDetection()
 	
     #create lists that can be cycles through to iterate over every object, as well as create the file data header.
     objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
     stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
     stringAxes = ["x","y","z"]
-    stringSensors = ["gy","ac","mg"]
-	
+    #stringSensors = ["gy","ac","mg"]
+    stringSensors = ["gy","ac"]
     #Create formatted file header
     fileDump = open("algDump.txt", "w+")
-    header = "time\ttimeToRun\tgaitStageR\tgaitStageL\t\t"
+    header = "time\ttimeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
     for x in stringObjects:
         for y in stringSensors:
             for z in stringAxes:
                 header += f"{y}/{z}/{x}\t"
-            header += f"\t"
+        header += f"Angle/{x}\t"
         header += f"\t"
-	
-    for x in stringObjects:
-        header += f"zAngle{x}\t"
 		
-    header += f"slipRight\tslipLeft"
+    header += f"KneeAngleR\tKneeAngleL\t"
 	
     header += f"\n"
     fileDump.write(header)
