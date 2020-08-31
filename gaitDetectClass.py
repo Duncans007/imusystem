@@ -5,28 +5,32 @@ class gaitDetect:
         self.firstVar = 0
         self.movingArrShank = [0]
         self.movingArrHeel = [0]
-        self.significance = 0
-        self.movingAvgAccuracy = 2
         self.movingAvgShank = 0
         self.movingAvgHeel = 0
         self.lastAvgShank = 0
+        self.movingAvgAccuracy = 2
+        
+        self.significance = 0
+        self.gaitStage = 0 #0-Stance / 1-Heel Off / 2-Toe Off
+        self.eventTimer = .1
+        
         self.timeLastHeelStrike = 0
         self.timeLastHeelOff = 0
         self.timeLastToeOff = 0
         self.timeLastStanding = 0
-        self.gaitStage = 0 #0-Stance / 1-Heel Off / 2-Toe Off
-        self.eventTimer = .1
-        self.standing = False
-        self.standingLimit = 200 * .07
-        self.lastDiffHeel = 0
-        self.gamma = 40 #-562 or -377 #deg/s	
+        
         self.slipToeOffWaitThreshold = .2
         self.slipHeelStrikeWaitThreshold = .1
+        self.standing = False
+        self.standingLimit = 14 #deg/s
+        self.concurrentZeroes = 0
+        self.concurrentZeroesLimit = 5
+        
+        self.lastDiffHeel = 0
+        self.gamma = 40 #-562 or -377 #deg/s	
         self.indicatorThreshold = 10 ** 30
         self.isSlipping = False
         self.timeSlipStart = 0
-        self.concurrentZeroes = 0
-        self.concurrentZeroesLimit = 5
         
                 
     def testVal(self, shank, heel):
@@ -111,6 +115,9 @@ class gaitDetect:
         else:
             return 0
 
+        
+        
+        
 
 #For testing purposes
 if __name__ == "__main__":
