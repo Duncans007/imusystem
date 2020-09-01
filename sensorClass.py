@@ -24,11 +24,11 @@ class sensorObject:
         self.zAngleArray = [0]
         self.zAngleArrayLimit = 50
         self.wasStanding = False
-        self.calibVal = .1
+        self.calibVal = .1  #How much gravity can affect angle during walking
         self.zAngle = 0
         
-        self.gravAngleWindow = 2
-        self.standingCalibVal = .5
+        self.gravAngleWindow = 0 #how high or low above the gravity vector does it have to be to get moved (still)
+        self.standingCalibVal = .1 #how much can the gravity vector affect the angle (still)
         
         #angularAcceleration() variables
         self.gyZarray = [0]
