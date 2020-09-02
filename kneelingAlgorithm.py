@@ -151,16 +151,10 @@ class kneelingDetection:
                 self.startingToStand = True
             #((self.Rcounter >=1 and self.Lcounter >=1) and legForward == "2")
             
-            if self.startingToStand == True:
-                if (self.legWasForward == "R" and rightKneeAngle > 160) or (self.legWasForward == "L" and leftKneeAngle > 160):
-                    self.startingToStand = False
-                    self.legWasForward = "X"
-                legForward += "s"
-                
-
-            #if (thighLAngV < - kneelingGyLimit and legForward == "L"):
-            #    legForward += "s"
-            #if (thighRAngV < - kneelingGyLimit and legForward == "R"):
-            #    legForward += "s"
+        if self.startingToStand == True:
+            if (self.legWasForward == "R" and rightKneeAngle > 160) or (self.legWasForward == "L" and leftKneeAngle > 160):
+                self.startingToStand = False
+                self.legWasForward = "X"
+            legForward += "s"
             
         return legForward, rightKneeAngle, leftKneeAngle, R_upper_limit, R_lower_limit, R_thighR_shankL_angV
