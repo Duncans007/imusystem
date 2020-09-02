@@ -95,6 +95,12 @@ class kneelingDetection:
             Rsd = Rsd * 2
         if Lsd < 5:
             Lsd = Lsd * 2
+            
+        R_upper_limit = Rmean + Rsd
+        R_lower_limit = Rmean - Rsd
+        
+        L_upper_limit = Lmean + Lsd
+        L_lower_limit = Lmean - Lsd
         
     #Test if angle is past a rather large and easy to determine threshold (60 degrees from straight)
         if (leftKneeAngle < 120) and (rightKneeAngle < 120):
@@ -126,8 +132,7 @@ class kneelingDetection:
 
 #Detect a spike as the moment that the subject starts to stand up.
             R_thighR_shankL_angV = shankLAngV - thighRAngV
-            R_upper_limit = Rmean + Rsd
-            R_lower_limit = Rmean - Rsd
+            
             if (thighRAngV < R_lower_limit) and (R_thighR_shankL_angV > R_upper_limit) and len(self.movingAvgGyThighR) > 20:
                 #self.movingAvgGyThighR.pop(len(self.movingAvgGyThighR)-1)
                 self.Rcounter = self.Rcounter + 1
@@ -135,7 +140,6 @@ class kneelingDetection:
                 self.Rcounter = 0
                 
             L_thighL_shankR_angV = shankRAngV - thighLAngV
-            L_upper_limit = Lmean
             if (thighLAngV < L_lower_limit) and (L_thighL_shankR_angV > L_upper_limit) and len(self.movingAvgGyThighL) > 20:
                 #self.movingAvgGyThighL.pop(len(self.movingAvgGyThighL)-1)
                 self.Lcounter = self.Lcounter + 1
