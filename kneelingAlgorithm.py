@@ -9,6 +9,7 @@ class kneelingDetection:
         self.Rcounter = 0
         self.Lcounter = 0
         self.isKneeling = False
+        self.stdMultiplier = 2
         
         #Perpetual values for torqueEstimation()
         self.A = 0.012
@@ -53,12 +54,16 @@ class kneelingDetection:
         thighAngleR = thighObjR.zAngle
         shankAngleR = shankObjR.zAngle
         heelAngleR = heelObjR.zAngle
+        
         thighAngleL = thighObjL.zAngle
         shankAngleL = shankObjL.zAngle
         heelAngleL = heelObjL.zAngle
         
         thighLAngV = thighObjL.gyZ
         thighRAngV = thighObjR.gyZ
+        
+        shankLAngV = shankObjL.gyZ
+        shankRAngV = shankObjR.gyZ
         
         kneelingGyLimit = 60
         
@@ -78,10 +83,10 @@ class kneelingDetection:
             self.movingAvgGyThighL.pop(0)
 
         Rmean = np.mean(self.movingAvgGyThighR)
-        Rsd = np.std(self.movingAvgGyThighR) * 4
+        Rsd = np.std(self.movingAvgGyThighR) * self.stdMultiplier
             
         Lmean = np.mean(self.movingAvgGyThighL)
-        Lsd = np.std(self.movingAvgGyThighL) * 4
+        Lsd = np.std(self.movingAvgGyThighL) * self.stdMultiplier
         
     #Test if angle is past a rather large and easy to determine threshold (60 degrees from straight)
         if (leftKneeAngle < 120) and (rightKneeAngle < 120):
@@ -99,8 +104,9 @@ class kneelingDetection:
             legForwardThreshold = 30
             if abs(shankAngleR - shankAngleL) < legForwardThreshold:
                 legForward = "2"
-                if (rightKneeAngle < 60) and (leftKneeAngle < 60):
-                    legForward += "d"
+            #deep flexion test
+                #if (rightKneeAngle < 60) and (leftKneeAngle < 60):
+                    #legForward += "d"
             else:
                 if shankAngleL > shankAngleR:
                     legForward = "L"
@@ -108,14 +114,16 @@ class kneelingDetection:
                     legForward = "R"
 
 #Detect a spike as the moment that the subject starts to stand up.
-            if ((thighRAngV > Rmean + Rsd) or (thighRAngV < Rmean - Rsd)) and len(self.movingAvgGyThighR) > 20:
-                self.movingAvgGyThighR.pop(len(self.movingAvgGyThighR)-1)
+            R_thighR_shankL_angV = shankLAngV - thighRAngV
+            if (thighRAngV < Rmean - Rsd) and (R_thighR_shankL_angV > Rmean + Rsd) and len(self.movingAvgGyThighR) > 20:
+                #self.movingAvgGyThighR.pop(len(self.movingAvgGyThighR)-1)
                 self.Rcounter = self.Rcounter + 1
             else:
                 self.Rcounter = 0
                 
-            if ((thighLAngV > Lmean + Lsd) or (thighLAngV < Lmean - Lsd)) and len(self.movingAvgGyThighL) > 20:
-                self.movingAvgGyThighL.pop(len(self.movingAvgGyThighL)-1)
+            L_thighL_shankR_angV = shankRAngV - thighLAngV
+            if (thighLAngV < Lmean - Lsd) and (L_thighL_shankR_angV > Lmean + Lsd) and len(self.movingAvgGyThighL) > 20:
+                #self.movingAvgGyThighL.pop(len(self.movingAvgGyThighL)-1)
                 self.Lcounter = self.Lcounter + 1
             else:
                 self.Lcounter = 0
@@ -129,4 +137,4 @@ class kneelingDetection:
             #if (thighRAngV < - kneelingGyLimit and legForward == "R"):
             #    legForward += "s"
             
-        return legForward, rightKneeAngle, leftKneeAngle
+        return legForward, rightKneeAngle, leftKneeAngle, Rmean, Rsd, Lmean, Lsd
