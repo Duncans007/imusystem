@@ -91,6 +91,11 @@ class kneelingDetection:
         Lmean = np.mean(self.movingAvgGyThighL)
         Lsd = np.std(self.movingAvgGyThighL) * self.stdMultiplier
         
+        if Rsd < 5:
+            Rsd = Rsd * 2
+        if Lsd < 5:
+            Lsd = Lsd * 2
+        
     #Test if angle is past a rather large and easy to determine threshold (60 degrees from straight)
         if (leftKneeAngle < 120) and (rightKneeAngle < 120):
             self.isKneeling = True
@@ -154,4 +159,4 @@ class kneelingDetection:
             #if (thighRAngV < - kneelingGyLimit and legForward == "R"):
             #    legForward += "s"
             
-        return legForward, rightKneeAngle, leftKneeAngle, Rmean, Rsd, R_thighR_shankL_angV
+        return legForward, rightKneeAngle, leftKneeAngle, R_upper_limit, R_lower_limit, R_thighR_shankL_angV
