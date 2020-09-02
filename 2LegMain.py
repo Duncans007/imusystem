@@ -324,7 +324,8 @@ def data_handler(address, *args):
         slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngle * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngle * .01745))), hip_heel_length)
 
 #Run Kneeling Detection Algorithm
-        legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
+        #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
+        legForward, kneeAngleR, kneeAngleL, Rupper, Rlower, Rthighshank = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
 
         kneelingTorqueEstimation = kneelingDetect.torqueEstimation(0.15, 80, kneeAngleR, objRThigh.gyZ)
 
@@ -356,7 +357,7 @@ def data_handler(address, *args):
         #    outputString += f"{x.gravAngleSmoothed}\t"
         #    outputString += f"{x.angleFromGravity}\t\t"
 
-        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimation}"
+        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimation}\t{Rupper}\t{Rlower}\t{Rthighshank}"
         outputString += f"\n"
 		
         print(outputString)
