@@ -147,7 +147,7 @@ class kneelingDetection:
                 self.startingToStand = True
             #((self.Rcounter >=1 and self.Lcounter >=1) and legForward == "2")
             
-            if self.startingToStand == True
+            if self.startingToStand == True:
                 if (self.legWasForward == "R" and rightKneeAngle > 160) or (self.legWasForward == "L" and leftKneeAngle > 160):
                     self.startingToStand = False
                     self.legWasForward = "X"
