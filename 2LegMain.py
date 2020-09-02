@@ -371,8 +371,8 @@ def data_handler(address, *args):
         send_over_serial(serialArr, intelNUCserial)
         serialArr = ["PR", time.time() - timeStart, timeToRun, gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, slipRight / (10**26), slipLeft / (10**26)]
         send_over_serial(serialArr, intelNUCserial)
-		serialArr = ["Tq", kneelingTorqueEstimation]
-		send_over_serial(serialArr, intelNUCserial)
+        serialArr = ["Tq", kneelingTorqueEstimation]
+        send_over_serial(serialArr, intelNUCserial)
 #---------------------------------------------------
 
 
