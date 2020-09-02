@@ -10,6 +10,9 @@ class kneelingDetection:
         self.Lcounter = 0
         self.isKneeling = False
         self.stdMultiplier = 2
+        self.counterDetectionLimit = 2
+        self.startingToStand = False
+        self.legWasForward = "X"
         
         #Perpetual values for torqueEstimation()
         self.A = 0.012
@@ -110,31 +113,45 @@ class kneelingDetection:
             else:
                 if shankAngleL > shankAngleR:
                     legForward = "L"
+                    self.legWasForward = "L"
                 elif shankAngleR > shankAngleL:
                     legForward = "R"
+                    self.legWasForward = "R"
+                    
 
 #Detect a spike as the moment that the subject starts to stand up.
             R_thighR_shankL_angV = shankLAngV - thighRAngV
-            if (thighRAngV < Rmean - Rsd) and (R_thighR_shankL_angV > Rmean + Rsd) and len(self.movingAvgGyThighR) > 20:
+            R_upper_limit = Rmean + Rsd
+            R_lower_limit = Rmean - Rsd
+            if (thighRAngV < R_lower_limit) and (R_thighR_shankL_angV > R_upper_limit) and len(self.movingAvgGyThighR) > 20:
                 #self.movingAvgGyThighR.pop(len(self.movingAvgGyThighR)-1)
                 self.Rcounter = self.Rcounter + 1
             else:
                 self.Rcounter = 0
                 
             L_thighL_shankR_angV = shankRAngV - thighLAngV
-            if (thighLAngV < Lmean - Lsd) and (L_thighL_shankR_angV > Lmean + Lsd) and len(self.movingAvgGyThighL) > 20:
+            L_upper_limit = Lmean
+            if (thighLAngV < L_lower_limit) and (L_thighL_shankR_angV > L_upper_limit) and len(self.movingAvgGyThighL) > 20:
                 #self.movingAvgGyThighL.pop(len(self.movingAvgGyThighL)-1)
                 self.Lcounter = self.Lcounter + 1
             else:
                 self.Lcounter = 0
-                
-            if (self.Rcounter >= 2 and legForward == "R") or (self.Lcounter >= 2 and legForward == "L") or ((self.Rcounter >=1 and self.Lcounter >=1) and legForward == "2"):
+               
+#Check for consecutive signals before setting to "standing up" mode.
+            if (self.Rcounter >= self.counterDetectionLimit and legForward == "R") or (self.Lcounter >= self.counterDetectionLimit and legForward == "L"):
+                self.startingToStand = True
+            #((self.Rcounter >=1 and self.Lcounter >=1) and legForward == "2")
+            
+            if self.startingToStand == True
+                if (self.legWasForward == "R" and rightKneeAngle > 160) or (self.legWasForward == "L" and leftKneeAngle > 160):
+                    self.startingToStand = False
+                    self.legWasForward = "X"
                 legForward += "s"
-
+                
 
             #if (thighLAngV < - kneelingGyLimit and legForward == "L"):
             #    legForward += "s"
             #if (thighRAngV < - kneelingGyLimit and legForward == "R"):
             #    legForward += "s"
             
-        return legForward, rightKneeAngle, leftKneeAngle, Rmean, Rsd, Lmean, Lsd
+        return legForward, rightKneeAngle, leftKneeAngle, Rmean, Rsd, R_thighR_shankL_angV
