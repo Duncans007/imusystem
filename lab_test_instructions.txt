@@ -1,0 +1,17 @@
+1. Plug red imu labels J1, yellow J2, gray J3
+2. Turn on rasberry pi
+3. After a bit it connects to the wifi network, obtain the IP address of the devices and ssh into the pi via the command: "ssh pi@XXX.XXX.X.X" where XXX.XXX.X.X is the IP
+4. You will be prompted for password, it is "chordata", you will not see any characters being typed, they are invisible. press enter.
+5. You will be logged into the home directory (~), you can type "ls" to view all files in the directory.
+6. The only script you need to run is called "stream_data.sh", run it with the command "./stream_data.sh"
+7. It will begin to connect to the IMU's, it should list 7 and then stop printing info.
+8. If you need to stop the script, just type "c", no enter necessary. Don't use ctrl-c, it will not kill all processes.
+9. Now on the Intel NUC, run the simulink model, if it cannot connect, double click on the subsystem and open the stream input block, choose the correct serial port, baudrate is 230400
+10. You can tell if the simulink model is recieving serial data if you see tags show up in the display blocks.
+11. You can also tell if the pi is still connected to all the imu's by just watching the ssh session window, as long as you do not see red text, you are good to go.
+
+____________Troubleshooting____________
+
+* If you see red text when running the script, the system cannot detect all IMU's or lost connection, make sure cables are plugged in correctly.
+* You can also try restarting the rasbrry pi. run the command "sudo reboot now"
+* Make sure the serial to usb adaptor is plugged in before starting the script, although you will see no error for it

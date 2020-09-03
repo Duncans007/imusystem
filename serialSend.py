@@ -9,7 +9,7 @@ def send_over_serial(msgArray, serialSend):
     #Pools sensor values into string for conversion to bytes
     for n in msgArray:    
         try:
-            x = truncate(n, 2.0)
+            x = truncate(n, 5.0)
         except TypeError:
             x = n
         sendStr += f"{x},"
