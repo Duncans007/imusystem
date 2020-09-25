@@ -307,8 +307,8 @@ def data_handler(address, *args):
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
 #Right and Left Gait Detection
-        gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ, objRShank.angularAcceleration)
-        gaitDetectLeft.testVal(objLShank.gyZ, objLHeel.gyZ, objLShank.angularAcceleration)
+        gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ)
+        gaitDetectLeft.testVal(objLShank.gyZ, objLHeel.gyZ)
 
 #Right Leg Angle Approximations
         objRThigh.angleCalc(gaitDetectRight)
