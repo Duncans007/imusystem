@@ -4,13 +4,10 @@ class gaitDetect:
     def __init__(self):
         self.firstVar = 0
         self.movingArrShank = [0]
-        self.movingArrShankAcc = [0]
         self.movingArrHeel = [0]
         self.movingAvgShank = 0
-        self.movingAvgShankAcc = 0
         self.movingAvgHeel = 0
         self.lastAvgShank = 0
-        self.lastAvgShankAcc = 0
         self.movingAvgAccuracy = 2
         
         self.significance = 0
@@ -36,7 +33,7 @@ class gaitDetect:
         self.timeSlipStart = 0
         
                 
-    def testVal(self, shank, heel, shankAcc):
+    def testVal(self, shank, heel):
         import time
         import numpy as np
         self.movingArrShank.append(shank)
@@ -50,10 +47,6 @@ class gaitDetect:
         if len(self.movingArrHeel) > self.movingAvgAccuracy:
             self.movingArrHeel.pop(0)
         self.movingAvgHeel = np.mean(self.movingArrHeel)
-        
-        if len(self.movingArrShankAcc) > self.movingAvgAccuracy:
-            self.movingArrShankAcc.pop(0)
-        self.movingAvgShankAcc = np.mean(self.movingArrShankAcc)
         
 #When standing, reset sensor's drift back to 0
         if self.standing == True:
@@ -81,7 +74,7 @@ class gaitDetect:
         if self.significance == 0 and not self.standing:
 
 #detects negative to positive, aka toe off or start of swing phase
-            if self.movingAvgShankAcc > 0 and self.lastAvgShankAcc < 0 and self.gaitStage == 1:
+            if self.movingAvgShank > 0 and self.lastAvgShank < 0 and self.gaitStage == 1:
                 self.significance = 1
                 self.timeLastToeOff = time.time()
                 self.gaitStage = 2
@@ -109,7 +102,6 @@ class gaitDetect:
                 self.significance = 0
 
         self.lastAvgShank = self.movingAvgShank
-        self.lastAvgShankAcc = self.movingAvgShankAcc
         
 #Trkov IFAC 2017 slip detection algorithm
     def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
