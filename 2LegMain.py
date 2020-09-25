@@ -358,7 +358,7 @@ def data_handler(address, *args):
         #    outputString += f"{x.gravAngleSmoothed}\t"
         #    outputString += f"{x.angleFromGravity}\t\t"
 
-        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimation}\t{Rupper}\t{Rlower}\t{Rthighshank}"
+        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimation}\t{objRShank.angularAcceleration}\t{objLShank.angularAcceleration}"
         outputString += f"\n"
 		
         print(outputString)
