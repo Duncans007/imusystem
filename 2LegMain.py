@@ -134,12 +134,6 @@ def data_handler(address, *args):
     
     out = []
 
-#SERIAL SEND END OF PACKET------------------------------------------------------------------------------------------------
-#If packet just finished sending or if first run, send start character (STX) over serial first.
-    if packetWasReady and intelNUCport != '':
-        packetWasReady = False
-        send_over_serial([f"/x02"], intelNUCserial)
-#--------------------------------------------------------------------------------------------------------------------------
 	
 #Collects variable type and sensor address as numbers
     varType = address[10]
@@ -154,16 +148,6 @@ def data_handler(address, *args):
         if varType == "r":
             dataDict[limb] = package_handler_raw(args)
             flagDict[limb] = True
-
-#SERIAL SEND------------------------------------------------
-#Whenever new data is brought in, it cuts the magnetometer (change 0:6 to 0:9 if you want magnetometer included), inserts the 2-letter sensor code at the beginning, and sends it with function to intelNUCserial.
-#To skip, comment send_over_serial()
-            if intelNUCport != '':
-                serialArr = dataDict[limb]
-                serialArr = serialArr[0:6]
-                serialArr.insert(0,limb[0:2])
-                send_over_serial(serialArr, intelNUCserial)
-#-----------------------------------------------------------
 
 #Tests if all sensors have been received before assembling packet and sending to algorithm
         if flagDict == toggleFlagDict:                    
@@ -358,10 +342,6 @@ def data_handler(address, *args):
 			
             outputString += f"\t"
 
-        #for x in objects:
-        #    outputString += f"{x.gravAngleSmoothed}\t"
-        #    outputString += f"{x.angleFromGravity}\t\t"
-
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimation}\t{objRShank.angularAcceleration}\t{objLShank.angularAcceleration}"
         outputString += f"\n"
 		
@@ -370,14 +350,25 @@ def data_handler(address, *args):
 		
 
 #SERIAL SEND--------------------------------------------
-#Sends all processed data over serial.
-#comment send_over_serial to skip
+#IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
+#[ 111, time,
+#  LHAX, LHAY, LHAZ, LHGX, LHGY, LHGZ, LHAngle,      RHAX, RHAY, RHAZ, RHGX, RHGY, RHGZ, RHAngle,
+#  LSAX, LSAY, LSAZ, LSGX, LSGY, LSGZ, LSAngle,      RSAX, RSAY, RSAZ, RSGX, RSGY, RSGZ, RSAngle,
+#  LTAX, LTAY, LTAZ, LTGX, LTGY, LTGZ, LTAngle,      RTAX, RTAY, RTAZ, RTGX, RTGY, RTGZ, RTAngle,
+#  LBAX, LBAY, LBAZ, LBGX, LBGY, LBGZ, LBAngle,
+#  gaitL, gaitR, slipL, slipR, Torque ]
+
+#To extract values:
+#Angle, Torque = x * 0.002
+#Accelerometer = x * 0.002394
+#Gyroscope = x * 0.07
+#Magnetometer = x * 0.00014
+
         if intelNUCport != '':
-            serialArr = ["A", objRThigh.zAngle, objRShank.zAngle, objRHeel.zAngle, objLThigh.zAngle, objLShank.zAngle, objLHeel.zAngle]
-            send_over_serial(serialArr, intelNUCserial)
-            serialArr = ["PR", time.time() - timeStart, timeToRun, gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, slipRight / (10**26), slipLeft / (10**26)]
-            send_over_serial(serialArr, intelNUCserial)
-            serialArr = ["Tq", kneelingTorqueEstimation]
+            serialArr = [111, time.time() - timeStart]
+            for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
+                serialArr.append(x.acX_norm, x.acY_norm, x.acZ_norm, x.gyX_norm, x.gyY_norm, x.gyZ_norm, x.zAngle * 500)
+            serialArr.append(gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, slipRight/(10**32), slipLeft/(10**32), kneelingTorqueEstimation * 500)
             send_over_serial(serialArr, intelNUCserial)
 #---------------------------------------------------
 
