@@ -81,7 +81,7 @@ class kneelingDetection:
         
         torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
             
-        return torqueL, torqueR
+        return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
         
         
     
