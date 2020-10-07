@@ -27,7 +27,7 @@ global gaitDetectRight, gaitDetectLeft
 global objects
 global hip_heel_length
 global intelNUCserial
-global tensySend, teensyPort
+global teensySend, teensyPort
 
 #-----------------------------------#
 #USER INPUTS
@@ -37,7 +37,7 @@ port = 6565
 intelNUCport = ''
 intelNUCbaud = 115200
 
-tensySend = True
+teensySend = True
 teensyPort = serial.Serial("/dev/ttyS0", baudrate=115200, timeout=3.0)
 
 hip_heel_length = 1 #meters
