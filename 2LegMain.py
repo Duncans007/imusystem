@@ -382,7 +382,7 @@ def data_handler(address, *args):
 
 #TEENSY SEND-------------------------------------------
         if send_to_teensy:
-		    send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR)
+            send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR)
 #-----------------------------------------------------
 
 
