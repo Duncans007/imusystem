@@ -27,6 +27,7 @@ global gaitDetectRight, gaitDetectLeft
 global objects
 global hip_heel_length
 global intelNUCserial
+global send_to_teensy
 
 #-----------------------------------#
 #USER INPUTS
@@ -36,10 +37,13 @@ port = 6565
 intelNUCport = ''
 intelNUCbaud = 115200
 
+send_to_teensy = True
+
 hip_heel_length = 1 #meters
 
 #Currently unused
-mass = 60 #kg
+mass = 80 #kg
+NMKG = 0.15
 height = 180 #cm
 #-----------------------------------#
 
@@ -326,9 +330,8 @@ def data_handler(address, *args):
 
 #Run Kneeling Detection Algorithm
         #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
-        legForward, kneeAngleR, kneeAngleL, Rupper, Rlower, Rthighshank = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
+        kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank)
 
-        kneelingTorqueEstimation = kneelingDetect.torqueEstimation(0.15, 80, kneeAngleR, objRThigh.gyZ)
 
 
 #PRINT TO OUTPUT STRING -------------------------------------------------------------------------------------------------------------
@@ -358,7 +361,7 @@ def data_handler(address, *args):
         #    outputString += f"{x.gravAngleSmoothed}\t"
         #    outputString += f"{x.angleFromGravity}\t\t"
 
-        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimation}\t{objRShank.angularAcceleration}\t{objLShank.angularAcceleration}"
+        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         outputString += f"\n"
 		
         print(outputString)
@@ -373,9 +376,14 @@ def data_handler(address, *args):
             send_over_serial(serialArr, intelNUCserial)
             serialArr = ["PR", time.time() - timeStart, timeToRun, gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, slipRight / (10**26), slipLeft / (10**26)]
             send_over_serial(serialArr, intelNUCserial)
-            serialArr = ["Tq", kneelingTorqueEstimation]
+            serialArr = ["Tq", kneelingTorqueEstimationR]
             send_over_serial(serialArr, intelNUCserial)
-#---------------------------------------------------
+#-----------------------------------------------------
+
+#TEENSY SEND-------------------------------------------
+        if send_to_teensy:
+		    send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR)
+#-----------------------------------------------------
 
 
 #Handles any OSC messages that aren't picked up by dataHandler
@@ -417,7 +425,7 @@ if __name__ == "__main__":
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
-    kneelingDetect = kneelingDetection()
+    kneelingDetect = kneelingDetection(NMKG, mass)
 	
     #create lists that can be cycles through to iterate over every object, as well as create the file data header.
     objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
