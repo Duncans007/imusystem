@@ -27,7 +27,7 @@ global gaitDetectRight, gaitDetectLeft
 global objects
 global hip_heel_length
 global intelNUCserial
-global send_to_teensy, teensyPort
+global tensySend, teensyPort
 
 #-----------------------------------#
 #USER INPUTS
@@ -37,7 +37,7 @@ port = 6565
 intelNUCport = ''
 intelNUCbaud = 115200
 
-send_to_teensy = True
+tensySend = True
 teensyPort = serial.Serial("/dev/ttyS0", baudrate=115200, timeout=3.0)
 
 hip_heel_length = 1 #meters
@@ -136,7 +136,7 @@ def data_handler(address, *args):
     global objects
     global hip_heel_length
     global intelNUCserial
-    global send_to_teensy, teensyPort
+    global teensySend, teensyPort
     
     out = []
 
@@ -383,7 +383,7 @@ def data_handler(address, *args):
 #-----------------------------------------------------
 
 #TEENSY SEND-------------------------------------------
-        if send_to_teensy:
+        if teensySend:
             send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
 #-----------------------------------------------------
 
