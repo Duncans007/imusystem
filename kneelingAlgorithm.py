@@ -103,7 +103,7 @@ class kneelingDetection:
             torqueOutputR = (self.A * (180-kneeAngleR)) + (self.B * thighGyR) + self.C
             torqueOutputR = torqueOutputR * self.NMKG * self.mass * (12/15)
         else:
-            torqueOutputL = 0
+            torqueOutputR = 0
         
         
         if (self.torqueWindow("LEFT")):
@@ -150,10 +150,13 @@ class kneelingDetection:
         
         #Condition 1: self.legForward == match
         c1 = (self.legForward == match)
+        
         #Condition 2: self.legForward == "2"
         c2 = (self.legForward == "2")
+        
         #Condition 3: self.legForward == X and lastLeg == match and single-trip-switch
         c3 = ((self.legForward == "X") and (self.lastLeg == match) and (self.run_loop))
+        
         #Condition 4: self.legForward == X and lastLeg == "2" and single-trip-switch
         c3 = ((self.legForward == "X") and (self.lastLeg == 2) and (self.run_loop))
             
