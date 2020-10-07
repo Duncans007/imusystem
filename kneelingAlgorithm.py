@@ -68,8 +68,8 @@ class kneelingDetection:
         self.shankLAngV  = lShank.gyZ
         
         #Knee angles calculated with 0 as straight here
-        self.kneeAngleR = self.thighAngleR - self.shankAngleR
-        self.kneeAngleL = self.thighAngleL - self.shankAngleL
+        self.kneeAngleR = 180 - (self.thighAngleR - self.shankAngleR)
+        self.kneeAngleL = 180 - (self.thighAngleL - self.shankAngleL)
         
         self.kneelingDetection()
         
