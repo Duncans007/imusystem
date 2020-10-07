@@ -38,7 +38,7 @@ intelNUCport = ''
 intelNUCbaud = 115200
 
 send_to_teensy = True
-teensyPort = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+teensyPort = serial.Serial("/dev/ttyS0", baudrate=115200, timeout=3.0)
 
 hip_heel_length = 1 #meters
 
