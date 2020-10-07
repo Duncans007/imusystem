@@ -2,6 +2,7 @@
 
 class kneelingDetection:
     def __init__(self, NMKG, mass):
+        import time
         self.NMKG = NMKG
         self.mass = mass
         
