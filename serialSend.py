@@ -4,7 +4,7 @@ def ardno(msg):
 
     
     
-def send_to_teensy(torqueLeft, torqueRight, serialPort = serial.Serial('/dev/ttyACM0', 9600, timeout=1)):
+def send_to_teensy(torqueLeft, torqueRight, serialPort):
     import struct
     import serial
     import time
