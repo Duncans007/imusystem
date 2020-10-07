@@ -159,7 +159,7 @@ class kneelingDetection:
         c3 = ((self.legForward == "X") and (self.lastLeg == match) and (self.run_loop))
         
         #Condition 4: self.legForward == X and lastLeg == "2" and single-trip-switch
-        c3 = ((self.legForward == "X") and (self.lastLeg == 2) and (self.run_loop))
+        c4 = ((self.legForward == "X") and (self.lastLeg == 2) and (self.run_loop))
             
         if c1 or c2 or c3 or c4:
             deliverTorque = True
