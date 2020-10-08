@@ -16,7 +16,7 @@ def send_over_serial(msgArray, serialSend):
     
     for enum, x in enumerate(msgArray):
 
-        enum == 50 or enum == 51:
+        if enum == 50 or enum == 51:
             sendStr += bytearray(struct.pack("B", x))
         elif (enum > 0 and enum < 50) or enum > 51:
             sendStr += bytearray(struct.pack("<h", x))
