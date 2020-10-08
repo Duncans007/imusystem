@@ -35,8 +35,8 @@ def send_over_serial(msgArray, serialSend):
 #  LSAX, LSAY, LSAZ, LSGX, LSGY, LSGZ, LSAngle,      RSAX, RSAY, RSAZ, RSGX, RSGY, RSGZ, RSAngle,
 #  LTAX, LTAY, LTAZ, LTGX, LTGY, LTGZ, LTAngle,      RTAX, RTAY, RTAZ, RTGX, RTGY, RTGZ, RTAngle,
 #  LBAX, LBAY, LBAZ, LBGX, LBGY, LBGZ, LBAngle,
-#  gaitL, gaitR, slipL, slipR, Torque ]
-    sendStr = bytearray(struct.pack("B", 111))
+#  gaitL, gaitR, slipL, slipR, TorqueL, TorqueR ]
+    sendStr = bytearray(struct.pack("B", 113))
     
     for enum, x in enumerate(msgArray):
 
