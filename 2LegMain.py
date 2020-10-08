@@ -37,8 +37,9 @@ port = 6565
 intelNUCport = '/dev/ttyS0'
 intelNUCbaud = 115200
 
-teensySend = True
-teensyPort = serial.Serial("/dev/ttyS0", baudrate=115200, timeout=3.0)
+teensySend = False
+if teensySend:
+    teensyPort = serial.Serial("/dev/ttyS0", baudrate=115200, timeout=3.0)
 
 hip_heel_length = 1 #meters
 
@@ -367,7 +368,7 @@ def data_handler(address, *args):
 #  LSAX, LSAY, LSAZ, LSGX, LSGY, LSGZ, LSAngle,      RSAX, RSAY, RSAZ, RSGX, RSGY, RSGZ, RSAngle,
 #  LTAX, LTAY, LTAZ, LTGX, LTGY, LTGZ, LTAngle,      RTAX, RTAY, RTAZ, RTGX, RTGY, RTGZ, RTAngle,
 #  LBAX, LBAY, LBAZ, LBGX, LBGY, LBGZ, LBAngle,
-#  gaitL, gaitR, slipL, slipR, Torque ]
+#  gaitL, gaitR, slipL, slipR, TorqueL, TorqueR ]
 
 #To extract values:
 #Angle, Torque = x * 0.002
@@ -379,7 +380,7 @@ def data_handler(address, *args):
             serialArr = [time.time() - timeStart]
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [x.acX_norm, x.acY_norm, x.acZ_norm, x.gyX_norm, x.gyY_norm, x.gyZ_norm, int(x.zAngle * 10)]
-            serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimation * 500)]
+            serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationL * 500), int(kneelingTorqueEstimationR * 500)]
             print(serialArr)
             send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------
@@ -447,7 +448,7 @@ if __name__ == "__main__":
         header += f"Angle/{x}\t"
         header += f"\t"
 		
-    header += f"KneeAngleR\tKneeAngleL\t"
+    header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL"
 	
     header += f"\n"
     fileDump.write(header)
