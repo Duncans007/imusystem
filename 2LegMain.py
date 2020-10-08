@@ -345,7 +345,7 @@ def data_handler(address, *args):
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimation}\t{objRShank.angularAcceleration}\t{objLShank.angularAcceleration}"
         outputString += f"\n"
 		
-        print(outputString)
+        #print(outputString)
         fileDump.write(f"{outputString}")
 		
 
@@ -369,6 +369,7 @@ def data_handler(address, *args):
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [x.acX_norm, x.acY_norm, x.acZ_norm, x.gyX_norm, x.gyY_norm, x.gyZ_norm, int(x.zAngle * 500)]
             serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimation * 500)]
+            print(serialArr)
             send_over_serial(serialArr, intelNUCserial)
 #---------------------------------------------------
 
