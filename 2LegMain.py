@@ -380,7 +380,7 @@ def data_handler(address, *args):
             serialArr = [time.time() - timeStart]
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [x.acX_norm, x.acY_norm, x.acZ_norm, x.gyX_norm, x.gyY_norm, x.gyZ_norm, int(x.zAngle * 10)]
-            serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationR * 500)]
+            serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationL * 500), int(kneelingTorqueEstimationR * 500)]
             print(serialArr)
             send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------
