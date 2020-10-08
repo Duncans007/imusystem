@@ -4,7 +4,7 @@ def ardno(msg):
 
     
     
-def send_to_teensy(serialPort, torqueLeft, torqueRight):
+def send_to_teensy(torqueLeft, torqueRight, serialPort):
     import struct
     import serial
     import time
@@ -21,8 +21,8 @@ def send_to_teensy(serialPort, torqueLeft, torqueRight):
     sendStr = bytearray(struct.pack("B", 165))
     sendStr += bytearray(struct.pack("B", 90))
     sendStr += bytearray(struct.pack("B", 52))
-    sendStr += bytearray(struct.pack("<h", torqueLeftCorrected))
-    sendStr += bytearray(struct.pack("<h", torqueRightCorrected))
+    sendStr += bytearray(struct.pack("<h", int(torqueLeft * 1000)))
+    sendStr += bytearray(struct.pack("<h", int(torqueRight * 1000)))
     serialPort.write(sendStr)
 
     
