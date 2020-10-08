@@ -28,25 +28,27 @@ def send_to_teensy(torqueLeft, torqueRight, serialPort):
     
     
 def send_over_serial(msgArray, serialSend):
-    sendStr = ""
+    import struct
+#IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
+#[ time,
+#  LHAX, LHAY, LHAZ, LHGX, LHGY, LHGZ, LHAngle,      RHAX, RHAY, RHAZ, RHGX, RHGY, RHGZ, RHAngle,
+#  LSAX, LSAY, LSAZ, LSGX, LSGY, LSGZ, LSAngle,      RSAX, RSAY, RSAZ, RSGX, RSGY, RSGZ, RSAngle,
+#  LTAX, LTAY, LTAZ, LTGX, LTGY, LTGZ, LTAngle,      RTAX, RTAY, RTAZ, RTGX, RTGY, RTGZ, RTAngle,
+#  LBAX, LBAY, LBAZ, LBGX, LBGY, LBGZ, LBAngle,
+#  gaitL, gaitR, slipL, slipR, Torque ]
+    sendStr = bytearray(struct.pack("B", 111))
     
-    #Pools sensor values into string for conversion to bytes
-    for n in msgArray:    
-        try:
-            x = truncate(n, 5.0)
-        except TypeError:
-            x = n
-        sendStr += f"{x},"
-    
-    #Cut last comma, add terminating character instead
-    sendStr = sendStr[:-1]
-    sendStr += f"\n"
-    
-    if msgArray[0] == "PR":
-        sendStr += f"\r"
+    for enum, x in enumerate(msgArray):
+
+        if enum == 50 or enum == 51:
+            sendStr += bytearray(struct.pack("B", x))
+        elif (enum > 0 and enum < 50) or enum > 51:
+            sendStr += bytearray(struct.pack("<h", x))
+        elif enum == 0:
+            sendStr += bytearray(struct.pack("<f", x))
     
     #Encode with UTF-8 and send over serial.
-    serialSend.write(sendStr.encode('utf-8'))
+    serialSend.write(sendStr)
     
     
 #Cuts number to "digits" number of decimal points.

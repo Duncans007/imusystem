@@ -14,6 +14,22 @@ class sensorObject:
         self.mgY = 0
         self.mgZ = 0
         
+        self.gyX_norm = 0
+        self.gyY_norm = 0
+        self.gyZ_norm = 0
+        
+        self.acX_norm = 0
+        self.acY_norm = 0
+        self.acZ_norm = 0
+        
+        self.mgX_norm = 0
+        self.mgY_norm = 0
+        self.mgZ_norm = 0
+        
+        self.gyConversion = 0.07
+        self.acConversion = 0.000244 * 9.81
+        self.mgConversion = 0.00014
+        
         #angleCalc() variables
         self.timeToRun = 0
         self.timeLastValue = time.time()
@@ -88,6 +104,7 @@ class sensorObject:
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
         
+        self.conversions()
         self.gravityVectorAngle()
         self.angularAccCalc()
         
@@ -173,3 +190,36 @@ class sensorObject:
         
     #Take mean of populated array, save to object.
         self.gravAngleSmoothed = np.mean(self.gravAngleArray)
+        
+        
+#--------------------------------------------------------------------------------------------------
+#Function to streamline implementation of Alborz's new communication protocol while changing minimal code.
+#This object now has the original signed 16-bit integers from the Notochord added directly to it.
+#This function serves to put the 16-bit integers back to their more floated values with units for calculation.
+#Runs at the beginning of testval, before any other calculations are done with the numbers.
+    def conversions(self):
+        self.gyX_norm = self.gyX
+        self.gyY_norm = self.gyY
+        self.gyZ_norm = self.gyZ
+        
+        self.acX_norm = self.acX
+        self.acY_norm = self.acY
+        self.acZ_norm = self.acZ
+        
+        self.mgX_norm = self.mgX
+        self.mgY_norm = self.mgY
+        self.mgZ_norm = self.mgZ
+        
+        self.gyX = self.gyX_norm * self.gyConversion
+        self.gyY = self.gyX_norm * self.gyConversion
+        self.gyZ = self.gyX_norm * self.gyConversion
+        
+        self.acX = self.acX * self.acConversion
+        self.acY = self.acY * self.acConversion
+        self.acZ = self.acZ * self.acConversion
+        
+        self.mgX = self.mgX * self.mgConversion
+        self.mgY = self.mgY * self.mgConversion
+        self.mgZ = self.mgZ * self.mgConversion
+        
+        
