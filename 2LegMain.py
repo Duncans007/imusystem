@@ -345,7 +345,9 @@ def data_handler(address, *args):
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimation}\t{objRShank.angularAcceleration}\t{objLShank.angularAcceleration}"
         outputString += f"\n"
 		
-        #print(outputString)
+        if intelNUCport == '':
+            print(outputString)
+            
         fileDump.write(f"{outputString}")
 		
 
