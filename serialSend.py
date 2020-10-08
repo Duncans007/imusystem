@@ -6,25 +6,22 @@ def ardno(msg):
 def send_over_serial(msgArray, serialSend):
 import struct
 #IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
-#[ 111, time,
+#[ time,
 #  LHAX, LHAY, LHAZ, LHGX, LHGY, LHGZ, LHAngle,      RHAX, RHAY, RHAZ, RHGX, RHGY, RHGZ, RHAngle,
 #  LSAX, LSAY, LSAZ, LSGX, LSGY, LSGZ, LSAngle,      RSAX, RSAY, RSAZ, RSGX, RSGY, RSGZ, RSAngle,
 #  LTAX, LTAY, LTAZ, LTGX, LTGY, LTGZ, LTAngle,      RTAX, RTAY, RTAZ, RTGX, RTGY, RTGZ, RTAngle,
 #  LBAX, LBAY, LBAZ, LBGX, LBGY, LBGZ, LBAngle,
 #  gaitL, gaitR, slipL, slipR, Torque ]
-    sendStr = bytearray()
+    sendStr = bytearray(struct.pack("B", 111))
     
     for enum, x in enumerate(msgArray):
 
-        if enum == 0 or (enum >= 51 and enum < 53):
-            packedString = bytearray(struct.pack("<B", x))
-            sendStr += packedString
-        if enum > 1 and enum < 51 or (enum >= 53):
-            packedString = bytearray(struct.pack("<h", x))
-            sendStr += packedString
-        if enum == 1:
-            packedString = bytearray(struct.pack("<f", x))
-            sendStr += packedString
+        enum == 50 or enum == 51:
+            sendStr += bytearray(struct.pack("B", x))
+        elif (enum > 0 and enum < 50) or enum > 51:
+            sendStr += bytearray(struct.pack("<h", x))
+        elif enum == 0:
+            sendStr += bytearray(struct.pack("<f", x))
     
     #Encode with UTF-8 and send over serial.
     serialSend.write(sendStr)
