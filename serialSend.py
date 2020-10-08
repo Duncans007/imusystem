@@ -4,7 +4,7 @@ def ardno(msg):
 
     
 def send_over_serial(msgArray, serialSend):
-import struct
+    import struct
 #IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
 #[ time,
 #  LHAX, LHAY, LHAZ, LHGX, LHGY, LHGZ, LHAngle,      RHAX, RHAY, RHAZ, RHGX, RHGY, RHGZ, RHAngle,
