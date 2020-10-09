@@ -36,6 +36,14 @@ def send_over_serial(msgArray, serialSend):
 #  LTAX, LTAY, LTAZ, LTGX, LTGY, LTGZ, LTAngle,      RTAX, RTAY, RTAZ, RTGX, RTGY, RTGZ, RTAngle,
 #  LBAX, LBAY, LBAZ, LBGX, LBGY, LBGZ, LBAngle,
 #  gaitL, gaitR, slipL, slipR, TorqueL, TorqueR ]
+
+#To extract values:
+#Torque = x * 0.002
+#Angle = x * .0125
+#Accelerometer = x * 0.002394
+#Gyroscope = x * 0.07
+
+
     sendStr = bytearray(struct.pack("B", 111))
     
     for enum, x in enumerate(msgArray):
