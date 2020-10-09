@@ -371,7 +371,8 @@ def data_handler(address, *args):
 #  gaitL, gaitR, slipL, slipR, TorqueL, TorqueR ]
 
 #To extract values:
-#Angle, Torque = x * 0.002
+#Torque = x * 0.002
+#Angle = x * .0125
 #Accelerometer = x * 0.002394
 #Gyroscope = x * 0.07
 #Magnetometer = x * 0.00014
@@ -379,7 +380,7 @@ def data_handler(address, *args):
         if intelNUCport != '':
             serialArr = [time.time() - timeStart]
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
-                serialArr += [x.acX_norm, x.acY_norm, x.acZ_norm, x.gyX_norm, x.gyY_norm, x.gyZ_norm, int(x.zAngle * 10)]
+                serialArr += [x.acX_norm, x.acY_norm, x.acZ_norm, x.gyX_norm, x.gyY_norm, x.gyZ_norm, int(x.zAngle * 80)]
             #serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationL * 500), int(kneelingTorqueEstimationR * 500)]
             serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationR * 500)]
             print(serialArr)
