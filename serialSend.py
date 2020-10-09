@@ -44,7 +44,7 @@ def send_over_serial(msgArray, serialSend):
 #Gyroscope = x * 0.07
 
 
-    sendStr = bytearray(struct.pack("B", 111))
+    sendStr = bytearray(struct.pack("B", 113))
     
     for enum, x in enumerate(msgArray):
 
