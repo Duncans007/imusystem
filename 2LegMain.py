@@ -203,14 +203,14 @@ def data_handler(address, *args):
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
 #Right Leg Angle Approximations
-        objRThigh.angleCalc(gaitDetectRight)
-        objRShank.angleCalc(gaitDetectRight)
-        objRHeel.angleCalc(gaitDetectRight)
+        objRThigh.angleCalc()
+        objRShank.angleCalc()
+        objRHeel.angleCalc()
 
 #Left Leg Angle Approximations
-        objLThigh.angleCalc(gaitDetectLeft)
-        objLShank.angleCalc(gaitDetectLeft)
-        objLHeel.angleCalc(gaitDetectLeft)
+        objLThigh.angleCalc()
+        objLShank.angleCalc()
+        objLHeel.angleCalc()
 	
         objLowBack.conversions()
 #-----------------------------------------------------------
