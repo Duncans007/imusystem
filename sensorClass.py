@@ -29,6 +29,14 @@ class sensorObject:
         self.mgY_norm = 0
         self.mgZ_norm = 0
         
+        self.gyX_avg = 0
+        self.gyY_avg = 0
+        self.gyZ_avg = 0
+        
+        self.gyX_range = 1
+        self.gyY_range = 1
+        self.gyZ_range = 1
+        
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
         self.mgConversion = 0.00014
@@ -136,9 +144,9 @@ class sensorObject:
             self.zAngleChangeArray.pop(0)
             
     #manually set perturbation range for now, later set using calibration function
-        if (self.gyZ < self.gyZrange and self.gyZ > - self.gyZrange):
-            if (self.gyY < self.gyYrange and self.gyY > - self.gyYrange):
-                if (self.gyX < self.gyXrange and self.gyX > - self.gyXrange):
+        if (self.gyZ < (self.gyZ_avg + self.gyZ_range) and self.gyZ > (self.gyZ_avg - self.gyZ_range)):
+            if (self.gyY < (self.gyY_avg + self.gyY_range) and self.gyY > (self.gyY_avg - self.gyY_range)):
+                if (self.gyX < (self.gyZ_avg + self.gyZ_range) and self.gyX > (self.gyZ_avg - self.gyZ_range)):
                     proportionality = abs(self.gravAngleSmoothed - - self.zAngle) / 20
                     if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
                         self.zAngle -= proportionality
