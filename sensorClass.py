@@ -33,9 +33,9 @@ class sensorObject:
         self.gyY_avg = 0
         self.gyZ_avg = 0
         
-        self.gyX_range = 1
-        self.gyY_range = 1
-        self.gyZ_range = 1
+        self.gyX_range = 2
+        self.gyY_range = 2
+        self.gyZ_range = 2
         
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
@@ -150,7 +150,7 @@ class sensorObject:
         if (self.gyZ < (self.gyZ_avg + self.gyZ_range) and self.gyZ > (self.gyZ_avg - self.gyZ_range)):
             if (self.gyY < (self.gyY_avg + self.gyY_range) and self.gyY > (self.gyY_avg - self.gyY_range)):
                 if (self.gyX < (self.gyZ_avg + self.gyZ_range) and self.gyX > (self.gyZ_avg - self.gyZ_range)):
-                    proportionality = abs(self.gravAngleSmoothed - - self.zAngle) / 100
+                    proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 20
                     if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
                         self.zAngle -= proportionality
                     elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
