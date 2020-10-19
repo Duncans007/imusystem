@@ -54,9 +54,6 @@ class sensorObject:
         self.calibVal = .1  #How much gravity can affect angle during walking
         self.zAngle = 0
         
-        self.gravAngleWindow = 0 #how high or low above the gravity vector does it have to be to get moved (still)
-        self.standingCalibVal = .1 #how much can the gravity vector affect the angle (still)
-        
         #angularAcceleration() variables
         self.gyZarray = [0]
         self.angularAcceleration = 0
@@ -144,14 +141,14 @@ class sensorObject:
             self.zAngleChangeArray.pop(0)
             
     #manually set perturbation range for now, later set using calibration function
-        if (self.gyZ < (self.gyZ_avg + self.gyZ_range) and self.gyZ > (self.gyZ_avg - self.gyZ_range)):
-            if (self.gyY < (self.gyY_avg + self.gyY_range) and self.gyY > (self.gyY_avg - self.gyY_range)):
-                if (self.gyX < (self.gyZ_avg + self.gyZ_range) and self.gyX > (self.gyZ_avg - self.gyZ_range)):
-                    proportionality = abs(self.gravAngleSmoothed - - self.zAngle) / 20
-                    if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
-                        self.zAngle -= proportionality
-                    elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
-                        self.zAngle += proportionality
+ #       if (self.gyZ < (self.gyZ_avg + self.gyZ_range) and self.gyZ > (self.gyZ_avg - self.gyZ_range)):
+ #           if (self.gyY < (self.gyY_avg + self.gyY_range) and self.gyY > (self.gyY_avg - self.gyY_range)):
+ #               if (self.gyX < (self.gyZ_avg + self.gyZ_range) and self.gyX > (self.gyZ_avg - self.gyZ_range)):
+ #                   proportionality = abs(self.gravAngleSmoothed - - self.zAngle) / 20
+ #                   if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
+ #                       self.zAngle -= proportionality
+ #                   elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
+ #                       self.zAngle += proportionality
         
         self.zAngle += zAngleChange
         
