@@ -89,6 +89,8 @@ class sensorObject:
         self.mgY = outArray[7]
         self.mgZ = outArray[8]
         
+        self.conversions()
+        
         
     def angularAccCalc(self):
         import time
@@ -113,14 +115,13 @@ class sensorObject:
     
 #--------------------------------------------------------------------------------------------------    
 #Angle Calcluation function        
-    def angleCalc(self, gaitDetectObject):
+    def angleCalc(self):
         import time
         import numpy as np
         self.timeLastValue = self.currentTime
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
         
-        self.conversions()
         self.gravityVectorAngle()
         self.angularAccCalc()
         
@@ -133,38 +134,19 @@ class sensorObject:
 #Limits number of previous values kept
         if len(self.zAngleChangeArray) > self.zAngleChangeArrayLimit:
             self.zAngleChangeArray.pop(0)
-    
-#When not standing
-        if gaitDetectObject.standing == False:
-        
-    #If was standing on the last frame, add the missed values stored in zAngleChangeArray
-            if self.wasStanding == True:
-                self.wasStanding = False
-                self.zAngle += np.sum(self.zAngleChangeArray)
-        
-    #Otherwise, add zAngleChange
-            else:
-                self.zAngle += zAngleChange
-                
-    #Drifts degree value towards 0 by 1/10th of a degree per frame.
-                if np.mean(self.zAngleArray) > self.gravAngleSmoothed:
-                    self.zAngle -= self.calibVal
-                elif np.mean(self.zAngleArray) < self.gravAngleSmoothed:
-                    self.zAngle += self.calibVal
-        
-    #If standing still, reset angle to zero over time
-        elif gaitDetectObject.standing == True:
-            if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
-                self.zAngle -= self.standingCalibVal
-                self.zAngle += zAngleChange
-            elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
-                self.zAngle += self.standingCalibVal
-                self.zAngle += zAngleChange
-            else:
-                pass
-    #Tracks if standing was true on last frame for zAngleChangeArray
-            self.wasStanding = True
             
+    #manually set perturbation range for now, later set using calibration function
+        if (self.gyZ < self.gyZrange and self.gyZ > - self.gyZrange):
+            if (self.gyY < self.gyYrange and self.gyY > - self.gyYrange):
+                if (self.gyX < self.gyXrange and self.gyX > - self.gyXrange):
+                    proportionality = abs(self.gravAngleSmoothed - - self.zAngle) / 20
+                    if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
+                        self.zAngle -= proportionality
+                    elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
+                        self.zAngle += proportionality
+        
+        self.zAngle += zAngleChange
+        
     #Keeps short array of values. Not currently used.
         self.zAngleArray.append(self.zAngle)
     
