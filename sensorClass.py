@@ -74,56 +74,16 @@ class sensorObject:
             outArray = valueArray
             
         if self.limbCode == "RH":
-            outArray.append(-valueArray[1])
-            outArray.append(valueArray[0])
-            outArray.append(valueArray[2])
-            
-            outArray.append(-valueArray[4])
-            outArray.append(valueArray[3])
-            outArray.append(valueArray[5])
-            
-            outArray.append(-valueArray[7])
-            outArray.append(valueArray[6])
-            outArray.append(valueArray[8])
+            outArray = (-valueArray[1], valueArray[0], valueArray[2], -valueArray[4], valueArray[3], valueArray[5], -valueArray[7], valueArray[6], valueArray[8])
             
         if self.limbCode == "LT" or self.limbCode == "LS":
-            outArray.append(-valueArray[0])
-            outArray.append(valueArray[1])
-            outArray.append(-valueArray[2])
-            
-            outArray.append(-valueArray[3])
-            outArray.append(valueArray[4])
-            outArray.append(-valueArray[5])
-            
-            outArray.append(-valueArray[6])
-            outArray.append(valueArray[7])
-            outArray.append(-valueArray[8])
+            outArray = (-valueArray[0], valueArray[1], -valueArray[2], -valueArray[3], valueArray[4], -valueArray[5], -valueArray[6], valueArray[7], -valueArray[8])
             
         if self.limbCode == "LH":
-            outArray.append(-valueArray[1])
-            outArray.append(-valueArray[0])
-            outArray.append(-valueArray[2])
-            
-            outArray.append(-valueArray[4])
-            outArray.append(-valueArray[3])
-            outArray.append(-valueArray[5])
-            
-            outArray.append(-valueArray[7])
-            outArray.append(-valueArray[6])
-            outArray.append(-valueArray[8])
+            outArray = (-valueArray[1], -valueArray[0], -valueArray[2], -valueArray[4], -valueArray[3], -valueArray[5], -valueArray[7], -valueArray[6], -valueArray[8])
             
         if self.limbCode == "LB":
-            outArray.append(-valueArray[1])
-            outArray.append(valueArray[1])
-            outArray.append(valueArray[0])
-            
-            outArray.append(-valueArray[5])
-            outArray.append(valueArray[4])
-            outArray.append(valueArray[3])
-            
-            outArray.append(-valueArray[8])
-            outArray.append(valueArray[7])
-            outArray.append(valueArray[6])
+            outArray = (-valueArray[1], valueArray[1], valueArray[0], -valueArray[5], valueArray[4], valueArray[3], -valueArray[8], valueArray[7], valueArray[6])
             
             
             
@@ -186,14 +146,14 @@ class sensorObject:
             self.zAngleChangeArray.pop(0)
             
     #manually set perturbation range for now, later set using calibration function
- #       if (self.gyZ < (self.gyZ_avg + self.gyZ_range) and self.gyZ > (self.gyZ_avg - self.gyZ_range)):
- #           if (self.gyY < (self.gyY_avg + self.gyY_range) and self.gyY > (self.gyY_avg - self.gyY_range)):
- #               if (self.gyX < (self.gyZ_avg + self.gyZ_range) and self.gyX > (self.gyZ_avg - self.gyZ_range)):
- #                   proportionality = abs(self.gravAngleSmoothed - - self.zAngle) / 20
- #                   if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
- #                       self.zAngle -= proportionality
- #                   elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
- #                       self.zAngle += proportionality
+        if (self.gyZ < (self.gyZ_avg + self.gyZ_range) and self.gyZ > (self.gyZ_avg - self.gyZ_range)):
+            if (self.gyY < (self.gyY_avg + self.gyY_range) and self.gyY > (self.gyY_avg - self.gyY_range)):
+                if (self.gyX < (self.gyZ_avg + self.gyZ_range) and self.gyX > (self.gyZ_avg - self.gyZ_range)):
+                    proportionality = abs(self.gravAngleSmoothed - - self.zAngle) / 20
+                    if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
+                        self.zAngle -= proportionality
+                    elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
+                        self.zAngle += proportionality
         
         self.zAngle += zAngleChange
         
