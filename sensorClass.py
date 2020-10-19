@@ -259,8 +259,8 @@ class sensorObject:
         self.mgZ_norm = self.mgZ
         
         self.gyX = self.gyX_norm * self.gyConversion
-        self.gyY = self.gyX_norm * self.gyConversion
-        self.gyZ = self.gyX_norm * self.gyConversion
+        self.gyY = self.gyy_norm * self.gyConversion
+        self.gyZ = self.gyz_norm * self.gyConversion
         
         self.acX = self.acX * self.acConversion
         self.acY = self.acY * self.acConversion
