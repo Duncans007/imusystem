@@ -1,6 +1,9 @@
+import numpy as np
+
 class sensorObject:
-    def __init__(self):
+    def __init__(self, limbCode):
         import time
+        self.limbCode = limbCode
         #State Values from Sensors initialized at 0
         self.gyX = 0
         self.gyY = 0
@@ -59,19 +62,32 @@ class sensorObject:
 
 #--------------------------------------------------------------------------------------------------
 #Function to dump new values from sensors
-#Function not currently in use b/c it's clunky to implement (the positive/negative values for each axis differ on each sensor, dictionary implementation should be possible when you go to implement it. This should cut 50+ lines out of the original file.)
     def newValues(self, valueArray):
-        self.gyX = valueArray[0]
-        self.gyY = valueArray[1]
-        self.gyZ = valueArray[2]
+        valueArray = np.array(valueArray)
+        outArray = []
         
-        self.acX = valueArray[3]
-        self.acY = valueArray[4]
-        self.acZ = valueArray[5]
+        if self.limbCode == "RT" or self.limbCode == "RS":
+            outArray = valueArray
+        if self.limbCode == "RH":
+            outArray = [-valueArray[1], valueArray[0], valueArray[2], -valueArray[4], valueArray[3], valueArray[5], -valueArray[7], valueArray[6], valueArray[8]]
+        if self.limbCode == "LT" or self.limbCode == "LS":
+            outArray = np.multiply(valueArray, np.array([-1, 1, -1, -1, 1, -1, -1, 1, -1]))
+        if self.limbCode == "LH":
+            outArray = [-valueArray[1], -valueArray[0], -valueArray[2], -valueArray[4], -valueArray[3], -valueArray[5], -valueArray[7], -valueArray[6], -valueArray[8]]
+        if self.limbCode == "LB":
+            outArray = [-valueArray[2], valueArray[1], valueArray[0], -valueArray[5], valueArray[4], valueArray[3], -valueArray[8], valueArray[7], valueArray[6]]
         
-        self.mgX = valueArray[6]
-        self.mgY = valueArray[7]
-        self.mgZ = valueArray[8]
+        self.gyX = outArray[0]
+        self.gyY = outArray[1]
+        self.gyZ = outArray[2]
+        
+        self.acX = outArray[3]
+        self.acY = outArray[4]
+        self.acZ = outArray[5]
+        
+        self.mgX = outArray[6]
+        self.mgY = outArray[7]
+        self.mgZ = outArray[8]
         
         
     def angularAccCalc(self):
