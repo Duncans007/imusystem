@@ -53,6 +53,7 @@ class sensorObject:
         self.wasStanding = False
         self.calibVal = .1  #How much gravity can affect angle during walking
         self.zAngle = 0
+        self.gravAngleWindow = 0
         
         #angularAcceleration() variables
         self.gyZarray = [0]
