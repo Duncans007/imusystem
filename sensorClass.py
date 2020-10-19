@@ -68,20 +68,65 @@ class sensorObject:
 #--------------------------------------------------------------------------------------------------
 #Function to dump new values from sensors
     def newValues(self, valueArray):
-        valueArray = np.array(valueArray)
         outArray = []
         
         if self.limbCode == "RT" or self.limbCode == "RS":
             outArray = valueArray
+            
         if self.limbCode == "RH":
-            outArray = [-valueArray[1], valueArray[0], valueArray[2], -valueArray[4], valueArray[3], valueArray[5], -valueArray[7], valueArray[6], valueArray[8]]
+            outArray.append(-valueArray[1])
+            outArray.append(valueArray[0])
+            outArray.append(valueArray[2])
+            
+            outArray.append(-valueArray[4])
+            outArray.append(valueArray[3])
+            outArray.append(valueArray[5])
+            
+            outArray.append(-valueArray[7])
+            outArray.append(valueArray[6])
+            outArray.append(valueArray[8])
+            
         if self.limbCode == "LT" or self.limbCode == "LS":
-            outArray = np.multiply(valueArray, np.array([-1, 1, -1, -1, 1, -1, -1, 1, -1]))
+            outArray.append(-valueArray[0])
+            outArray.append(valueArray[1])
+            outArray.append(-valueArray[2])
+            
+            outArray.append(-valueArray[3])
+            outArray.append(valueArray[4])
+            outArray.append(-valueArray[5])
+            
+            outArray.append(-valueArray[6])
+            outArray.append(valueArray[7])
+            outArray.append(-valueArray[8])
+            
         if self.limbCode == "LH":
-            outArray = [-valueArray[1], -valueArray[0], -valueArray[2], -valueArray[4], -valueArray[3], -valueArray[5], -valueArray[7], -valueArray[6], -valueArray[8]]
+            outArray.append(-valueArray[1])
+            outArray.append(-valueArray[0])
+            outArray.append(-valueArray[2])
+            
+            outArray.append(-valueArray[4])
+            outArray.append(-valueArray[3])
+            outArray.append(-valueArray[5])
+            
+            outArray.append(-valueArray[7])
+            outArray.append(-valueArray[6])
+            outArray.append(-valueArray[8])
+            
         if self.limbCode == "LB":
-            outArray = [-valueArray[2], valueArray[1], valueArray[0], -valueArray[5], valueArray[4], valueArray[3], -valueArray[8], valueArray[7], valueArray[6]]
-        
+            outArray.append(-valueArray[1])
+            outArray.append(valueArray[1])
+            outArray.append(valueArray[0])
+            
+            outArray.append(-valueArray[5])
+            outArray.append(valueArray[4])
+            outArray.append(valueArray[3])
+            
+            outArray.append(-valueArray[8])
+            outArray.append(valueArray[7])
+            outArray.append(valueArray[6])
+            
+            
+            
         self.gyX = outArray[0]
         self.gyY = outArray[1]
         self.gyZ = outArray[2]
