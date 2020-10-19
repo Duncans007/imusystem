@@ -324,15 +324,15 @@ if __name__ == "__main__":
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
 	
     #create objects for sensor operations and value storage.
-    objRThigh = sensorObject(RT)
-    objRShank = sensorObject(RS)
-    objRHeel = sensorObject(RH)
+    objRThigh = sensorObject("RT")
+    objRShank = sensorObject("RS")
+    objRHeel = sensorObject("RH")
 	
-    objLThigh = sensorObject(LT)
-    objLShank = sensorObject(LS)
-    objLHeel = sensorObject(LH)
+    objLThigh = sensorObject("LT")
+    objLShank = sensorObject("LS")
+    objLHeel = sensorObject("LH")
 	
-    objLowBack = sensorObject(LB)
+    objLowBack = sensorObject("LB")
     
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
