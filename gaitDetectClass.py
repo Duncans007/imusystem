@@ -10,6 +10,7 @@ class gaitDetect:
         self.movingAvgShankAcc = 0
         self.movingAvgHeel = 0
         self.lastAvgShank = 0
+        self.lastAvgShankAcc = 0
         self.movingAvgAccuracy = 2
         
         self.significance = 0
@@ -89,6 +90,7 @@ class gaitDetect:
 #                self.significance = 0
 
         self.lastAvgShank = self.movingAvgShank
+        self.lastAvgShankAcc = self.movingAvgShankAcc
         
 #Trkov IFAC 2017 slip detection algorithm
     def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
