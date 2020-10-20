@@ -4,8 +4,10 @@ class gaitDetect:
     def __init__(self):
         self.firstVar = 0
         self.movingArrShank = [0]
+        self.movingArrShankAcc = [0]
         self.movingArrHeel = [0]
         self.movingAvgShank = 0
+        self.movingAvgShankAcc = 0
         self.movingAvgHeel = 0
         self.lastAvgShank = 0
         self.movingAvgAccuracy = 2
@@ -33,11 +35,12 @@ class gaitDetect:
         self.timeSlipStart = 0
         
                 
-    def testVal(self, shank, heel):
+    def testVal(self, shank, heel, shankAcc):
         import time
         import numpy as np
         self.movingArrShank.append(shank)
         self.movingArrHeel.append(heel)
+        self.movingArrShankAcc.append(shankAcc)
         
 #Limits number of previous values in array
         if len(self.movingArrShank) > self.movingAvgAccuracy:
@@ -48,13 +51,17 @@ class gaitDetect:
             self.movingArrHeel.pop(0)
         self.movingAvgHeel = np.mean(self.movingArrHeel)
         
-
+        if len(self.movingArrShankAcc) > self.movingAvgAccuracy:
+            self.movingArrShankAcc.pop(0)
+        self.movingAvgShankAcc = np.mean(self.movingArrShankAcc)
+        
 
 #Significance changes for timing reasons. When not zero, it waits for the given timeframe before resetting to zero so that gait change can be detected again
         if self.significance == 0:
 
 #detects negative to positive, aka toe off or start of swing phase
-            if self.movingAvgShank > 0 and self.lastAvgShank < 0 and self.gaitStage == 0:
+#            if self.movingAvgShank > 0 and self.lastAvgShank < 0 and self.gaitStage == 0:
+            if self.movingAvgShankAcc > 0 and self.lastAvgShankAcc < 0 and self.gaitStage == 0:
                 self.significance = 1
                 self.timeLastToeOff = time.time()
                 self.gaitStage = 1
