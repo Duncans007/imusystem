@@ -125,8 +125,8 @@ class sensorObject:
         self.gyZ_calib_arr.append(self.gyZ)
         
         self.gyX_calib = sum(self.gyX_calib_arr)/len(self.gyX_calib_arr)
-        self.gyY_calib = sum(self.gyY_calib_arr)/(self.gyY_calib_arr)
-        self.gyZ_calib = sum(self.gyZ_calib_arr)/(self.gyZ_calib_arr)
+        self.gyY_calib = sum(self.gyY_calib_arr)/len(self.gyY_calib_arr)
+        self.gyZ_calib = sum(self.gyZ_calib_arr)/len(self.gyZ_calib_arr)
 
         
         
