@@ -33,6 +33,14 @@ class sensorObject:
         self.gyY_avg = 0
         self.gyZ_avg = 0
         
+        self.gyX_calib_arr = []
+        self.gyY_calib_arr = []
+        self.gyZ_calib_arr = []
+        
+        self.gyX_calib = 0
+        self.gyY_calib = 0
+        self.gyZ_calib = 0
+        
         self.gyX_range = 4
         self.gyY_range = 4
         self.gyZ_range = 4
@@ -66,6 +74,12 @@ class sensorObject:
         self.gravAngleSmoothed = 0
         self.gravAngleArrayLimit = 5
 
+        
+        
+        
+        
+        
+        
 #--------------------------------------------------------------------------------------------------
 #Function to dump new values from sensors
     def newValues(self, valueArray):
@@ -103,6 +117,21 @@ class sensorObject:
         self.conversions()
         
         
+#-------------------------------------------------------------------------------------------------- 
+#Run instead of angleCalc() for first X seconds of the script. Use if time < X: else:
+    def getCalib(self):
+        self.gyX_calib_arr.append(self.gyX)
+        self.gyY_calib_arr.append(self.gyY)
+        self.gyZ_calib_arr.append(self.gyZ)
+        
+        self.gyX_calib = mean(self.gyX_calib_arr)
+        self.gyY_calib = mean(self.gyY_calib_arr)
+        self.gyZ_calib = mean(self.gyZ_calib_arr)
+
+        
+        
+        
+#--------------------------------------------------------------------------------------------------        
     def angularAccCalc(self):
         import time
         import numpy as np
@@ -124,6 +153,11 @@ class sensorObject:
         return self.angularAcceleration
 
     
+    
+    
+    
+    
+    
 #--------------------------------------------------------------------------------------------------    
 #Angle Calcluation function        
     def angleCalc(self):
@@ -137,7 +171,7 @@ class sensorObject:
         self.angularAccCalc()
         
 #Integrates gyroscope to get angle. Includes drift.
-        zAngleChange = self.gyZ * self.timeToRun
+        zAngleChange = (self.gyZ-self.gyZ_calib) * self.timeToRun
         
 #Keeps track of previous values. Used when standing is turned off to make up for the 4-5 frame delay.
         self.zAngleChangeArray.append(zAngleChange)
@@ -147,9 +181,9 @@ class sensorObject:
             self.zAngleChangeArray.pop(0)
             
     #manually set perturbation range for now, later set using calibration function
-        if (self.gyZ < (self.gyZ_avg + self.gyZ_range) and self.gyZ > (self.gyZ_avg - self.gyZ_range)):
-            if (self.gyY < (self.gyY_avg + self.gyY_range) and self.gyY > (self.gyY_avg - self.gyY_range)):
-                if (self.gyX < (self.gyZ_avg + self.gyZ_range) and self.gyX > (self.gyZ_avg - self.gyZ_range)):
+        if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)):
+            if (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)):
+                if (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
                     proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 20
                     if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
                         self.zAngle -= proportionality
@@ -165,6 +199,11 @@ class sensorObject:
             self.zAngleArray.pop(0)
             
         return self.zAngle
+    
+    
+    
+    
+    
     
 #--------------------------------------------------------------------------------------------------
 #Gravity vector calculations function
@@ -199,6 +238,12 @@ class sensorObject:
         
     #Take mean of populated array, save to object.
         self.gravAngleSmoothed = np.mean(self.gravAngleArray)
+        
+        
+        
+        
+        
+        
         
         
 #--------------------------------------------------------------------------------------------------
