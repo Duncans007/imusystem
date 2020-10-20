@@ -203,25 +203,25 @@ def data_handler(address, *args):
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
 
-    if (time.time() - timeStart) < 1:
-        objRThigh.getCalib()
-        objRShank.getCalib()
-        objRHeel.getCalib()
+        if (time.time() - timeStart) < 1:
+            objRThigh.getCalib()
+            objRShank.getCalib()
+            objRHeel.getCalib()
 
-        objLThigh.getCalib()
-        objLShank.getCalib()
-        objLHeel.getCalib()
-    
-    else:
-#Right Leg Angle Approximations
-        objRThigh.angleCalc()
-        objRShank.angleCalc()
-        objRHeel.angleCalc()
+            objLThigh.getCalib()
+            objLShank.getCalib()
+            objLHeel.getCalib()
 
-#Left Leg Angle Approximations
-        objLThigh.angleCalc()
-        objLShank.angleCalc()
-        objLHeel.angleCalc()
+        else:
+    #Right Leg Angle Approximations
+            objRThigh.angleCalc()
+            objRShank.angleCalc()
+            objRHeel.angleCalc()
+
+    #Left Leg Angle Approximations
+            objLThigh.angleCalc()
+            objLShank.angleCalc()
+            objLHeel.angleCalc()
 
 #-----------------------------------------------------------
 #NO CALCULATIONS BEFORE ANGLECALC() OTHERWISE THEY WILL RUN USING RAW DATA INSTEAD OF PROPER UNITS
