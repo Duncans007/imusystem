@@ -202,6 +202,17 @@ def data_handler(address, *args):
         
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
+
+    if (time.time() - timeStart) < 1:
+        objRThigh.getCalib()
+        objRShank.getCalib()
+        objRHeel.getCalib()
+
+        objLThigh.getCalib()
+        objLShank.getCalib()
+        objLHeel.getCalib()
+    
+    else:
 #Right Leg Angle Approximations
         objRThigh.angleCalc()
         objRShank.angleCalc()
