@@ -33,9 +33,9 @@ class sensorObject:
         self.gyY_avg = 0
         self.gyZ_avg = 0
         
-        self.gyX_range = 2
-        self.gyY_range = 2
-        self.gyZ_range = 2
+        self.gyX_range = 4
+        self.gyY_range = 4
+        self.gyZ_range = 4
         
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
