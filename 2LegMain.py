@@ -217,8 +217,8 @@ def data_handler(address, *args):
 #NO CALCULATIONS BEFORE ANGLECALC() OTHERWISE THEY WILL RUN USING RAW DATA INSTEAD OF PROPER UNITS
 	
 #Right and Left Gait Detection
-        gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ)
-        gaitDetectLeft.testVal(objLShank.gyZ, objLHeel.gyZ)
+        gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ, objRShank.angularAcceleration)
+        gaitDetectLeft.testVal(objLShank.gyZ, objLHeel.gyZ, objRShank.angularAcceleration)
 
 #Calculates Slip Indicator from Trkov IFAC 2017 paper
         slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), hip_heel_length)
