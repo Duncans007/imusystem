@@ -2,7 +2,7 @@
 
 from multiprocessing import Process,Pipe
 
-def async_teensy(child_conn, teensyPort):
+def async_teensy(child_conn):
     msg = {
         "yes" : 1,
         "no" : 2,
@@ -11,13 +11,13 @@ def async_teensy(child_conn, teensyPort):
     
     while True:
         #receivedData, outputArray = receive_from_teensy(teensyPort)
-        if receivedData:
+        #if receivedData:
             #send_to_teensy(1, 1, teensyPort)
             #child_conn.send(outputArray)
-            child_conn.send(msg)
-            msg["yes"] += 1
-            msg["no"] += 2
-            msg["maybe"] += 3
+        child_conn.send(msg)
+        msg["yes"] += 1
+        msg["no"] += 2
+        msg["maybe"] += 3
                 
 
     child_conn.close()
