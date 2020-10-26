@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from multiprocessing import Process,Queue,Pipe
-from time import sleep
+import time
 from testChild import f
 
 if __name__ == '__main__':
