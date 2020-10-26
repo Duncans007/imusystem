@@ -32,7 +32,7 @@ def send_from_teensy_over_serial(msgArray, serialSend):
     
     
 def receive_from_teensy(serialPort):
-import struct
+    import struct
 #[ 165, 90, LENGTH(101),
 # Actual Torque L, Actual Torque R, Knee Angle L, Knee Angle R
 # LT angX, LT angY, LT angZ, LT gyX, LT gyY, LT gyZ, LT acX, LT acY, LT acZ
