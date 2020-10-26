@@ -48,9 +48,9 @@ def receive_from_teensy(serialPort):
     firstCharInt = struct.unpack('B', firstChar)
     
     if (firstCharInt[0] == 165):
-        print("READ FIRST CHAR")
         secondChar = serialPort.read() #Byte 2
-        if (secondChar == 90):
+        secondCharInt = struct.unpack('B', secondChar)
+        if (secondCharInt[0] == 90):
             
             dataSize = serialPort.read() #Byte 3
             dataSizeInt = struct.unpack('B',dataSize)
