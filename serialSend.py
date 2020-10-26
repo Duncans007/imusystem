@@ -59,7 +59,7 @@ def receive_from_teensy(serialPort):
             
 #THIS IS THE NEW BIT INCASE THERE ARE ERRORS
 #--------------------------------------------------------
-            for x in range((dataSize - 3)/2):
+            for x in range((dataSizeInt - 3)/2):
                 loByte = serialPort.read()
                 hiByte = serialPort.read()
                 recArray += struct.unpack('<h', loByte + hiByte)
