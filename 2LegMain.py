@@ -36,7 +36,8 @@ global teensySend, teensyPort
 ip = "localhost"
 port = 6565
 
-nucSend = True
+nucSend = False
+nucSendTest = True
 intelNUCport = "/dev/ttyUSB0"
 intelNUCbaud = 115200
 
@@ -340,7 +341,7 @@ def data_handler(address, *args):
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         outputString += f"\n"
 		
-        if not nucSend:
+        if not nucSendTest:
             print(outputString)
             
         fileDump.write(f"{outputString}")
@@ -379,7 +380,7 @@ def data_handler(address, *args):
 #Gyroscope = x * 0.07
 #Magnetometer = x * 0.00014
 
-        if nucSend:
+        if nucSendTest:
             serialArr = [time.time() - timeStart]
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [int(x.acX_norm/2), int(x.acY_norm/2), int(x.acZ_norm/2), int(x.gyX_norm/2), int(x.gyY_norm/2), int(x.gyZ_norm/2), int(x.zAngle * 80)]
@@ -393,7 +394,7 @@ def data_handler(address, *args):
                     
                     
             print(serialArr)
-            send_over_serial(serialArr, intelNUCserial)
+            #send_over_serial(serialArr, intelNUCserial)
                 
             
             
