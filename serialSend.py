@@ -44,7 +44,7 @@ def receive_from_teensy(serialPort):
     outputArray = []
     
     firstChar = serialPort.read() #Byte 1
-    
+    print(firstChar)
     if (firstChar == 165):
         secondChar = serialPort.read() #Byte 2
         if (secondChar == 90):
@@ -89,6 +89,8 @@ def send_to_teensy(torqueLeft, torqueRight, serialPort):
     sendStr += bytearray(struct.pack("<H", int(torqueLeft * 1000)))
     sendStr += bytearray(struct.pack("<H", int(torqueRight * 1000)))
     serialPort.write(sendStr)
+    print("SENDING")
+    print(sendStr)
 
     
     
