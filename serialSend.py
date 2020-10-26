@@ -44,9 +44,9 @@ def receive_from_teensy(serialPort):
     outputArray = []
     
     firstChar = serialPort.read() #Byte 1
+    print(struct.unpack('B', firstChar))
     
     if (firstChar == 165):
-        print(firstChar)
         secondChar = serialPort.read() #Byte 2
         if (secondChar == 90):
             
