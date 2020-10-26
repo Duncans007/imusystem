@@ -92,8 +92,6 @@ def send_to_teensy(torqueLeft, torqueRight, serialPort):
     sendStr += bytearray(struct.pack("<H", int(torqueLeft * 1000)))
     sendStr += bytearray(struct.pack("<H", int(torqueRight * 1000)))
     serialPort.write(sendStr)
-    print("SENDING")
-    print(sendStr)
 
     
     
@@ -127,6 +125,19 @@ def send_over_serial(msgArray, serialSend):
     
     #Encode with UTF-8 and send over serial.
     serialSend.write(sendStr)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 #Cuts number to "digits" number of decimal points.
