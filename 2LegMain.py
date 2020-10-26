@@ -341,7 +341,8 @@ if __name__ == "__main__":
             
             if receivedData:
                 send_to_teensy(1, 1, teensyPort)
-                send_from_teensy_over_serial(outputArray, intelNUCserial)
+                if intelNUCport != '':
+                    send_from_teensy_over_serial(outputArray, intelNUCserial)
     
     
     
