@@ -302,10 +302,6 @@ def data_handler(address, *args):
             send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------
 
-#TEENSY SEND-------------------------------------------
-        if teensySend:
-            send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
-#-----------------------------------------------------
 
 
 #Handles any OSC messages that aren't picked up by dataHandler
@@ -333,42 +329,62 @@ if __name__ == "__main__":
     if intelNUCport != '':
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
 	
-    #create objects for sensor operations and value storage.
-    objRThigh = sensorObject("RT")
-    objRShank = sensorObject("RS")
-    objRHeel = sensorObject("RH")
-	
-    objLThigh = sensorObject("LT")
-    objLShank = sensorObject("LS")
-    objLHeel = sensorObject("LH")
-	
-    objLowBack = sensorObject("LB")
     
-    #create gait detect objects for each leg
-    gaitDetectRight = gaitDetect()
-    gaitDetectLeft = gaitDetect()
-    kneelingDetect = kneelingDetection(NMKG, mass)
-	
-    #create lists that can be cycles through to iterate over every object, as well as create the file data header.
-    objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
-    stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
-    stringAxes = ["x","y","z"]
-    #stringSensors = ["gy","ac","mg"]
-    stringSensors = ["gy","ac"]
-    #Create formatted file header
-    fileDump = open("algDump.txt", "w+")
-    header = "time\ttimeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
-    for x in stringObjects:
-        for y in stringSensors:
-            for z in stringAxes:
-                header += f"{y}/{z}/{x}\t"
-        header += f"Angle/{x}\t"
-        header += f"\t"
-		
-    header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL"
-	
-    header += f"\n"
-    fileDump.write(header)
     
-    main_func(ip, port)
-    client.close()
+    
+    
+    
+    
+    if teensySend:
+        while teensySend:
+            send_to_teensy(1, 1, teensyPort)
+            receivedData, outputArray = receive_from_teensy(teensyPort)
+            if receivedData and (intelNUCport != ''):
+                send_from_teensy_over_serial(outputArray, intelNUCserial)
+    
+    
+    
+    
+    
+    
+    
+    else:
+        #create objects for sensor operations and value storage.
+        objRThigh = sensorObject("RT")
+        objRShank = sensorObject("RS")
+        objRHeel = sensorObject("RH")
+
+        objLThigh = sensorObject("LT")
+        objLShank = sensorObject("LS")
+        objLHeel = sensorObject("LH")
+
+        objLowBack = sensorObject("LB")
+
+        #create gait detect objects for each leg
+        gaitDetectRight = gaitDetect()
+        gaitDetectLeft = gaitDetect()
+        kneelingDetect = kneelingDetection(NMKG, mass)
+
+        #create lists that can be cycles through to iterate over every object, as well as create the file data header.
+        objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
+        stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
+        stringAxes = ["x","y","z"]
+        #stringSensors = ["gy","ac","mg"]
+        stringSensors = ["gy","ac"]
+        #Create formatted file header
+        fileDump = open("algDump.txt", "w+")
+        header = "time\ttimeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
+        for x in stringObjects:
+            for y in stringSensors:
+                for z in stringAxes:
+                    header += f"{y}/{z}/{x}\t"
+            header += f"Angle/{x}\t"
+            header += f"\t"
+
+        header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL"
+
+        header += f"\n"
+        fileDump.write(header)
+
+        main_func(ip, port)
+        client.close()
