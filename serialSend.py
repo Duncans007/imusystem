@@ -64,7 +64,7 @@ def receive_from_teensy(serialPort):
             for x in range(49):
                 loByte = serialPort.read()
                 hiByte = serialPort.read()
-                recArray += struct.unpack('<H', loByte + hiByte)
+                recArray += struct.unpack('<h', loByte + hiByte)
             
             
             receivedData = True
