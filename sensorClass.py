@@ -1,6 +1,9 @@
+import numpy as np
+
 class sensorObject:
-    def __init__(self):
+    def __init__(self, limbCode):
         import time
+        self.limbCode = limbCode
         #State Values from Sensors initialized at 0
         self.gyX = 0
         self.gyY = 0
@@ -26,6 +29,22 @@ class sensorObject:
         self.mgY_norm = 0
         self.mgZ_norm = 0
         
+        self.gyX_avg = 0
+        self.gyY_avg = 0
+        self.gyZ_avg = 0
+        
+        self.gyX_calib_arr = []
+        self.gyY_calib_arr = []
+        self.gyZ_calib_arr = []
+        
+        self.gyX_calib = 0
+        self.gyY_calib = 0
+        self.gyZ_calib = 0
+        
+        self.gyX_range = 4
+        self.gyY_range = 4
+        self.gyZ_range = 4
+        
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
         self.mgConversion = 0.00014
@@ -42,9 +61,7 @@ class sensorObject:
         self.wasStanding = False
         self.calibVal = .1  #How much gravity can affect angle during walking
         self.zAngle = 0
-        
-        self.gravAngleWindow = 0 #how high or low above the gravity vector does it have to be to get moved (still)
-        self.standingCalibVal = .1 #how much can the gravity vector affect the angle (still)
+        self.gravAngleWindow = 0
         
         #angularAcceleration() variables
         self.gyZarray = [0]
@@ -57,23 +74,64 @@ class sensorObject:
         self.gravAngleSmoothed = 0
         self.gravAngleArrayLimit = 5
 
+        
+        
+        
+        
+        
+        
 #--------------------------------------------------------------------------------------------------
 #Function to dump new values from sensors
-#Function not currently in use b/c it's clunky to implement (the positive/negative values for each axis differ on each sensor, dictionary implementation should be possible when you go to implement it. This should cut 50+ lines out of the original file.)
     def newValues(self, valueArray):
-        self.gyX = valueArray[0]
-        self.gyY = valueArray[1]
-        self.gyZ = valueArray[2]
+        outArray = []
         
-        self.acX = valueArray[3]
-        self.acY = valueArray[4]
-        self.acZ = valueArray[5]
+        if self.limbCode == "RT" or self.limbCode == "RS":
+            outArray = valueArray
+            
+        if self.limbCode == "RH":
+            outArray = (-valueArray[1], valueArray[0], valueArray[2], -valueArray[4], valueArray[3], valueArray[5], -valueArray[7], valueArray[6], valueArray[8])
+            
+        if self.limbCode == "LT" or self.limbCode == "LS":
+            outArray = (-valueArray[0], valueArray[1], -valueArray[2], -valueArray[3], valueArray[4], -valueArray[5], -valueArray[6], valueArray[7], -valueArray[8])
+            
+        if self.limbCode == "LH":
+            outArray = (-valueArray[1], -valueArray[0], -valueArray[2], -valueArray[4], -valueArray[3], -valueArray[5], -valueArray[7], -valueArray[6], -valueArray[8])
+            
+        if self.limbCode == "LB":
+            outArray = (-valueArray[1], valueArray[1], valueArray[0], -valueArray[5], valueArray[4], valueArray[3], -valueArray[8], valueArray[7], valueArray[6])
+            
+            
+            
+        self.gyX = outArray[0]
+        self.gyY = outArray[1]
+        self.gyZ = outArray[2]
         
-        self.mgX = valueArray[6]
-        self.mgY = valueArray[7]
-        self.mgZ = valueArray[8]
+        self.acX = outArray[3]
+        self.acY = outArray[4]
+        self.acZ = outArray[5]
+        
+        self.mgX = outArray[6]
+        self.mgY = outArray[7]
+        self.mgZ = outArray[8]
+        
+        self.conversions()
         
         
+#-------------------------------------------------------------------------------------------------- 
+#Run instead of angleCalc() for first X seconds of the script. Use if time < X: else:
+    def getCalib(self):
+        self.gyX_calib_arr.append(self.gyX)
+        self.gyY_calib_arr.append(self.gyY)
+        self.gyZ_calib_arr.append(self.gyZ)
+        
+        self.gyX_calib = sum(self.gyX_calib_arr)/len(self.gyX_calib_arr)
+        self.gyY_calib = sum(self.gyY_calib_arr)/len(self.gyY_calib_arr)
+        self.gyZ_calib = sum(self.gyZ_calib_arr)/len(self.gyZ_calib_arr)
+
+        
+        
+        
+#--------------------------------------------------------------------------------------------------        
     def angularAccCalc(self):
         import time
         import numpy as np
@@ -95,21 +153,25 @@ class sensorObject:
         return self.angularAcceleration
 
     
+    
+    
+    
+    
+    
 #--------------------------------------------------------------------------------------------------    
 #Angle Calcluation function        
-    def angleCalc(self, gaitDetectObject):
+    def angleCalc(self):
         import time
         import numpy as np
         self.timeLastValue = self.currentTime
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
         
-        self.conversions()
         self.gravityVectorAngle()
         self.angularAccCalc()
         
 #Integrates gyroscope to get angle. Includes drift.
-        zAngleChange = self.gyZ * self.timeToRun
+        zAngleChange = (self.gyZ-self.gyZ_calib) * self.timeToRun
         
 #Keeps track of previous values. Used when standing is turned off to make up for the 4-5 frame delay.
         self.zAngleChangeArray.append(zAngleChange)
@@ -117,38 +179,19 @@ class sensorObject:
 #Limits number of previous values kept
         if len(self.zAngleChangeArray) > self.zAngleChangeArrayLimit:
             self.zAngleChangeArray.pop(0)
-    
-#When not standing
-        if gaitDetectObject.standing == False:
-        
-    #If was standing on the last frame, add the missed values stored in zAngleChangeArray
-            if self.wasStanding == True:
-                self.wasStanding = False
-                self.zAngle += np.sum(self.zAngleChangeArray)
-        
-    #Otherwise, add zAngleChange
-            else:
-                self.zAngle += zAngleChange
-                
-    #Drifts degree value towards 0 by 1/10th of a degree per frame.
-                if np.mean(self.zAngleArray) > self.gravAngleSmoothed:
-                    self.zAngle -= self.calibVal
-                elif np.mean(self.zAngleArray) < self.gravAngleSmoothed:
-                    self.zAngle += self.calibVal
-        
-    #If standing still, reset angle to zero over time
-        elif gaitDetectObject.standing == True:
-            if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
-                self.zAngle -= self.standingCalibVal
-                self.zAngle += zAngleChange
-            elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
-                self.zAngle += self.standingCalibVal
-                self.zAngle += zAngleChange
-            else:
-                pass
-    #Tracks if standing was true on last frame for zAngleChangeArray
-            self.wasStanding = True
             
+    #manually set perturbation range for now, later set using calibration function
+        if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)):
+            if (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)):
+                if (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
+                    proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 20
+                    if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
+                        self.zAngle -= proportionality
+                    elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
+                        self.zAngle += proportionality
+        
+        self.zAngle += zAngleChange
+        
     #Keeps short array of values. Not currently used.
         self.zAngleArray.append(self.zAngle)
     
@@ -156,6 +199,11 @@ class sensorObject:
             self.zAngleArray.pop(0)
             
         return self.zAngle
+    
+    
+    
+    
+    
     
 #--------------------------------------------------------------------------------------------------
 #Gravity vector calculations function
@@ -192,6 +240,12 @@ class sensorObject:
         self.gravAngleSmoothed = np.mean(self.gravAngleArray)
         
         
+        
+        
+        
+        
+        
+        
 #--------------------------------------------------------------------------------------------------
 #Function to streamline implementation of Alborz's new communication protocol while changing minimal code.
 #This object now has the original signed 16-bit integers from the Notochord added directly to it.
@@ -211,8 +265,8 @@ class sensorObject:
         self.mgZ_norm = self.mgZ
         
         self.gyX = self.gyX_norm * self.gyConversion
-        self.gyY = self.gyX_norm * self.gyConversion
-        self.gyZ = self.gyX_norm * self.gyConversion
+        self.gyY = self.gyY_norm * self.gyConversion
+        self.gyZ = self.gyZ_norm * self.gyConversion
         
         self.acX = self.acX * self.acConversion
         self.acY = self.acY * self.acConversion

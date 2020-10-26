@@ -190,130 +190,45 @@ def data_handler(address, *args):
         timeCurrent = time.time()
         timeToRun = timeCurrent - timeLastRun
         
-#Update data
-        rt_raw = passToAlgorithm['rt_raw']
-        rs_raw = passToAlgorithm['rs_raw']
-        rh_raw = passToAlgorithm['rh_raw']
-        lt_raw = passToAlgorithm['lt_raw']
-        ls_raw = passToAlgorithm['ls_raw']
-        lh_raw = passToAlgorithm['lh_raw']
-        b_raw  = passToAlgorithm['b_raw']
-        
-#Values are moved around to equalize the axes of the IMUs.
-#Does not put IMUs on a global coordinate system.
-#Only sets local axes to be the same for ease on analysis.
-		
-#Right Thigh - no flipped values
-        objRThigh.gyX = rt_raw[0]
-        objRThigh.gyY = rt_raw[1]
-        objRThigh.gyZ = rt_raw[2]
-                  
-        objRThigh.acX = rt_raw[3]
-        objRThigh.acY = rt_raw[4]
-        objRThigh.acZ = rt_raw[5]
-                  
-        objRThigh.mgX = rt_raw[6]
-        objRThigh.mgY = rt_raw[7]
-        objRThigh.mgZ = rt_raw[8]
-        
-#Right Shank - no flipped values
-        objRShank.gyX = rs_raw[0]
-        objRShank.gyY = rs_raw[1]
-        objRShank.gyZ = rs_raw[2]
-                  
-        objRShank.acX = rs_raw[3]
-        objRShank.acY = rs_raw[4]
-        objRShank.acZ = rs_raw[5]
-                  
-        objRShank.mgX = rs_raw[6]
-        objRShank.mgY = rs_raw[7]
-        objRShank.mgZ = rs_raw[8]
-        
-#Right Heel - X and Y axes flipped, X negated
-        objRHeel.gyX = -rh_raw[1]
-        objRHeel.gyY = rh_raw[0]
-        objRHeel.gyZ = rh_raw[2]
-        
-        objRHeel.acX = -rh_raw[4]
-        objRHeel.acY = rh_raw[3]
-        objRHeel.acZ = rh_raw[5]
-        
-        objRHeel.mgX = -rh_raw[7]
-        objRHeel.mgY = rh_raw[6]
-        objRHeel.mgZ = rh_raw[8]
-		
-#Left Thigh - X and Z values negated
-        objLThigh.gyX = -lt_raw[0]
-        objLThigh.gyY =  lt_raw[1]
-        objLThigh.gyZ = -lt_raw[2]
-                               
-        objLThigh.acX = -lt_raw[3]
-        objLThigh.acY =  lt_raw[4]
-        objLThigh.acZ = -lt_raw[5]
-                               
-        objLThigh.mgX = -lt_raw[6]
-        objLThigh.mgY =  lt_raw[7]
-        objLThigh.mgZ = -lt_raw[8]
-        
-#Left Shank - X and Z values negated		
-        objLShank.gyX = -ls_raw[0]
-        objLShank.gyY =  ls_raw[1]
-        objLShank.gyZ = -ls_raw[2]
-                               
-        objLShank.acX = -ls_raw[3]
-        objLShank.acY =  ls_raw[4]
-        objLShank.acZ = -ls_raw[5]
-                               
-        objLShank.mgX = -ls_raw[6]
-        objLShank.mgY =  ls_raw[7]
-        objLShank.mgZ = -ls_raw[8]
-                  
-#Left Heel - X and Y axes flipped, then X, Y, and Z values negated.
-        objLHeel.gyX = -lh_raw[1]
-        objLHeel.gyY = -lh_raw[0]
-        objLHeel.gyZ = -lh_raw[2]
-                              
-        objLHeel.acX = -lh_raw[4]
-        objLHeel.acY = -lh_raw[3]
-        objLHeel.acZ = -lh_raw[5]
-                              
-        objLHeel.mgX = -lh_raw[7]
-        objLHeel.mgY = -lh_raw[6]
-        objLHeel.mgZ = -lh_raw[8]
-        
-#Lower Back - X and Z values flipped, X value negated
-        objLowBack.gyX = -b_raw[2]
-        objLowBack.gyY =  b_raw[1]
-        objLowBack.gyZ =  b_raw[0]
-                       
-        objLowBack.acX = -b_raw[5]
-        objLowBack.acY =  b_raw[4]
-        objLowBack.acZ =  b_raw[3]
-                   
-        objLowBack.mgX = -b_raw[8]
-        objLowBack.mgY =  b_raw[7]
-        objLowBack.mgZ =  b_raw[6]
+#Update data        
+        objRThigh.newValues(passToAlgorithm['rt_raw'])
+        objRShank.newValues(passToAlgorithm['rs_raw'])
+        objRHeel.newValues(passToAlgorithm['rh_raw'])
+        objLThigh.newValues(passToAlgorithm['lt_raw'])
+        objLShank.newValues(passToAlgorithm['ls_raw'])
+        objLHeel.newValues(passToAlgorithm['lh_raw'])
+        objLowBack.newValues(passToAlgorithm['b_raw'])
         
         
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
-#Right Leg Angle Approximations
-        objRThigh.angleCalc(gaitDetectRight)
-        objRShank.angleCalc(gaitDetectRight)
-        objRHeel.angleCalc(gaitDetectRight)
 
-#Left Leg Angle Approximations
-        objLThigh.angleCalc(gaitDetectLeft)
-        objLShank.angleCalc(gaitDetectLeft)
-        objLHeel.angleCalc(gaitDetectLeft)
-	
-        objLowBack.conversions()
+        if (time.time() - timeStart) < 1:
+            objRThigh.getCalib()
+            objRShank.getCalib()
+            objRHeel.getCalib()
+
+            objLThigh.getCalib()
+            objLShank.getCalib()
+            objLHeel.getCalib()
+
+        else:
+    #Right Leg Angle Approximations
+            objRThigh.angleCalc()
+            objRShank.angleCalc()
+            objRHeel.angleCalc()
+
+    #Left Leg Angle Approximations
+            objLThigh.angleCalc()
+            objLShank.angleCalc()
+            objLHeel.angleCalc()
+
 #-----------------------------------------------------------
 #NO CALCULATIONS BEFORE ANGLECALC() OTHERWISE THEY WILL RUN USING RAW DATA INSTEAD OF PROPER UNITS
 	
 #Right and Left Gait Detection
-        gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ)
-        gaitDetectLeft.testVal(objLShank.gyZ, objLHeel.gyZ)
+        gaitDetectRight.testVal(objRThigh.gyZ, objRShank.gyZ, objRHeel.gyZ)
+        gaitDetectLeft.testVal(objLThigh.gyZ, objLShank.gyZ, objLHeel.gyZ)
 
 #Calculates Slip Indicator from Trkov IFAC 2017 paper
         slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), hip_heel_length)
@@ -419,15 +334,15 @@ if __name__ == "__main__":
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
 	
     #create objects for sensor operations and value storage.
-    objRThigh = sensorObject()
-    objRShank = sensorObject()
-    objRHeel = sensorObject()
+    objRThigh = sensorObject("RT")
+    objRShank = sensorObject("RS")
+    objRHeel = sensorObject("RH")
 	
-    objLThigh = sensorObject()
-    objLShank = sensorObject()
-    objLHeel = sensorObject()
+    objLThigh = sensorObject("LT")
+    objLShank = sensorObject("LS")
+    objLHeel = sensorObject("LH")
 	
-    objLowBack = sensorObject()
+    objLowBack = sensorObject("LB")
     
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
