@@ -3,69 +3,72 @@ def ardno(msg):
     ser.write(b"{}".format(msg))
 
     
+    
+def send_from_teensy_over_serial(msgArray, serialSend):
+    import struct
+    LENGTH = 101
+#IMPORTANT: msgArray NEW FORMAT FOR DATA COLLECTION IN SIMULINK WITH DATA FROM CUNY IMUS
+#[ 165, 90, LENGTH(101),
+# Actual Torque L, Actual Torque R, Knee Angle L, Knee Angle R
+# LT angX, LT angY, LT angZ, LT gyX, LT gyY, LT gyZ, LT acX, LT acY, LT acZ
+# RT angX, RT angY, RT angZ, RT gyX, RT gyY, RT gyZ, RT acX, RT acY, RT acZ
+# LS angX, LS angY, LS angZ, LS gyX, LS gyY, LS gyZ, LS acX, LS acY, LS acZ
+# RS angX, RS angY, RS angZ, RS gyX, RS gyY, RS gyZ, RS acX, RS acY, RS acZ
+# BB angX, BB angY, BB angZ, BB gyX, BB gyY, BB gyZ, BB acX, BB acY, BB acZ]
+
+
+
+    sendStr = bytearray(struct.pack("B", 165))
+    sendStr += bytearray(struct.pack("B", 90))
+    sendStr += bytearray(struct.pack("B", LENGTH))
+    
+    for enum, x in enumerate(msgArray):
+        sendStr += bytearray(struct.pack("<h", x))
+    
+    serialSend.write(sendStr)
+    
+    
+    
+    
+    
 def receive_from_teensy(serialPort):
+    import struct
+#[ 165, 90, LENGTH(101),
+# Actual Torque L, Actual Torque R, Knee Angle L, Knee Angle R
+# LT angX, LT angY, LT angZ, LT gyX, LT gyY, LT gyZ, LT acX, LT acY, LT acZ
+# RT angX, RT angY, RT angZ, RT gyX, RT gyY, RT gyZ, RT acX, RT acY, RT acZ
+# LS angX, LS angY, LS angZ, LS gyX, LS gyY, LS gyZ, LS acX, LS acY, LS acZ
+# RS angX, RS angY, RS angZ, RS gyX, RS gyY, RS gyZ, RS acX, RS acY, RS acZ
+# BB angX, BB angY, BB angZ, BB gyX, BB gyY, BB gyZ, BB acX, BB acY, BB acZ]
+
     receivedData = False
     outputArray = []
     
     firstChar = serialPort.read() #Byte 1
+    firstCharInt = struct.unpack('B', firstChar)
     
-    if (firstChar == 165):
+    if (firstCharInt[0] == 165):
         secondChar = serialPort.read() #Byte 2
-        if (secondChar == 90):
+        secondCharInt = struct.unpack('B', secondChar)
+        if (secondCharInt[0] == 90):
+            
             dataSize = serialPort.read() #Byte 3
             dataSizeInt = struct.unpack('B',dataSize)
             
-            LTorqueLO = serialPort.read() #Byte 4
-            LTorqueHI = serialPort.read() #Byte 5
-            LTorque = struct.unpack('<h', LTorqueLO + LTorqueHI)
+            recArray = []
             
-            RTorqueLO = serialPort.read() #Byte 6
-            RTorqueHI = serialPort.read() #Byte 7
-            RTorque = struct.unpack('<h', RTorqueLO + RTorqueHI)
             
-            LKneeAngleLO = serialPort.read() #Byte 8
-            LKneeAngleHI = serialPort.read() #Byte 9
-            LKneeAngle = struct.unpack('<h', LKneeAngleLO + LKneeAngleHI)
             
-            RKneeAngleLO = serialPort.read() #Byte 10
-            RKneeAngleHI = serialPort.read() #Byte 11
-            RKneeAngle = struct.unpack('<h', RKneeAngleLO + RKneeAngleHI)
+#THIS IS THE NEW BIT INCASE THERE ARE ERRORS
+#--------------------------------------------------------
+            for x in range(49):
+                loByte = serialPort.read()
+                hiByte = serialPort.read()
+                recArray += struct.unpack('<h', loByte + hiByte)
             
-            LTAngleLO = serialPort.read() #Byte 12
-            LTAngleHI = serialPort.read() #Byte 13
-            LTAngle = struct.unpack('<h', LTAngleLO + LTAngleHI)
             
-            RTAngleLO = serialPort.read() #Byte 14
-            RTAngleHI = serialPort.read() #Byte 15
-            RTAngle = struct.unpack('<h', RTAngleLO + RTAngleHI)
-            
-            LSAngleLO = serialPort.read() #Byte 16
-            LSAngleHI = serialPort.read() #Byte 17
-            LSAngle = struct.unpack('<h', LSAngleLO + LSAngleHI)
-            
-            RSAngleLO = serialPort.read() #Byte 18
-            RSAngleHI = serialPort.read() #Byte 19
-            RSAngle = struct.unpack('<h', RSAngleLO + RSAngleHI)
-            
-            LTangVLO = serialPort.read() #Byte 20
-            LTangVHI = serialPort.read() #Byte 21
-            LTangV = struct.unpack('<h', LTangVLO + LTangVHI)
-            
-            RTangVLO = serialPort.read() #Byte 22
-            RTangVHI = serialPort.read() #Byte 23
-            RTangV = struct.unpack('<h', RTangVLO + RTangVHI)
-            
-            LSangVLO = serialPort.read() #Byte 24
-            LSangVHI = serialPort.read() #Byte 25
-            LSangV = struct.unpack('<h', LSangVLO + LSangVHI)
-            
-            RSangVLO = serialPort.read() #Byte 26
-            RSangVHI = serialPort.read() #Byte 27
-            RSangV = struct.unpack('<h', RSangVLO + RSangVHI)
-            
-            outputArray = [LTorque, RTorque, LKneeAngle, RKneeAngle, LTAngle, RTAngle, LSAngle, RSAngle, LTangV, RTangV, LSangV, RSangV]
             receivedData = True
-            print(outputArray)
+            print(recArray)
     
     return receivedData, outputArray
     
@@ -122,6 +125,19 @@ def send_over_serial(msgArray, serialSend):
     
     #Encode with UTF-8 and send over serial.
     serialSend.write(sendStr)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
 #Cuts number to "digits" number of decimal points.
