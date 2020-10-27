@@ -52,8 +52,14 @@ height = 180 #cm
 #-----------------------------------#
 
 
-
-
+if str(sys.argv)[1] == True:
+    nucSend = True
+if str(sys.argv)[1] == False:
+    nucSend = False
+if str(sys.argv)[2] == True:
+    nucSend = True
+if str(sys.argv)[2] == False:
+    nucSend = False
 
 
 
