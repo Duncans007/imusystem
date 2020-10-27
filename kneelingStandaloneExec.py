@@ -36,7 +36,6 @@ wFile = open('algDump.txt', 'w+')
 for i in range(count):
     outputStr = ''
     y = data[i].split()
-    print(x)
     for enum, x in enumerate([objLThigh, objRThigh, objLShank, objRShank]):
         x.gyX = float(y[enum])
         x.gyY = float(y[enum + 1])
@@ -64,6 +63,7 @@ for i in range(count):
 
     kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank)
     outputStr = f"{objLThigh.zAngle}\t{objRThigh.zAngle}\t{objLShank.zAngle}\t{objRShank.zAngle}\t{kneelingTorqueEstimationL}\t{kneelingTorqueEstimationR}\t{kneeAngleL}\t{kneeAngleR}\t{legForward}\n"
+    print(outputStr)
     wFile.write(outputStr)
     time.sleep(.02)
 wFile.close()
