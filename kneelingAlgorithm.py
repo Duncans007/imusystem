@@ -68,8 +68,8 @@ class kneelingDetection:
         self.shankLAngV  = lShank.gyZ
         
         #Knee angles calculated with 0 as straight here
-        self.kneeAngleR = 180 - (self.thighAngleR - self.shankAngleR)
-        self.kneeAngleL = 180 - (self.thighAngleL - self.shankAngleL)
+        self.kneeAngleR = self.thighAngleR - self.shankAngleR
+        self.kneeAngleL = self.thighAngleL - self.shankAngleL
         
         self.kneelingDetection()
         
@@ -101,14 +101,14 @@ class kneelingDetection:
         
         
         if (self.torqueWindow("RIGHT")):
-            torqueOutputR = (self.A * (180-kneeAngleR)) + (self.B * thighGyR) + self.C
+            torqueOutputR = (self.A * (kneeAngleR)) + (self.B * thighGyR) + self.C
             torqueOutputR = torqueOutputR * self.NMKG * self.mass * (12/15)
         else:
             torqueOutputR = 0
         
         
         if (self.torqueWindow("LEFT")):
-            torqueOutputL = (self.A * (180-kneeAngleL)) + (self.B * thighGyL) + self.C
+            torqueOutputL = (self.A * (kneeAngleL)) + (self.B * thighGyL) + self.C
             torqueOutputL = torqueOutputL * self.NMKG * self.mass * (12/15)
         else:
             torqueOutputL = 0
@@ -127,7 +127,7 @@ class kneelingDetection:
     
     
     def torqueWindow(self, leg):
-        #Knee angles oriented with staight leg at 180 degrees
+        #Knee angles oriented with staight leg at 0 degrees
         #leg = "RIGHT" or "LEFT"
         import time
         
@@ -143,7 +143,7 @@ class kneelingDetection:
             localKneeAngle = (self.kneeAngleL + self.kneeAngleR) / 2
         
         #self.run_loop is a single-trip-switch, that shuts off torque after 
-        if time.time() - self.timeLastKneeling < .6 and localKneeAngle < 170 and self.run_loop:
+        if time.time() - self.timeLastKneeling < .6 and localKneeAngle > 10 and self.run_loop:
             self.run_loop = True
         else:
             self.run_loop = False
@@ -232,7 +232,7 @@ class kneelingDetection:
         
     #Test if angle is past a rather large and easy to determine threshold (60 degrees from straight)
     #re-work to use sum of angles for a closer detection
-        if (self.kneeAngleL < 120) and (self.kneeAngleR < 120):
+        if (self.kneeAngleL > 60) and (self.kneeAngleR > 60):
             self.isKneeling = True
         else:
             self.isKneeling = False
@@ -289,7 +289,7 @@ class kneelingDetection:
             #((self.Rcounter >=1 and self.Lcounter >=1) and self.legForward == "2")
             
         if self.startingToStand == True:
-            if (self.legWasForward == "R" and self.kneeAngleR > 160) or (self.legWasForward == "L" and self.kneeAngleL > 160):
+            if (self.legWasForward == "R" and self.kneeAngleR > 20) or (self.legWasForward == "L" and self.kneeAngleL < 20):
                 self.startingToStand = False
                 self.legWasForward = "X"
             #self.legForward += "s"
