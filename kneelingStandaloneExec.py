@@ -37,13 +37,13 @@ for i in range(count):
     outputStr = ''
     x = data[i].split()
     print(x)
-    for enum, x in enumerate([objLThigh, objRThigh, objLShank, objRShank]):
-        x.gyX = float(x[enum])
-        x.gyY = float(x[enum + 1])
-        x.gyZ = float(x[enum + 2])
-        x.acX = float(x[enum + 3])
-        x.acY = float(x[enum + 4])
-        x.acZ = float(x[enum + 5])
+    for enum, y in enumerate([objLThigh, objRThigh, objLShank, objRShank]):
+        x.gyX = float(y[enum])
+        x.gyY = float(y[enum + 1])
+        x.gyZ = float(y[enum + 2])
+        x.acX = float(y[enum + 3])
+        x.acY = float(y[enum + 4])
+        x.acZ = float(y[enum + 5])
         
     if i < 50:
         objRThigh.getCalib()
