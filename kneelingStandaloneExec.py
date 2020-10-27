@@ -36,13 +36,33 @@ wFile = open('algDump.txt', 'w+')
 for i in range(count):
     outputStr = ''
     y = data[i].split()
-    for enum, x in enumerate([objLThigh, objRThigh, objLShank, objRShank]):
-        x.gyX = float(y[enum])
-        x.gyY = float(y[enum + 1])
-        x.gyZ = float(y[enum + 2])
-        x.acX = float(y[enum + 3])
-        x.acY = float(y[enum + 4])
-        x.acZ = float(y[enum + 5])
+    objLThigh.gyX = float(y[0])
+    objLThigh.gyY = float(y[1])
+    objLThigh.gyZ = float(y[2])
+    objLThigh.acX = float(y[3])
+    objLThigh.acY = float(y[4])
+    objLThigh.acZ = float(y[5])
+
+    objRThigh.gyX = float(y[6])
+    objRThigh.gyY = float(y[7])
+    objRThigh.gyZ = float(y[8])
+    objRThigh.acX = float(y[9])
+    objRThigh.acY = float(y[10])
+    objRThigh.acZ = float(y[11])
+
+    objLShank.gyX = float(y[12])
+    objLShank.gyY = float(y[13])
+    objLShank.gyZ = float(y[14])
+    objLShank.acX = float(y[15])
+    objLShank.acY = float(y[16])
+    objLShank.acZ = float(y[17])
+
+    objRShank.gyX = float(y[18])
+    objRShank.gyY = float(y[19])
+    objRShank.gyZ = float(y[20])
+    objRShank.acX = float(y[21])
+    objRShank.acY = float(y[22])
+    objRShank.acZ = float(y[23])
         
     if i < 50:
         objRThigh.getCalib()
