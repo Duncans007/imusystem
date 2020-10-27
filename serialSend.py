@@ -4,30 +4,7 @@ def ardno(msg):
 
     
     
-def send_from_teensy_over_serial(msgArray, serialSend):
-    import struct
-    LENGTH = 101
-#IMPORTANT: msgArray NEW FORMAT FOR DATA COLLECTION IN SIMULINK WITH DATA FROM CUNY IMUS
-#[ 165, 90, LENGTH(101),
-# Actual Torque L, Actual Torque R, Knee Angle L, Knee Angle R
-# LT angX, LT angY, LT angZ, LT gyX, LT gyY, LT gyZ, LT acX, LT acY, LT acZ
-# RT angX, RT angY, RT angZ, RT gyX, RT gyY, RT gyZ, RT acX, RT acY, RT acZ
-# LS angX, LS angY, LS angZ, LS gyX, LS gyY, LS gyZ, LS acX, LS acY, LS acZ
-# RS angX, RS angY, RS angZ, RS gyX, RS gyY, RS gyZ, RS acX, RS acY, RS acZ
-# BB angX, BB angY, BB angZ, BB gyX, BB gyY, BB gyZ, BB acX, BB acY, BB acZ]
 
-
-
-    sendStr = bytearray(struct.pack("B", 165))
-    sendStr += bytearray(struct.pack("B", 90))
-    sendStr += bytearray(struct.pack("B", LENGTH))
-    
-    for enum, x in enumerate(msgArray):
-        sendStr += bytearray(struct.pack("<h", x))
-    
-    serialSend.write(sendStr)
-    
-    
     
     
     
@@ -68,7 +45,6 @@ def receive_from_teensy(serialPort):
             
             
             receivedData = True
-            print(recArray)
     
     return receivedData, outputArray
     
