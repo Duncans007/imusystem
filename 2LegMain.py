@@ -52,7 +52,6 @@ NMKG = 0.15
 height = 180 #cm
 #-----------------------------------#
 
-print((sys.argv)[1])
 if str((sys.argv)[1]) == "true":
     nucSend = True
 if str((sys.argv)[1]) == "false":
@@ -155,6 +154,7 @@ def data_handler(address, *args):
     global teensySend, teensyPort
     global parent_conn
     
+    print("TEST")
     if teensySend:
         cuny_data = parent_conn.recv()
     
