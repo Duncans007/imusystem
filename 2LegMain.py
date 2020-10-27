@@ -342,7 +342,7 @@ def data_handler(address, *args):
         outputString += f"\n"
 		
         if not nucSendTest:
-            print(outputString)
+            #print(outputString)
             
         fileDump.write(f"{outputString}")
 		
@@ -389,12 +389,12 @@ def data_handler(address, *args):
             
             
             if teensySend:
-                print(cuny_data)
+                #print(cuny_data)
                 #for key, value in cuny_data.items():
                     #serialArr += value
                     
                     
-            print(serialArr)
+            #print(serialArr)
             #send_over_serial(serialArr, intelNUCserial)
                 
             
