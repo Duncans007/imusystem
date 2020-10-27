@@ -53,13 +53,13 @@ height = 180 #cm
 #-----------------------------------#
 
 print((sys.argv)[1])
-if str(sys.argv)[1] == "true":
+if str((sys.argv)[1]) == "true":
     nucSend = True
-if str(sys.argv)[1] == "false":
+if str((sys.argv)[1]) == "false":
     nucSend = False
-if str(sys.argv)[2] == "true":
+if str((sys.argv)[2]) == "true":
     teensySend = True
-if str(sys.argv)[2] == "false":
+if str((sys.argv)[2]) == "false":
     teensySend = False
 
 
