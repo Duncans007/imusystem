@@ -17,6 +17,7 @@ import serial
 import time
 from math import sin, cos, sqrt, atan2
 import numpy as np
+import sys
 
 #These will all be passed, rather than global eventually.
 global timeCurrent, varType, timeStart
@@ -52,13 +53,13 @@ height = 180 #cm
 #-----------------------------------#
 
 
-if str(sys.argv)[1] == True:
+if str(sys.argv)[1] == "True":
     nucSend = True
-if str(sys.argv)[1] == False:
+if str(sys.argv)[1] == "False":
     nucSend = False
-if str(sys.argv)[2] == True:
+if str(sys.argv)[2] == "True":
     nucSend = True
-if str(sys.argv)[2] == False:
+if str(sys.argv)[2] == "False":
     nucSend = False
 
 
