@@ -37,10 +37,10 @@ for i in range(count):
     outputStr = ''
     x = data[i].split()
     print(x)
-    objLThigh.newValues([int(x[1]), int(x[2]), int(x[3]), int(x[4]), int(x[5]), int(x[6]), 0, 0, 0])
-    objRThigh.newValues([int(x[7]), int(x[8]), int(x[9]), int(x[10]), int(x[11]), int(x[12]), 0, 0, 0])
-    objLShank.newValues([int(x[13]), int(x[14]), int(x[15]), int(x[16]), int(x[17]), int(x[18]), 0, 0, 0])
-    objRShank.newValues([int(x[19]), int(x[20]), int(x[21]), int(x[22]), int(x[23]), int(x[24]), 0, 0, 0])
+    objLThigh.newValues([float(x[1]), float(x[2]), float(x[3]), float(x[4]), float(x[5]), float(x[6]), 0, 0, 0])
+    objRThigh.newValues([float(x[7]), float(x[8]), float(x[9]), float(x[10]), float(x[11]), float(x[12]), 0, 0, 0])
+    objLShank.newValues([float(x[13]), float(x[14]), float(x[15]), float(x[16]), float(x[17]), float(x[18]), 0, 0, 0])
+    objRShank.newValues([float(x[19]), float(x[20]), float(x[21]), float(x[22]), float(x[23]), float(x[24]), 0, 0, 0])
     
     if i < 100:
         objRThigh.getCalib()
