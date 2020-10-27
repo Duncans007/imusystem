@@ -390,8 +390,8 @@ def data_handler(address, *args):
             
             if teensySend:
                 for i in cuny_data.items():
-                    print(i)
-                    print(type(i))
+                    print(i[1])
+                    print(type(i[1]))
                 #for key, value in cuny_data.items():
                     #serialArr += value
                     
