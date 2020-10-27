@@ -35,9 +35,9 @@ wFile = open('algDump.txt', 'w+')
 
 for i in range(count):
     outputStr = ''
-    x = data[i].split()
+    y = data[i].split()
     print(x)
-    for enum, y in enumerate([objLThigh, objRThigh, objLShank, objRShank]):
+    for enum, x in enumerate([objLThigh, objRThigh, objLShank, objRShank]):
         x.gyX = float(y[enum])
         x.gyY = float(y[enum + 1])
         x.gyZ = float(y[enum + 2])
