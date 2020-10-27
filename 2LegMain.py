@@ -389,8 +389,9 @@ def data_handler(address, *args):
             
             
             if teensySend:
-                print(cuny_data["ActTqL"])
-                print(type(cuny_data["ActTqL"]))
+                for i in cuny_data.iteritems:
+                    print(i)
+                    print(type(i))
                 #for key, value in cuny_data.items():
                     #serialArr += value
                     
