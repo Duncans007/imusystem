@@ -37,11 +37,14 @@ for i in range(count):
     outputStr = ''
     x = data[i].split()
     print(x)
-    objLThigh.newValues([float(x[0]), float(x[1]), float(x[2]), float(x[3]), float(x[4]), float(x[5]), 0, 0, 0])
-    objRThigh.newValues([float(x[6]), float(x[7]), float(x[8]), float(x[9]), float(x[10]), float(x[11]), 0, 0, 0])
-    objLShank.newValues([float(x[12]), float(x[13]), float(x[14]), float(x[15]), float(x[16]), float(x[17]), 0, 0, 0])
-    objRShank.newValues([float(x[18]), float(x[19]), float(x[20]), float(x[21]), float(x[22]), float(x[23]), 0, 0, 0])
-    
+    for enum, x in enumerate([objLThigh, objRThigh, objLShank, objRShank]):
+        x.gyX = float(x[enum])
+        x.gyY = float(x[enum + 1])
+        x.gyZ = float(x[enum + 2])
+        x.acX = float(x[enum + 3])
+        x.acY = float(x[enum + 4])
+        x.acZ = float(x[enum + 5])
+        
     if i < 50:
         objRThigh.getCalib()
         objRShank.getCalib()
