@@ -390,13 +390,10 @@ def data_handler(address, *args):
             
             if teensySend:
                 for i in cuny_data.items():
-                    print(i[1])
-                    print(type(i[1]))
-                #for key, value in cuny_data.items():
-                    #serialArr += value
+                    serialArr += i[1]
                     
                     
-            #print(serialArr)
+            print(serialArr)
             #send_over_serial(serialArr, intelNUCserial)
                 
             
