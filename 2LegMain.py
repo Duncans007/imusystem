@@ -52,15 +52,15 @@ NMKG = 0.15
 height = 180 #cm
 #-----------------------------------#
 
-
+print(sys.argv)[1]
 if str(sys.argv)[1] == "true":
     nucSend = True
 if str(sys.argv)[1] == "false":
     nucSend = False
 if str(sys.argv)[2] == "true":
-    nucSend = True
+    teensySend = True
 if str(sys.argv)[2] == "false":
-    nucSend = False
+    teensySend = False
 
 
 
