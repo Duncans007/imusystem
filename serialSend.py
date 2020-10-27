@@ -87,7 +87,7 @@ def send_over_serial(msgArray, serialSend):
 #Accelerometer = x * 0.002394
 #Gyroscope = x * 0.07
 
-    if len(msgArray) > 60:
+    if len(msgArray) < 60:
         sendStr = bytearray(struct.pack("B", 113))
     else:
         sendStr = bytearray(struct.pack("B", 113 + 98))
