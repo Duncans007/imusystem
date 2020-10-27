@@ -341,7 +341,7 @@ def data_handler(address, *args):
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         outputString += f"\n"
 		
-        if not nucSendTest:
+        #if not nucSendTest:
             #print(outputString)
             
         fileDump.write(f"{outputString}")
