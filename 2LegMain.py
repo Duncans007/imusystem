@@ -38,7 +38,8 @@ ip = "localhost"
 port = 6565
 
 nucSend = True
-intelNUCport = "/dev/ttyUSB0"
+#intelNUCport = "/dev/ttyUSB0"
+intelNUCport = "/dev/ttyS0"
 intelNUCbaud = 115200
 
 teensySend = True
