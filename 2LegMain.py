@@ -53,13 +53,13 @@ height = 180 #cm
 #-----------------------------------#
 
 
-if str(sys.argv)[1] == "True":
+if str(sys.argv)[1] == "true":
     nucSend = True
-if str(sys.argv)[1] == "False":
+if str(sys.argv)[1] == "false":
     nucSend = False
-if str(sys.argv)[2] == "True":
+if str(sys.argv)[2] == "true":
     nucSend = True
-if str(sys.argv)[2] == "False":
+if str(sys.argv)[2] == "false":
     nucSend = False
 
 
