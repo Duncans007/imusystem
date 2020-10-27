@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Both arguments are True/False, capital first letter. First is NUC. Second is Teensy."
+echo "Arg1: NUC, Arg2: Teensy. Both arguments are true/false all lowercase."
 
 sleep 1
 
