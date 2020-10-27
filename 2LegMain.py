@@ -388,8 +388,8 @@ def data_handler(address, *args):
             #serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationR * 500)]
             
             
-            #if teensySend:
-                #print(cuny_data)
+            if teensySend:
+                print(cuny_data)
                 #for key, value in cuny_data.items():
                     #serialArr += value
                     
