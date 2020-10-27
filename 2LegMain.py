@@ -61,6 +61,8 @@ if str((sys.argv)[2]) == "true":
     teensySend = True
 if str((sys.argv)[2]) == "false":
     teensySend = False
+print(nucSend)
+print(teensySend)
 
 
 
