@@ -52,7 +52,7 @@ NMKG = 0.15
 height = 180 #cm
 #-----------------------------------#
 
-print(sys.argv)[1]
+print((sys.argv)[1])
 if str(sys.argv)[1] == "true":
     nucSend = True
 if str(sys.argv)[1] == "false":
