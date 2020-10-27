@@ -34,8 +34,8 @@ global teensySend, teensyPort
 ip = "localhost"
 port = 6565
 
-intelNUCport = '/dev/ttyS0'
-intelNUCbaud = 115200
+intelNUCport = '/dev/ttyUSB0'
+intelNUCbaud = 921600
 
 teensySend = False
 if teensySend:
