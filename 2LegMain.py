@@ -155,7 +155,7 @@ def data_handler(address, *args):
     global teensySend, teensyPort
     global parent_conn
     
-    print("TEST")
+    print("LOOPSTART")
     if teensySend:
         cuny_data = parent_conn.recv()
     
@@ -432,6 +432,7 @@ def default_handler(address, *args):
     
 #Sets up OSC server
 def main_func(ip, port):   
+    print("main_func")
     dispatcher = Dispatcher()
     dispatcher.map("/Chordata/r*", data_handler)
     dispatcher.set_default_handler(default_handler)
@@ -449,7 +450,7 @@ def main_func(ip, port):
     
 
 if __name__ == "__main__":    
-    
+    print("started")
     #Variable initializations
     #serial object for NUC. Comment out if not used.
     if nucSend:
