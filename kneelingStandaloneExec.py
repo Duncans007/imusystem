@@ -42,7 +42,7 @@ for i in range(count):
     objLShank.newValues([float(x[12]), float(x[13]), float(x[14]), float(x[15]), float(x[16]), float(x[17]), 0, 0, 0])
     objRShank.newValues([float(x[18]), float(x[19]), float(x[20]), float(x[21]), float(x[22]), float(x[23]), 0, 0, 0])
     
-    if i < 100:
+    if i < 50:
         objRThigh.getCalib()
         objRShank.getCalib()
 
@@ -60,7 +60,7 @@ for i in range(count):
 
 
     kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank)
-    outputStr = f"{kneelingTorqueEstimationL}\t{kneelingTorqueEstimationR}\t{kneeAngleL}\t{kneeAngleR}\t{legForward}\n"
+    outputStr = f"{objLThigh.zAngle}\t{objRThigh.zAngle}\t{objLShank.zAngle}\t{objRShank.zAngle}\t{kneelingTorqueEstimationL}\t{kneelingTorqueEstimationR}\t{kneeAngleL}\t{kneeAngleR}\t{legForward}\n"
     wFile.write(outputStr)
     time.sleep(.02)
 wFile.close()
