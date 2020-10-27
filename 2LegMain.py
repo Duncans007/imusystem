@@ -7,10 +7,12 @@ from sensorClass import * #class sensorObject, newValues(valueArray), angularAcc
 from serialSend import * #ardno(msg as string)
 from slipAlgorithmFunc import * #slipAlgorithm(pelvis_forward_acc, heel_forward_acc, L_hh)
 from kneelingAlgorithm import * #kneelingDetection.kneelingDetection(objRT, objRS, objRH, objLT, objLS, objLH)
+from CUNYreceiver import async_teensy
 
 #Importing python libraries
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import BlockingOSCUDPServer
+from multiprocessing import Process,Queue,Pipe
 import serial
 import time
 from math import sin, cos, sqrt, atan2
@@ -34,20 +36,26 @@ global teensySend, teensyPort
 ip = "localhost"
 port = 6565
 
-intelNUCport = ''
+nucSend = True
+intelNUCport = "/dev/ttyUSB0"
 intelNUCbaud = 115200
 
 teensySend = True
-if teensySend:
-    teensyPort = serial.Serial("/dev/ttyS0", baudrate=115200, timeout=3.0)
+teensyPort = "/dev/ttyS0"
+teensyBaud = 115200
+
 
 hip_heel_length = 1 #meters
-
-#Currently unused
 mass = 80 #kg
 NMKG = 0.15
 height = 180 #cm
 #-----------------------------------#
+
+
+
+
+
+
 
 #Turns data collection for particular sensors on/off if necessary.
 toggleFlagDict = {
@@ -136,19 +144,25 @@ def data_handler(address, *args):
     global gaitDetectRight, gaitDetectLeft
     global objects
     global hip_heel_length
-    global intelNUCserial
+    global intelNUCserial, nucSend
     global teensySend, teensyPort
+    global parent_conn
     
-    out = []
+    if teensySend:
+        cuny_data = parent_conn.recv()
+    
+    
 
 	
 #Collects variable type and sensor address as numbers
+    out = []
     varType = address[10]
     addr = ''
     addr += str(address[len(address) - 3])
     addr += str(address[len(address) - 1])
     
-    #Takes in individual data and assembles into easily indexable dictionary packages.
+    
+#Takes in individual data and assembles into easily indexable dictionary packages.
     if addr in addressDict:
         limb = addressDict[addr]
 
@@ -156,6 +170,7 @@ def data_handler(address, *args):
             dataDict[limb] = package_handler_raw(args)
             flagDict[limb] = True
 
+            
 #Tests if all sensors have been received before assembling packet and sending to algorithm
         if flagDict == toggleFlagDict:                    
             for x in flagDict:
@@ -178,8 +193,11 @@ def data_handler(address, *args):
         
         packetReady = True
         
+        
+        
+        
 #----------------------------------------------------------------------------------------------------------------#    
-#Code is broken into reader above and algorithm below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
+#Code is broken into reader above and algorithms below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
 #If sensor orientations change, they can be changed in the code below.
         
 #When complete system state is ready, run calculations
@@ -198,6 +216,20 @@ def data_handler(address, *args):
         objLShank.newValues(passToAlgorithm['ls_raw'])
         objLHeel.newValues(passToAlgorithm['lh_raw'])
         objLowBack.newValues(passToAlgorithm['b_raw'])
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
@@ -223,6 +255,21 @@ def data_handler(address, *args):
             objLShank.angleCalc()
             objLHeel.angleCalc()
 
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 #-----------------------------------------------------------
 #NO CALCULATIONS BEFORE ANGLECALC() OTHERWISE THEY WILL RUN USING RAW DATA INSTEAD OF PROPER UNITS
 	
@@ -240,6 +287,29 @@ def data_handler(address, *args):
 
 
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 #PRINT TO OUTPUT STRING -------------------------------------------------------------------------------------------------------------
 
 #Append beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
@@ -270,12 +340,29 @@ def data_handler(address, *args):
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         outputString += f"\n"
 		
-        if intelNUCport == '':
+        if not nucSend:
             print(outputString)
             
         fileDump.write(f"{outputString}")
 		
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 #SERIAL SEND--------------------------------------------
 #IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
 #[ 111, time,
@@ -292,15 +379,34 @@ def data_handler(address, *args):
 #Gyroscope = x * 0.07
 #Magnetometer = x * 0.00014
 
-        if intelNUCport != '':
+        if nucSend:
             serialArr = [time.time() - timeStart]
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [int(x.acX_norm/2), int(x.acY_norm/2), int(x.acZ_norm/2), int(x.gyX_norm/2), int(x.gyY_norm/2), int(x.gyZ_norm/2), int(x.zAngle * 80)]
             serialArr += [int(gaitDetectRight.gaitStage), int(gaitDetectLeft.gaitStage), int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationL * 500), int(kneelingTorqueEstimationR * 500)]
             #serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationR * 500)]
+            
+            
+            if teensySend:
+                for i in cuny_data.items():
+                    serialArr.append(i[1])
+                    
+                    
             print(serialArr)
             send_over_serial(serialArr, intelNUCserial)
+                
+            
+            
+            
+            
+            
+            
 #-----------------------------------------------------
+
+
+
+
+
 
 
 
@@ -311,6 +417,11 @@ def default_handler(address, *args):
     out += str(args)
 
 
+    
+    
+    
+    
+    
 #Sets up OSC server
 def main_func(ip, port):   
     dispatcher = Dispatcher()
@@ -321,12 +432,19 @@ def main_func(ip, port):
     server.serve_forever()  # Blocks forever
 
 
+    
+    
+    
+    
+    
+    
+    
 
 if __name__ == "__main__":    
     
     #Variable initializations
     #serial object for NUC. Comment out if not used.
-    if intelNUCport != '':
+    if nucSend:
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
 	
     
@@ -336,13 +454,10 @@ if __name__ == "__main__":
     
     
     if teensySend:
-        while teensySend:
-            receivedData, outputArray = receive_from_teensy(teensyPort)
-            
-            if receivedData:
-                send_to_teensy(1, 1, teensyPort)
-                if intelNUCport != '':
-                    send_from_teensy_over_serial(outputArray, intelNUCserial)
+        teensyPort = serial.Serial(teensyPort, teensyBaud, timeout=3.0)
+        parent_conn,child_conn = Pipe()
+        p = Process(target=async_teensy, args=(child_conn, teensyPort))
+        p.start()
     
     
     
@@ -350,43 +465,43 @@ if __name__ == "__main__":
     
     
     
-    else:
-        #create objects for sensor operations and value storage.
-        objRThigh = sensorObject("RT")
-        objRShank = sensorObject("RS")
-        objRHeel = sensorObject("RH")
+    
 
-        objLThigh = sensorObject("LT")
-        objLShank = sensorObject("LS")
-        objLHeel = sensorObject("LH")
+    objRThigh = sensorObject("RT")
+    objRShank = sensorObject("RS")
+    objRHeel = sensorObject("RH")
 
-        objLowBack = sensorObject("LB")
+    objLThigh = sensorObject("LT")
+    objLShank = sensorObject("LS")
+    objLHeel = sensorObject("LH")
 
-        #create gait detect objects for each leg
-        gaitDetectRight = gaitDetect()
-        gaitDetectLeft = gaitDetect()
-        kneelingDetect = kneelingDetection(NMKG, mass)
+    objLowBack = sensorObject("LB")
 
-        #create lists that can be cycles through to iterate over every object, as well as create the file data header.
-        objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
-        stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
-        stringAxes = ["x","y","z"]
-        #stringSensors = ["gy","ac","mg"]
-        stringSensors = ["gy","ac"]
-        #Create formatted file header
-        fileDump = open("algDump.txt", "w+")
-        header = "time\ttimeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
-        for x in stringObjects:
-            for y in stringSensors:
-                for z in stringAxes:
-                    header += f"{y}/{z}/{x}\t"
-            header += f"Angle/{x}\t"
-            header += f"\t"
+    #create gait detect objects for each leg
+    gaitDetectRight = gaitDetect()
+    gaitDetectLeft = gaitDetect()
+    kneelingDetect = kneelingDetection(NMKG, mass)
 
-        header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL"
+    #create lists that can be cycles through to iterate over every object, as well as create the file data header.
+    objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
+    stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
+    stringAxes = ["x","y","z"]
+    #stringSensors = ["gy","ac","mg"]
+    stringSensors = ["gy","ac"]
+    #Create formatted file header
+    fileDump = open("algDump.txt", "w+")
+    header = "time\ttimeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
+    for x in stringObjects:
+        for y in stringSensors:
+            for z in stringAxes:
+                header += f"{y}/{z}/{x}\t"
+        header += f"Angle/{x}\t"
+        header += f"\t"
 
-        header += f"\n"
-        fileDump.write(header)
+    header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL"
 
-        main_func(ip, port)
-        client.close()
+    header += f"\n"
+    fileDump.write(header)
+
+    main_func(ip, port)
+    client.close()
