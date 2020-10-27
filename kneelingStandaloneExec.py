@@ -20,7 +20,7 @@ objLShank = sensorObject("LS")
 
 rFile = open('standaloneKneelingData.txt')
 data = rFile.readlines()
-count = len(len(data))
+count = len(data)
 rFile.close()
 
 
@@ -31,6 +31,7 @@ wFile = open('algDump.txt', 'w+')
 for i in range(count):
     outputStr = ''
     x = data[i].split()
+    print(x)
     objLThigh.newValues([x[1], x[2], x[3], x[4], x[5], x[6], 0, 0, 0])
     objRThigh.newValues([x[7], x[8], x[9], x[10], x[11], x[12], 0, 0, 0])
     objLShank.newValues([x[13], x[14], x[15], x[16], x[17], x[18], 0, 0, 0])
