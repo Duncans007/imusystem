@@ -389,7 +389,7 @@ def data_handler(address, *args):
             
             
             if teensySend:
-                for i in cuny_data.iteritems:
+                for i in cuny_data.items:
                     print(i)
                     print(type(i))
                 #for key, value in cuny_data.items():
