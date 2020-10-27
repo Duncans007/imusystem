@@ -13,10 +13,15 @@ import sys
 #6: knee calcs
 #Time step .02
 
+mass = 80 #kg
+NMKG = 0.15
+
 objRThigh = sensorObject("RT")
 objRShank = sensorObject("RS")
 objLThigh = sensorObject("LT")
 objLShank = sensorObject("LS")
+
+kneelingDetect = kneelingDetection(NMKG, mass)
 
 rFile = open('standaloneKneelingData.txt')
 data = rFile.readlines()
