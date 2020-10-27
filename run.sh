@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/notochord/bin/notochord --scan --raw --no_bundles --odr=97 -y localhost && ./2LegMain.py
+(cd ../notochord/bin ; notochord --scan --raw --no_bundles --odr=97 -y localhost) && ./2LegMain.py
