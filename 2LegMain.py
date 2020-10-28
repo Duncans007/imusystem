@@ -398,7 +398,7 @@ def data_handler(address, *args):
             
             if teensySend:
                 for i in cuny_data.items():
-                    serialArr.append(i[1])
+                    serialArr.append(int(i[1]))
                     
                     
             print(serialArr)
