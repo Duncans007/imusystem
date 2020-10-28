@@ -7,14 +7,17 @@ from sensorClass import * #class sensorObject, newValues(valueArray), angularAcc
 from serialSend import * #ardno(msg as string)
 from slipAlgorithmFunc import * #slipAlgorithm(pelvis_forward_acc, heel_forward_acc, L_hh)
 from kneelingAlgorithm import * #kneelingDetection.kneelingDetection(objRT, objRS, objRH, objLT, objLS, objLH)
+from CUNYreceiver import async_teensy
 
 #Importing python libraries
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import BlockingOSCUDPServer
+from multiprocessing import Process,Queue,Pipe
 import serial
 import time
 from math import sin, cos, sqrt, atan2
 import numpy as np
+import sys
 
 #These will all be passed, rather than global eventually.
 global timeCurrent, varType, timeStart
@@ -34,20 +37,38 @@ global teensySend, teensyPort
 ip = "localhost"
 port = 6565
 
-intelNUCport = '/dev/ttyUSB0'
+
+nucSend = True
+intelNUCport = "/dev/ttyUSB0"
+#intelNUCport = "/dev/ttyS0"
+#intelNUCbaud = 115200
 intelNUCbaud = 921600
 
-teensySend = False
-if teensySend:
-    teensyPort = serial.Serial("/dev/ttyS0", baudrate=115200, timeout=3.0)
+
+teensySend = True
+#teensyPort = "/dev/ttyS0"
+teensyPort = "/dev/ttyACM0"
+teensyBaud = 256000
+
 
 hip_heel_length = 1 #meters
-
-#Currently unused
 mass = 80 #kg
 NMKG = 0.15
 height = 180 #cm
 #-----------------------------------#
+
+if str((sys.argv)[1]) == "true":
+    nucSend = True
+if str((sys.argv)[1]) == "false":
+    nucSend = False
+if str((sys.argv)[2]) == "true":
+    teensySend = True
+if str((sys.argv)[2]) == "false":
+    teensySend = False
+print(nucSend)
+print(teensySend)
+
+
 
 #Turns data collection for particular sensors on/off if necessary.
 toggleFlagDict = {
@@ -136,19 +157,25 @@ def data_handler(address, *args):
     global gaitDetectRight, gaitDetectLeft
     global objects
     global hip_heel_length
-    global intelNUCserial
+    global intelNUCserial, nucSend
     global teensySend, teensyPort
+    global parent_conn
     
-    out = []
+    if teensySend:
+        cuny_data = parent_conn.recv()
+    
+    
 
 	
 #Collects variable type and sensor address as numbers
+    out = []
     varType = address[10]
     addr = ''
     addr += str(address[len(address) - 3])
     addr += str(address[len(address) - 1])
     
-    #Takes in individual data and assembles into easily indexable dictionary packages.
+    
+#Takes in individual data and assembles into easily indexable dictionary packages.
     if addr in addressDict:
         limb = addressDict[addr]
 
@@ -156,6 +183,7 @@ def data_handler(address, *args):
             dataDict[limb] = package_handler_raw(args)
             flagDict[limb] = True
 
+            
 #Tests if all sensors have been received before assembling packet and sending to algorithm
         if flagDict == toggleFlagDict:                    
             for x in flagDict:
@@ -178,8 +206,11 @@ def data_handler(address, *args):
         
         packetReady = True
         
+        
+        
+        
 #----------------------------------------------------------------------------------------------------------------#    
-#Code is broken into reader above and algorithm below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
+#Code is broken into reader above and algorithms below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
 #If sensor orientations change, they can be changed in the code below.
         
 #When complete system state is ready, run calculations
@@ -190,130 +221,74 @@ def data_handler(address, *args):
         timeCurrent = time.time()
         timeToRun = timeCurrent - timeLastRun
         
-#Update data
-        rt_raw = passToAlgorithm['rt_raw']
-        rs_raw = passToAlgorithm['rs_raw']
-        rh_raw = passToAlgorithm['rh_raw']
-        lt_raw = passToAlgorithm['lt_raw']
-        ls_raw = passToAlgorithm['ls_raw']
-        lh_raw = passToAlgorithm['lh_raw']
-        b_raw  = passToAlgorithm['b_raw']
+#Update data        
+        objRThigh.newValues(passToAlgorithm['rt_raw'])
+        objRShank.newValues(passToAlgorithm['rs_raw'])
+        objRHeel.newValues(passToAlgorithm['rh_raw'])
+        objLThigh.newValues(passToAlgorithm['lt_raw'])
+        objLShank.newValues(passToAlgorithm['ls_raw'])
+        objLHeel.newValues(passToAlgorithm['lh_raw'])
+        objLowBack.newValues(passToAlgorithm['b_raw'])
         
-#Values are moved around to equalize the axes of the IMUs.
-#Does not put IMUs on a global coordinate system.
-#Only sets local axes to be the same for ease on analysis.
-		
-#Right Thigh - no flipped values
-        objRThigh.gyX = rt_raw[0]
-        objRThigh.gyY = rt_raw[1]
-        objRThigh.gyZ = rt_raw[2]
-                  
-        objRThigh.acX = rt_raw[3]
-        objRThigh.acY = rt_raw[4]
-        objRThigh.acZ = rt_raw[5]
-                  
-        objRThigh.mgX = rt_raw[6]
-        objRThigh.mgY = rt_raw[7]
-        objRThigh.mgZ = rt_raw[8]
         
-#Right Shank - no flipped values
-        objRShank.gyX = rs_raw[0]
-        objRShank.gyY = rs_raw[1]
-        objRShank.gyZ = rs_raw[2]
-                  
-        objRShank.acX = rs_raw[3]
-        objRShank.acY = rs_raw[4]
-        objRShank.acZ = rs_raw[5]
-                  
-        objRShank.mgX = rs_raw[6]
-        objRShank.mgY = rs_raw[7]
-        objRShank.mgZ = rs_raw[8]
         
-#Right Heel - X and Y axes flipped, X negated
-        objRHeel.gyX = -rh_raw[1]
-        objRHeel.gyY = rh_raw[0]
-        objRHeel.gyZ = rh_raw[2]
         
-        objRHeel.acX = -rh_raw[4]
-        objRHeel.acY = rh_raw[3]
-        objRHeel.acZ = rh_raw[5]
         
-        objRHeel.mgX = -rh_raw[7]
-        objRHeel.mgY = rh_raw[6]
-        objRHeel.mgZ = rh_raw[8]
-		
-#Left Thigh - X and Z values negated
-        objLThigh.gyX = -lt_raw[0]
-        objLThigh.gyY =  lt_raw[1]
-        objLThigh.gyZ = -lt_raw[2]
-                               
-        objLThigh.acX = -lt_raw[3]
-        objLThigh.acY =  lt_raw[4]
-        objLThigh.acZ = -lt_raw[5]
-                               
-        objLThigh.mgX = -lt_raw[6]
-        objLThigh.mgY =  lt_raw[7]
-        objLThigh.mgZ = -lt_raw[8]
         
-#Left Shank - X and Z values negated		
-        objLShank.gyX = -ls_raw[0]
-        objLShank.gyY =  ls_raw[1]
-        objLShank.gyZ = -ls_raw[2]
-                               
-        objLShank.acX = -ls_raw[3]
-        objLShank.acY =  ls_raw[4]
-        objLShank.acZ = -ls_raw[5]
-                               
-        objLShank.mgX = -ls_raw[6]
-        objLShank.mgY =  ls_raw[7]
-        objLShank.mgZ = -ls_raw[8]
-                  
-#Left Heel - X and Y axes flipped, then X, Y, and Z values negated.
-        objLHeel.gyX = -lh_raw[1]
-        objLHeel.gyY = -lh_raw[0]
-        objLHeel.gyZ = -lh_raw[2]
-                              
-        objLHeel.acX = -lh_raw[4]
-        objLHeel.acY = -lh_raw[3]
-        objLHeel.acZ = -lh_raw[5]
-                              
-        objLHeel.mgX = -lh_raw[7]
-        objLHeel.mgY = -lh_raw[6]
-        objLHeel.mgZ = -lh_raw[8]
         
-#Lower Back - X and Z values flipped, X value negated
-        objLowBack.gyX = -b_raw[2]
-        objLowBack.gyY =  b_raw[1]
-        objLowBack.gyZ =  b_raw[0]
-                       
-        objLowBack.acX = -b_raw[5]
-        objLowBack.acY =  b_raw[4]
-        objLowBack.acZ =  b_raw[3]
-                   
-        objLowBack.mgX = -b_raw[8]
-        objLowBack.mgY =  b_raw[7]
-        objLowBack.mgZ =  b_raw[6]
+        
+        
+        
+        
+        
+        
+        
         
         
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
-#Right Leg Angle Approximations
-        objRThigh.angleCalc(gaitDetectRight)
-        objRShank.angleCalc(gaitDetectRight)
-        objRHeel.angleCalc(gaitDetectRight)
 
-#Left Leg Angle Approximations
-        objLThigh.angleCalc(gaitDetectLeft)
-        objLShank.angleCalc(gaitDetectLeft)
-        objLHeel.angleCalc(gaitDetectLeft)
-	
-        objLowBack.conversions()
+        if (time.time() - timeStart) < 1:
+            objRThigh.getCalib()
+            objRShank.getCalib()
+            objRHeel.getCalib()
+
+            objLThigh.getCalib()
+            objLShank.getCalib()
+            objLHeel.getCalib()
+
+        else:
+    #Right Leg Angle Approximations
+            objRThigh.angleCalc()
+            objRShank.angleCalc()
+            objRHeel.angleCalc()
+
+    #Left Leg Angle Approximations
+            objLThigh.angleCalc()
+            objLShank.angleCalc()
+            objLHeel.angleCalc()
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 #-----------------------------------------------------------
 #NO CALCULATIONS BEFORE ANGLECALC() OTHERWISE THEY WILL RUN USING RAW DATA INSTEAD OF PROPER UNITS
 	
 #Right and Left Gait Detection
-        gaitDetectRight.testVal(objRShank.gyZ, objRHeel.gyZ)
-        gaitDetectLeft.testVal(objLShank.gyZ, objLHeel.gyZ)
+        gaitDetectRight.testVal(objRThigh.gyZ, objRShank.gyZ, objRHeel.gyZ)
+        gaitDetectLeft.testVal(objLThigh.gyZ, objLShank.gyZ, objLHeel.gyZ)
 
 #Calculates Slip Indicator from Trkov IFAC 2017 paper
         slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngle * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngle * .01745))), hip_heel_length)
@@ -325,6 +300,29 @@ def data_handler(address, *args):
 
 
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 #PRINT TO OUTPUT STRING -------------------------------------------------------------------------------------------------------------
 
 #Append beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
@@ -355,12 +353,29 @@ def data_handler(address, *args):
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         outputString += f"\n"
 		
-        if intelNUCport == '':
+        if nucSend == False:
             print(outputString)
             
         fileDump.write(f"{outputString}")
 		
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 #SERIAL SEND--------------------------------------------
 #IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
 #[ 111, time,
@@ -377,20 +392,35 @@ def data_handler(address, *args):
 #Gyroscope = x * 0.07
 #Magnetometer = x * 0.00014
 
-        if intelNUCport != '':
+        if nucSend:
             serialArr = [time.time() - timeStart]
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [int(x.acX_norm/2), int(x.acY_norm/2), int(x.acZ_norm/2), int(x.gyX_norm/2), int(x.gyY_norm/2), int(x.gyZ_norm/2), int(x.zAngle * 80)]
             serialArr += [int(gaitDetectRight.gaitStage), int(gaitDetectLeft.gaitStage), int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationL * 500), int(kneelingTorqueEstimationR * 500)]
             #serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationR * 500)]
+            
+            
+            if teensySend:
+                for i in cuny_data.items():
+                    serialArr.append(i[1])
+                    
+                    
             print(serialArr)
             send_over_serial(serialArr, intelNUCserial)
+                
+            
+            
+            
+            
+            
+            
 #-----------------------------------------------------
 
-#TEENSY SEND-------------------------------------------
-        if teensySend:
-            send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
-#-----------------------------------------------------
+
+
+
+
+
 
 
 #Handles any OSC messages that aren't picked up by dataHandler
@@ -400,8 +430,13 @@ def default_handler(address, *args):
     out += str(args)
 
 
+    
+    
+    
+    
+    
 #Sets up OSC server
-def main_func(ip, port):   
+def main_func(ip, port):
     dispatcher = Dispatcher()
     dispatcher.map("/Chordata/r*", data_handler)
     dispatcher.set_default_handler(default_handler)
@@ -410,30 +445,55 @@ def main_func(ip, port):
     server.serve_forever()  # Blocks forever
 
 
-
-if __name__ == "__main__":    
     
+    
+    
+    
+    
+    
+    
+
+if __name__ == "__main__":
     #Variable initializations
     #serial object for NUC. Comment out if not used.
-    if intelNUCport != '':
+    if nucSend:
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
 	
-    #create objects for sensor operations and value storage.
-    objRThigh = sensorObject()
-    objRShank = sensorObject()
-    objRHeel = sensorObject()
-	
-    objLThigh = sensorObject()
-    objLShank = sensorObject()
-    objLHeel = sensorObject()
-	
-    objLowBack = sensorObject()
     
+    
+    
+    
+    
+    
+    if teensySend:
+        teensyPort = serial.Serial(teensyPort, teensyBaud, timeout=3.0)
+        parent_conn,child_conn = Pipe()
+        p = Process(target=async_teensy, args=(child_conn, teensyPort))
+        p.start()
+    
+    
+    
+    
+    
+    
+    
+    
+
+    objRThigh = sensorObject("RT")
+    objRShank = sensorObject("RS")
+    objRHeel = sensorObject("RH")
+
+    objLThigh = sensorObject("LT")
+    objLShank = sensorObject("LS")
+    objLHeel = sensorObject("LH")
+
+    objLowBack = sensorObject("LB")
+
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
     kneelingDetect = kneelingDetection(NMKG, mass)
-	
+
     #create lists that can be cycles through to iterate over every object, as well as create the file data header.
     objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
     stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
@@ -449,11 +509,11 @@ if __name__ == "__main__":
                 header += f"{y}/{z}/{x}\t"
         header += f"Angle/{x}\t"
         header += f"\t"
-		
+
     header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL"
-	
+
     header += f"\n"
     fileDump.write(header)
-    
+
     main_func(ip, port)
     client.close()
