@@ -41,8 +41,9 @@ port = 6565
 nucSend = True
 intelNUCport = "/dev/ttyUSB0"
 #intelNUCport = "/dev/ttyS0"
-#intelNUCbaud = 115200
-intelNUCbaud = 921600
+intelNUCbaud = 115200
+#intelNUCbaud = 921600
+#intelNUCbaud = 1228800
 
 
 teensySend = True
