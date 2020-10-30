@@ -4,7 +4,10 @@ trap "kill 0" EXIT
 
 echo "Arg1: NUC, Arg2: Teensy, Arg3: VICON. Both arguments are true/false all lowercase."
 
-sleep 5
+sleep 1
 
 (cd ../notochord/bin ; ./notochord --scan --raw --no_bundles --odr=97 -y localhost)&
+
+sleep 5
+
 ./2LegMain.py $1 $2 $3 >/dev/null
