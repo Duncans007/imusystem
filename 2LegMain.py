@@ -52,7 +52,7 @@ teensyBaud = 256000
 hip_heel_length = 1 #meters
 mass = 80 #kg
 NMKG = 0.15
-height = 180 #cm
+height = 1.80 #m
 #-----------------------------------#
 
 if str((sys.argv)[1]) == "true":
@@ -502,7 +502,7 @@ if __name__ == "__main__":
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
-    kneelingDetect = kneelingDetection(NMKG, mass)
+    kneelingDetect = kneelingDetection(NMKG, mass, height)
 
     #create lists that can be cycles through to iterate over every object, as well as create the file data header.
     objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
