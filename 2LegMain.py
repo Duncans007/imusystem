@@ -63,8 +63,10 @@ if str((sys.argv)[2]) == "true":
     teensySend = True
 if str((sys.argv)[2]) == "false":
     teensySend = False
-print(nucSend)
-print(teensySend)
+if str((sys.argv)[3]) == "true":
+    viconData = True
+if str((sys.argv)[3]) == "false":
+    viconData = False
 
 
 
@@ -257,6 +259,8 @@ def data_handler(address, *args):
             objLThigh.getCalib()
             objLShank.getCalib()
             objLHeel.getCalib()
+            
+            objLowBack.getCalib()
 
         else:
     #Right Leg Angle Approximations
@@ -268,6 +272,8 @@ def data_handler(address, *args):
             objLThigh.angleCalc()
             objLShank.angleCalc()
             objLHeel.angleCalc()
+            
+            objLowBack.angleCalc()
 
             
             
@@ -298,9 +304,9 @@ def data_handler(address, *args):
 #Run Kneeling Detection Algorithm
         #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
         if viconData:
-            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, nuc_data[0], nuc_data[1])
+            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack nuc_data[0], nuc_data[1], nuc_data[2])
         else:
-            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank)
+            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
 
 
 
