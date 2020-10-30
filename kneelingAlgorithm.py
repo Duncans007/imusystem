@@ -7,7 +7,7 @@ class kneelingDetection:
         self.NMKG = NMKG
         self.mass = mass
         self.height = height
-        self.alpha = .01
+        self.alpha = .0001
         
         #Inputs updated on the first loop
         self.thighAngleR = 0
@@ -167,8 +167,8 @@ class kneelingDetection:
     
     
     def torqueYuSu(self, leg, thetaT, thetaB):
-        TqEst1 = self.Mb * self.g * ( (self.Lb * sin(thetaB)) + (self.Lt * sin(thetaT)) )
-        TqEst2 = self.Mt * self.g * self.Ltc * sin(thetaT)
+        TqEst1 = self.Mb * self.g * ( (self.Lb * sin(thetaB * 3.14159 / 90)) + (self.Lt * sin(thetaT * 3.14159 / 90)) )
+        TqEst2 = self.Mt * self.g * self.Ltc * sin(thetaT * 3.14159 / 90)
         TqEst = (-0.5) * (TqEst1 + TqEst2)
         
         Tr = (self.alpha) * TqEst
