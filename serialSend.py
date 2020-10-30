@@ -106,6 +106,34 @@ def send_over_serial(msgArray, serialSend):
     
     
     
+def receive_from_nuc(serialPort):
+    import struct
+#[LENGTH(5),
+# Knee Angle L, Knee Angle R]
+
+    receivedData = False
+    outputArray = []
+    
+    firstChar = serialPort.read() #Byte 1
+    firstCharInt = struct.unpack('B', firstChar)
+    
+    if (firstCharInt[0] == 5):
+        recArray = []
+            
+        loByte = serialPort.read()
+        hiByte = serialPort.read()
+        recArray += struct.unpack('<h', loByte + hiByte)
+        
+        loByte = serialPort.read()
+        hiByte = serialPort.read()
+        recArray += struct.unpack('<h', loByte + hiByte)
+            
+        receivedData = True
+    
+    return receivedData, outputArray
+    
+    
+    
     
     
     
