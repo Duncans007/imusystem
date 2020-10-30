@@ -1,6 +1,7 @@
 #!/bin/bash
+trap "kill 0" EXIT
 
-echo "Arg1: NUC, Arg2: Teensy. Both arguments are true/false all lowercase."
+echo "Arg1: NUC, Arg2: Teensy, Arg3: VICON. Both arguments are true/false all lowercase."
 
 sleep 1
 
