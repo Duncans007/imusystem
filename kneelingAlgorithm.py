@@ -173,7 +173,7 @@ class kneelingDetection:
         
         Tr = (self.alpha) * TqEst
         
-        if (self.torqueWindow(leg)):
+        if (True):
             return Tr
         else:
             return 0
