@@ -53,7 +53,7 @@ class kneelingDetection:
         self.Mb = mass * (52.2/81.4) #kg
         self.Mt = mass * (19.6/81.4) #kg
         
-        self.g = -9.81 #m/s
+        self.g = 9.81 #m/s
         
         self.Lb = height * 0.160901
         self.Lt = height * (0.441/1.784)
