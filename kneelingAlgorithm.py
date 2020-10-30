@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
 class kneelingDetection:
-    def __init__(self, NMKG, mass):
+    def __init__(self, NMKG, mass, height):
         import time
         self.NMKG = NMKG
         self.mass = mass
+        self.height = height
         
         #Inputs updated on the first loop
         self.thighAngleR = 0
@@ -45,6 +46,16 @@ class kneelingDetection:
         
         self.legForward = "X"
         self.lastLeg = "X"
+        
+        #YuSu Torque Controller Values
+        self.Mb = mass * (52.2/81.4) #kg
+        self.Mt = mass * (19.6/81.4) #kg
+        
+        self.g = 9.81 #m/s
+        
+        self.Lb = height * 0.160901
+        self.Lt = height * (0.441/1.784)
+        self.Ltc = height * (0.245 / 1.784)
     
     
     
@@ -53,7 +64,7 @@ class kneelingDetection:
     
     
     #Main function to run for third party input and export
-    def getTorque(self, rThigh, rShank, lThigh, lShank, lKnee = False, rKnee = False):
+    def getTorque(self, rThigh, rShank, lThigh, lShank, loBack):
         
         self.thighAngleR = rThigh.zAngle
         self.shankAngleR = rShank.zAngle
@@ -67,6 +78,8 @@ class kneelingDetection:
         self.thighLAngV  = lThigh.gyZ
         self.shankLAngV  = lShank.gyZ
         
+        self.loBackAng = loBack.zAngle
+        
         if (self.legForward == "L"):
             self.lastLeg = "L"
         if (self.legForward == "R"):
@@ -74,24 +87,108 @@ class kneelingDetection:
         if (self.legForward == "2"):
             self.lastLeg = "2"
         
-        if lKnee == False:
-            self.kneeAngleL = self.thighAngleL - self.shankAngleL
-        else:
-            self.kneeAngleL = lKnee
-            
-        if rKnee == False:
-            self.kneeAngleR = self.thighAngleR - self.shankAngleR
-        else:
-            self.kneeAngleR = rKnee
-            
-        
+        self.kneeAngleL = self.thighAngleL - self.shankAngleL
+        self.kneeAngleR = self.thighAngleR - self.shankAngleR
+
         self.kneelingDetection()
         
-        torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
+        #torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
+        torqueL = torqueYuSu("LEFT", self.thighAngleL, self.loBackAng)
+        torqueR = torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
             
         return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    def getTorqueFromVicon(self, rThigh, rShank, lThigh, lShank, RTA, LTA, BA):
+        
+        self.thighAngleR = RTA
+        self.shankAngleR = rShank.zAngle
+        
+        self.thighAngleL = LTA
+        self.shankAngleL = lShank.zAngle
+        
+        self.thighRAngV  = rThigh.gyZ
+        self.shankRAngV  = rShank.gyZ
+        
+        self.thighLAngV  = lThigh.gyZ
+        self.shankLAngV  = lShank.gyZ
+        
+        self.loBackAng = BA
+        
+        if (self.legForward == "L"):
+            self.lastLeg = "L"
+        if (self.legForward == "R"):
+            self.lastLeg = "R"
+        if (self.legForward == "2"):
+            self.lastLeg = "2"
+        
+        self.kneeAngleL = self.thighAngleL - self.shankAngleL
+        self.kneeAngleR = self.thighAngleR - self.shankAngleR
+
+        self.kneelingDetection()
+        
+        #torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
+        torqueL = torqueYuSu("LEFT", self.thighAngleL, self.loBackAng)
+        torqueR = torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
+            
+        return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
+    
+    
+    
+    
+    
         
         
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    
+    
+    def torqueYuSu(leg, thetaT, thetaB):
+        TqEst1 = self.Mb * self.g * ( (self.Lb * sin(-thetaB)) + (self.Lt * sin(-thetaT)) )
+        TqEst2 = self.Mt * self.g * self.Ltc * sin(-thetaT)
+        TqEst = (-0.5) * (TqEst1 + TqEst2)
+        
+        Tr = (self.NMKG) * TqEst
+        
+        if (self.torqueWindow(leg)):
+            return Tr
+        else:
+            return 0
+        
+        
+        
+        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
