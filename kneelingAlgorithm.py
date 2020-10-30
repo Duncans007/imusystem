@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from math import sin
 
 class kneelingDetection:
     def __init__(self, NMKG, mass, height):
