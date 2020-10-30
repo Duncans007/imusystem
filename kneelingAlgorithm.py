@@ -164,7 +164,7 @@ class kneelingDetection:
         
     
     
-    def torqueYuSu(leg, thetaT, thetaB):
+    def torqueYuSu(self, leg, thetaT, thetaB):
         TqEst1 = self.Mb * self.g * ( (self.Lb * sin(-thetaB)) + (self.Lt * sin(-thetaT)) )
         TqEst2 = self.Mt * self.g * self.Ltc * sin(-thetaT)
         TqEst = (-0.5) * (TqEst1 + TqEst2)
