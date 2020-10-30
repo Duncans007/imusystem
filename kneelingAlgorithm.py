@@ -53,7 +53,7 @@ class kneelingDetection:
     
     
     #Main function to run for third party input and export
-    def getTorque(self, rThigh, rShank, lThigh, lShank):
+    def getTorque(self, rThigh, rShank, lThigh, lShank, lKnee = False, rKnee = False):
         
         self.thighAngleR = rThigh.zAngle
         self.shankAngleR = rShank.zAngle
@@ -67,18 +67,25 @@ class kneelingDetection:
         self.thighLAngV  = lThigh.gyZ
         self.shankLAngV  = lShank.gyZ
         
-        #Knee angles calculated with 0 as straight here
-        self.kneeAngleR = self.thighAngleR - self.shankAngleR
-        self.kneeAngleL = self.thighAngleL - self.shankAngleL
-        
-        self.kneelingDetection()
-        
         if (self.legForward == "L"):
             self.lastLeg = "L"
         if (self.legForward == "R"):
             self.lastLeg = "R"
         if (self.legForward == "2"):
             self.lastLeg = "2"
+        
+        if lKnee == False:
+            self.kneeAngleL = self.thighAngleL - self.shankAngleL
+        else:
+            self.kneeAngleL = lKnee
+            
+        if rKnee == False:
+            self.kneeAngleR = self.thighAngleR - self.shankAngleR
+        else:
+            self.kneeAngleR = rKnee
+            
+        
+        self.kneelingDetection()
         
         torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
             
