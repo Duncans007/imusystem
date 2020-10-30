@@ -99,7 +99,7 @@ class sensorObject:
             outArray = (-valueArray[1], -valueArray[0], -valueArray[2], -valueArray[4], -valueArray[3], -valueArray[5], -valueArray[7], -valueArray[6], -valueArray[8])
             
         if self.limbCode == "LB":
-            outArray = (-valueArray[2], valueArray[1], -valueArray[0], -valueArray[5], valueArray[4], -valueArray[3], -valueArray[8], valueArray[7], -valueArray[6])
+            outArray = (valueArray[2], valueArray[1], -valueArray[0], valueArray[5], valueArray[4], -valueArray[3], valueArray[8], valueArray[7], -valueArray[6])
             
             
             
