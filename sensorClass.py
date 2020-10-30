@@ -1,5 +1,5 @@
 import numpy as np
-from math import sin
+
 
 class sensorObject:
     def __init__(self, limbCode):
