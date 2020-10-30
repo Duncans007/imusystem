@@ -50,7 +50,7 @@ teensyBaud = 256000
 
 
 hip_heel_length = 1 #meters
-mass = 80 #kg
+mass = 60 #kg
 NMKG = 0.15
 height = 1.80 #m
 #-----------------------------------#
