@@ -7,7 +7,8 @@ from sensorClass import * #class sensorObject, newValues(valueArray), angularAcc
 from serialSend import * #ardno(msg as string)
 from slipAlgorithmFunc import * #slipAlgorithm(pelvis_forward_acc, heel_forward_acc, L_hh)
 from kneelingAlgorithm import * #kneelingDetection.kneelingDetection(objRT, objRS, objRH, objLT, objLS, objLH)
-from CUNYreceiver import async_teensy
+from CUNYreceiver import *
+from NUCreceiver import *
 
 #Importing python libraries
 from pythonosc.dispatcher import Dispatcher
@@ -38,6 +39,7 @@ ip = "localhost"
 port = 6565
 
 nucSend = True
+viconData = True
 #intelNUCport = "/dev/ttyUSB0"
 intelNUCport = "/dev/ttyS0"
 intelNUCbaud = 115200
@@ -158,7 +160,10 @@ def data_handler(address, *args):
     global parent_conn
     
     if teensySend:
-        cuny_data = parent_conn.recv()
+        cuny_data = parent_conn_teensy.recv()
+        
+    if viconData:
+        nuc_data = parent_conn_teensy.recv()
     
     
 
@@ -453,19 +458,18 @@ if __name__ == "__main__":
     #Variable initializations
     #serial object for NUC. Comment out if not used.
     if nucSend:
-        intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
+        intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
+        parent_conn_nuc,child_conn_nuc = Pipe()
+        p_nuc = Process(target=async_nuc, args=(child_conn_nuc, intelNUCserial))
+        p_nuc.start()
 	
     
-    
-    
-    
-    
-    
+
     if teensySend:
         teensyPort = serial.Serial(teensyPort, teensyBaud, timeout=3.0)
-        parent_conn,child_conn = Pipe()
-        p = Process(target=async_teensy, args=(child_conn, teensyPort))
-        p.start()
+        parent_conn_teensy,child_conn_teensy = Pipe()
+        p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
+        p_teensy.start()
     
     
     
