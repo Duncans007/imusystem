@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from math import sin, radians
+import math
 
 class kneelingDetection:
     def __init__(self, NMKG, mass, height):
@@ -167,8 +167,8 @@ class kneelingDetection:
     
     
     def torqueYuSu(self, leg, thetaT, thetaB):
-        TqEst1 = self.Mb * self.g * ( (self.Lb * sin(radians(thetaB)) + (self.Lt * sin(radians(-thetaT)) ) )
-        TqEst2 = self.Mt * self.g * self.Ltc * sin(radians(-thetaT))
+        TqEst1 = self.Mb * self.g * (   (self.Lb * math.sin(math.radians(thetaB)))   +   (self.Lt * math.sin(math.radians(-thetaT)))   )
+        TqEst2 = self.Mt * self.g * self.Ltc * math.sin(math.radians(-thetaT))
         TqEst = (-0.5) * (TqEst1 + TqEst2)
         
         Tr = (self.alpha) * TqEst
