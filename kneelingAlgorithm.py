@@ -100,16 +100,14 @@ class kneelingDetection:
         #Knee angles oriented with staight leg at 0 degrees
         
         
-        #if (self.torqueWindow("RIGHT")):
-        if True:
+        if (self.torqueWindow("RIGHT")):
             torqueOutputR = (self.A * (kneeAngleR)) + (self.B * thighGyR) + self.C
             torqueOutputR = torqueOutputR * self.NMKG * self.mass * (12/15)
         else:
             torqueOutputR = 0
         
         
-        #if (self.torqueWindow("LEFT")):
-        if True:
+        if (self.torqueWindow("LEFT")):
             torqueOutputL = (self.A * (kneeAngleL)) + (self.B * thighGyL) + self.C
             torqueOutputL = torqueOutputL * self.NMKG * self.mass * (12/15)
         else:
