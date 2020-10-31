@@ -7,7 +7,7 @@ class kneelingDetection:
         self.NMKG = NMKG
         self.mass = mass
         self.height = height
-        self.alpha = .0005
+        self.alpha = .0007
         
         #Inputs updated on the first loop
         self.thighAngleR = 0
