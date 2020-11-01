@@ -3,7 +3,7 @@
 import time
 from sensorClass import *
 from kneelingAlgorithm import *
-from torqueVariables import *
+from userinput import *
 import sys
 
 #1: import data from file
