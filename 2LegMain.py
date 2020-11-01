@@ -34,26 +34,14 @@ global hip_heel_length
 global intelNUCserial
 global teensySend, teensyPort
 
-#-----------------------------------#
+#ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
 #USER INPUTS
 ip = "localhost"
 port = 6565
 
 nucSend = True
 viconData = True
-#intelNUCport = "/dev/ttyUSB0"
-intelNUCport = "/dev/ttyS0"
-intelNUCbaud = 256000
-
 teensySend = True
-teensyPort = "/dev/ttyS0"
-teensyBaud = 256000
-
-
-hip_heel_length = 1 #meters
-NMKG = 0.15
-
-#-----------------------------------#
 
 if str((sys.argv)[1]) == "true":
     nucSend = True
