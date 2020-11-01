@@ -7,7 +7,9 @@ from sensorClass import * #class sensorObject, newValues(valueArray), angularAcc
 from serialSend import * #ardno(msg as string)
 from slipAlgorithmFunc import * #slipAlgorithm(pelvis_forward_acc, heel_forward_acc, L_hh)
 from kneelingAlgorithm import * #kneelingDetection.kneelingDetection(objRT, objRS, objRH, objLT, objLS, objLH)
-from CUNYreceiver import async_teensy
+from CUNYreceiver import *
+from NUCreceiver import *
+from userinput import *
 
 #Importing python libraries
 from pythonosc.dispatcher import Dispatcher
@@ -32,26 +34,14 @@ global hip_heel_length
 global intelNUCserial
 global teensySend, teensyPort
 
-#-----------------------------------#
+#ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
 #USER INPUTS
 ip = "localhost"
 port = 6565
 
 nucSend = True
-#intelNUCport = "/dev/ttyUSB0"
-intelNUCport = "/dev/ttyS0"
-intelNUCbaud = 115200
-
+viconData = True
 teensySend = True
-teensyPort = "/dev/ttyS0"
-teensyBaud = 115200
-
-
-hip_heel_length = 1 #meters
-mass = 80 #kg
-NMKG = 0.15
-height = 180 #cm
-#-----------------------------------#
 
 if str((sys.argv)[1]) == "true":
     nucSend = True
@@ -61,8 +51,10 @@ if str((sys.argv)[2]) == "true":
     teensySend = True
 if str((sys.argv)[2]) == "false":
     teensySend = False
-print(nucSend)
-print(teensySend)
+if str((sys.argv)[3]) == "true":
+    viconData = True
+if str((sys.argv)[3]) == "false":
+    viconData = False
 
 
 
@@ -158,7 +150,10 @@ def data_handler(address, *args):
     global parent_conn
     
     if teensySend:
-        cuny_data = parent_conn.recv()
+        cuny_data = parent_conn_teensy.recv()
+        
+    if viconData:
+        nuc_data = parent_conn_teensy.recv()
     
     
 
@@ -252,6 +247,8 @@ def data_handler(address, *args):
             objLThigh.getCalib()
             objLShank.getCalib()
             objLHeel.getCalib()
+            
+            objLowBack.getCalib()
 
         else:
     #Right Leg Angle Approximations
@@ -263,6 +260,8 @@ def data_handler(address, *args):
             objLThigh.angleCalc()
             objLShank.angleCalc()
             objLHeel.angleCalc()
+            
+            objLowBack.angleCalc()
 
             
             
@@ -292,7 +291,10 @@ def data_handler(address, *args):
 
 #Run Kneeling Detection Algorithm
         #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
-        kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank)
+        if viconData:
+            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack, nuc_data[0], nuc_data[1], nuc_data[2])
+        else:
+            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
 
 
 
@@ -453,19 +455,19 @@ if __name__ == "__main__":
     #Variable initializations
     #serial object for NUC. Comment out if not used.
     if nucSend:
-        intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud)
+        intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
+        if viconData:
+            parent_conn_nuc,child_conn_nuc = Pipe()
+            p_nuc = Process(target=async_nuc, args=(child_conn_nuc, intelNUCserial))
+            p_nuc.start()
 	
     
-    
-    
-    
-    
-    
+
     if teensySend:
         teensyPort = serial.Serial(teensyPort, teensyBaud, timeout=3.0)
-        parent_conn,child_conn = Pipe()
-        p = Process(target=async_teensy, args=(child_conn, teensyPort))
-        p.start()
+        parent_conn_teensy,child_conn_teensy = Pipe()
+        p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
+        p_teensy.start()
     
     
     
@@ -488,7 +490,7 @@ if __name__ == "__main__":
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
-    kneelingDetect = kneelingDetection(NMKG, mass)
+    kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff)
 
     #create lists that can be cycles through to iterate over every object, as well as create the file data header.
     objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
