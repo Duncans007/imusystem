@@ -179,6 +179,12 @@ class kneelingDetection:
                 return Tr
             else:
                 return self.torqueCutoff
+            
+            if Tr < 0:
+                return 0
+            else:
+                return Tr
+            
         else:
             return 0
         
