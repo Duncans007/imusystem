@@ -94,7 +94,7 @@ for i in range(count):
 
 
     kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLoBack)
-    outputStr = f"{objLThigh.zAngle}\t{objRThigh.zAngle}\t{objLShank.zAngle}\t{objRShank.zAngle}\t{kneelingTorqueEstimationL}\t{kneelingTorqueEstimationR}\t{kneeAngleL}\t{kneeAngleR}\t{legForward}\n"
+    outputStr = f"{objLThigh.zAngle}\t{objRThigh.zAngle}\t{objLoBack.zAngle}\t{kneelingTorqueEstimationL}\t{kneelingTorqueEstimationR}\t{kneeAngleL}\t{kneeAngleR}\n"
     wFile.write(outputStr)
     print(outputStr)
     time.sleep(.02)
