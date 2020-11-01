@@ -175,7 +175,7 @@ class kneelingDetection:
         Tr = (self.alpha) * TqEst
         
         if True:   #alternate: (self.torqueWindow(leg)):
-            if Tr < = self.torqueCutoff:
+            if Tr <= self.torqueCutoff:
                 return Tr
             else:
                 return self.torqueCutoff
