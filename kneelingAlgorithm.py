@@ -2,12 +2,13 @@
 import math
 
 class kneelingDetection:
-    def __init__(self, NMKG, mass, height):
+    def __init__(self, NMKG, mass, height, alpha, torqueCutoff):
         import time
         self.NMKG = NMKG
         self.mass = mass
         self.height = height
-        self.alpha = .0007
+        self.alpha = alpha
+        self.torqueCutoff = torqueCutoff
         
         #Inputs updated on the first loop
         self.thighAngleR = 0
@@ -174,7 +175,10 @@ class kneelingDetection:
         Tr = (self.alpha) * TqEst
         
         if True:   #alternate: (self.torqueWindow(leg)):
-            return Tr
+            if Tr < = self.torqueCutoff:
+                return Tr
+            else:
+                return self.torqueCutoff
         else:
             return 0
         
