@@ -224,14 +224,8 @@ class sensorObject:
         #dotProd = (g * magnitude) / (abs(g * magnitude))
         #self.angleFromGravity = math.degrees(math.acos(dotProd))
         
-        self.angleFromGravity = math.degrees(math.atan2(self.acX, -self.acY))
-        
-    #ACOS function has limited output, direction of angle movement determined by the direction of X acceleration on the heel.
-    #Negative X acc should imply toe up, while positive X acc should imply heel up. Values are originally only positive, so only necessary to change to negative when required.
-    #This is not entirely accurate during walking, which is why the drift cap is set so low while walking. 
-    #Note: this will not work at all as a primary method of angle detection. Works well to correct gyroscope values though.
-        if self.acX > 0:
-            self.angleFromGravity = -self.angleFromGravity
+        self.angleFromGravity = -math.degrees(math.atan2(self.acX, -self.acY))
+        self.angleFromGravity = self.angleFromGravity * ((abs(self.zAngle) + 0.00001) / (self.zAngle + 0.00001))
         
     #Populates and minimizes array of values to smooth curve. Usually set around 2-3 frames to minimize time delay while still smoothing peaks as much as possible.
     #2-3 frames adds up to .04-.06 seconds delay total, halved and averaged comes out to a .025 second (or approximately 1 frame) delay due to this method of smoothing.
