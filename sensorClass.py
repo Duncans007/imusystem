@@ -224,8 +224,9 @@ class sensorObject:
         #dotProd = (g * magnitude) / (abs(g * magnitude))
         #self.angleFromGravity = math.degrees(math.acos(dotProd))
         
-        self.angleFromGravity = -math.degrees(math.atan2(self.acX, -self.acY))
-        self.angleFromGravity = self.angleFromGravity * ((abs(self.acX) + 0.00001) / (self.acX + 0.00001))
+        tanVal = math.atan2(self.acX, self.acY)
+        print(tanVal, end='\t'
+        self.angleFromGravity = math.degrees(tanVal)
         
     #Populates and minimizes array of values to smooth curve. Usually set around 2-3 frames to minimize time delay while still smoothing peaks as much as possible.
     #2-3 frames adds up to .04-.06 seconds delay total, halved and averaged comes out to a .025 second (or approximately 1 frame) delay due to this method of smoothing.
