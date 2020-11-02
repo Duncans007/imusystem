@@ -87,7 +87,7 @@ dataDict = {
     "lShank": [],
     "lHeel": [],
     "lowBack":  [],
-    "topBack": []
+    "topBack": [0,0,0,0,0,0,0,0,0]
 }
 
 
