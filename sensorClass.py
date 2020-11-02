@@ -221,7 +221,7 @@ class sensorObject:
         #ratio = abs(magnitude / g)
         
     #Apply dot product to system in 2 steps to find the angle between where gravity is and should be.
-        dotProd = (g * self.acY) / (abs(g * magnitude))
+        dotProd = (g * magnitude) / (abs(g * magnitude))
         self.angleFromGravity = math.degrees(math.acos(dotProd))
         
     #ACOS function has limited output, direction of angle movement determined by the direction of X acceleration on the heel.
