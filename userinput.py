@@ -19,4 +19,4 @@ teensyBaud = 256000
 hip_heel_length = 1 #meters
 NMKG = 0.15
 
-sensor8 = False
+sensor8 = True
