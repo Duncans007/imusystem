@@ -8,6 +8,6 @@ sleep 1
 
 (cd ../notochord/bin ; ./notochord --scan --raw --no_bundles --odr=97 -y localhost)&
 
-sleep 5
+sleep 6
 
 ./2LegMain.py $1 $2 $3 #>/dev/null
