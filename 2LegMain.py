@@ -87,7 +87,7 @@ dataDict = {
     "lShank": [],
     "lHeel": [],
     "lowBack":  [],
-    "topBack": []
+    "topBack": [0,0,0,0,0,0,0,0,0]
 }
 
 
@@ -135,7 +135,7 @@ passToAlgorithm = {
     "ls_raw": [],
     "lh_raw": [],
     "b_raw": [],
-    "tb_raw": [0,0,0,0,0,0,0,0,0]
+    "tb_raw": []
 }
 
 
