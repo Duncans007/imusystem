@@ -69,7 +69,7 @@ toggleFlagDict = {
     "lowBack": True,
     "topBack": sensor8
 }
-
+print(toggleFlagDict)
 
 #Variable Initializations
 
