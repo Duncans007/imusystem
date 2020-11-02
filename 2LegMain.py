@@ -366,7 +366,7 @@ def data_handler(address, *args):
         outputString += f"\n"
 		
         if nucSend == False:
-            pass #print(outputString)
+            print(outputString)
         fileDump.write(f"{outputString}")
 		
 
@@ -416,7 +416,7 @@ def data_handler(address, *args):
                     serialArr.append(int(i[1]))
                     
                     
-            print(serialArr)
+            print(objRHeel.angleFromGravity) #print(serialArr)
             send_over_serial(serialArr, intelNUCserial)
                 
             
