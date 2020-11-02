@@ -261,7 +261,8 @@ def data_handler(address, *args):
             objLHeel.getCalib()
             
             objLowBack.getCalib()
-            objTopBack.getCalib()
+            if toggleFlagDict['topBack'] == True:
+                objTopBack.getCalib()
 
         else:
     #Right Leg Angle Approximations
@@ -275,7 +276,8 @@ def data_handler(address, *args):
             objLHeel.angleCalc()
             
             objLowBack.angleCalc()
-            objTopBack.angleCalc()
+            if toggleFlagDict['topBack'] == True:
+                objTopBack.angleCalc()
 
             
             
