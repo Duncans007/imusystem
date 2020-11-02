@@ -179,7 +179,12 @@ def data_handler(address, *args):
 
         if varType == "r":
             dataDict[limb] = package_handler_raw(args)
-            flagDict[limb] = True
+            
+            if (limb == "topBack"):
+                if (toggleFlagDict['topBack'] == True):
+                    flagDict[limb] = True
+            else:
+                flagDict[limb] = True
 
             
 #Tests if all sensors have been received before assembling packet and sending to algorithm
