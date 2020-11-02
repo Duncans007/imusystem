@@ -225,7 +225,8 @@ class sensorObject:
         #self.angleFromGravity = math.degrees(math.acos(dotProd))
         
         tanVal = math.atan2(self.acX, -self.acY)
-        print(tanVal, end='\t')
+        if self.limbCode = "RH":
+            print(tanVal, end='\t')
         self.angleFromGravity = math.degrees(tanVal)
         
     #Populates and minimizes array of values to smooth curve. Usually set around 2-3 frames to minimize time delay while still smoothing peaks as much as possible.
