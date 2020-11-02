@@ -67,6 +67,7 @@ toggleFlagDict = {
     "lShank": True,
     "lHeel": True,
     "lowBack": True,
+    "topBack": sensor8
 }
 
 
@@ -87,6 +88,7 @@ dataDict = {
     "lShank": [],
     "lHeel": [],
     "lowBack":  [],
+    "topBack": []
 }
 
 
@@ -98,6 +100,7 @@ flagDict = {
     "lShank": False,
     "lHeel": False,
     "lowBack": False,
+    "topBack": False
 }
 
 
@@ -109,6 +112,7 @@ addressDict = {
     "31": "lShank",
     "32": "lHeel",
     "20": "lowBack",
+    "52": "topBack"
 }
 
 
@@ -120,6 +124,7 @@ orderDict = {
     4: "lShank",
     5: "lHeel",
     6: "lowBack",
+    7: "topBack"
 }
 
 
@@ -131,6 +136,7 @@ passToAlgorithm = {
     "ls_raw": [],
     "lh_raw": [],
     "b_raw": [],
+    "tb_raw": []
 }
 
 
@@ -147,7 +153,7 @@ def data_handler(address, *args):
     global hip_heel_length
     global intelNUCserial, nucSend
     global teensySend, teensyPort
-    global parent_conn
+    global parent_conn, viconData
     
     if teensySend:
         cuny_data = parent_conn_teensy.recv()
@@ -194,6 +200,7 @@ def data_handler(address, *args):
         passToAlgorithm["ls_raw"] = dataDict["lShank"]
         passToAlgorithm["lh_raw"] = dataDict["lHeel"]
         passToAlgorithm["b_raw"]  = dataDict["lowBack"]
+        passToAlgorithm["tb_raw"] = dataDict["topBack"]
         
         packetReady = True
         
@@ -220,6 +227,7 @@ def data_handler(address, *args):
         objLShank.newValues(passToAlgorithm['ls_raw'])
         objLHeel.newValues(passToAlgorithm['lh_raw'])
         objLowBack.newValues(passToAlgorithm['b_raw'])
+        objTopBack.newValues(passToAlgorithm['tb_raw'])
         
         
         
@@ -249,6 +257,7 @@ def data_handler(address, *args):
             objLHeel.getCalib()
             
             objLowBack.getCalib()
+            objTopBack.getCalib()
 
         else:
     #Right Leg Angle Approximations
@@ -262,6 +271,7 @@ def data_handler(address, *args):
             objLHeel.angleCalc()
             
             objLowBack.angleCalc()
+            objTopBack.angleCalc()
 
             
             
@@ -486,6 +496,7 @@ if __name__ == "__main__":
     objLHeel = sensorObject("LH")
 
     objLowBack = sensorObject("LB")
+    objTopBack = sensorObject("LB")
 
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
@@ -493,8 +504,13 @@ if __name__ == "__main__":
     kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff)
 
     #create lists that can be cycles through to iterate over every object, as well as create the file data header.
-    objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
-    stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
+    if toggleFlagDict['topBack'] == True:
+        objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack, objTopBack]
+        stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack", "TopBack"]
+    else:
+        objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
+        stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
+        
     stringAxes = ["x","y","z"]
     #stringSensors = ["gy","ac","mg"]
     stringSensors = ["gy","ac"]
