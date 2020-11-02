@@ -69,7 +69,6 @@ toggleFlagDict = {
     "lowBack": True,
     "topBack": sensor8
 }
-print(toggleFlagDict)
 
 #Variable Initializations
 
@@ -170,6 +169,8 @@ def data_handler(address, *args):
     addr = ''
     addr += str(address[len(address) - 3])
     addr += str(address[len(address) - 1])
+    print(addr)
+    print(flagDict)
     
     
 #Takes in individual data and assembles into easily indexable dictionary packages.
