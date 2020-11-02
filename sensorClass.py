@@ -230,7 +230,7 @@ class sensorObject:
     #Negative X acc should imply toe up, while positive X acc should imply heel up. Values are originally only positive, so only necessary to change to negative when required.
     #This is not entirely accurate during walking, which is why the drift cap is set so low while walking. 
     #Note: this will not work at all as a primary method of angle detection. Works well to correct gyroscope values though.
-        if self.acX < 0:
+        if self.acX > 0:
             self.angleFromGravity = -self.angleFromGravity
         
     #Populates and minimizes array of values to smooth curve. Usually set around 2-3 frames to minimize time delay while still smoothing peaks as much as possible.
