@@ -225,7 +225,7 @@ class sensorObject:
         #self.angleFromGravity = math.degrees(math.acos(dotProd))
         
         tanVal = math.atan2(self.acX, -self.acY)
-        if self.limbCode = "RH":
+        if self.limbCode == "RH":
             print(tanVal, end='\t')
         self.angleFromGravity = math.degrees(tanVal)
         
