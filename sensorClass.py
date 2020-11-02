@@ -185,7 +185,7 @@ class sensorObject:
         if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)):
             if (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)):
                 if (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
-                    proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 20
+                    proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 10
                     if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
                         self.zAngle -= proportionality
                     elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
