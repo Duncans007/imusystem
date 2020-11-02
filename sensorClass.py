@@ -225,7 +225,6 @@ class sensorObject:
         #self.angleFromGravity = math.degrees(math.acos(dotProd))
         
         self.angleFromGravity = -math.degrees(math.atan2(self.acX, self.acY))
-        print(self.angleFromGravity)
         
     #ACOS function has limited output, direction of angle movement determined by the direction of X acceleration on the heel.
     #Negative X acc should imply toe up, while positive X acc should imply heel up. Values are originally only positive, so only necessary to change to negative when required.
