@@ -135,7 +135,7 @@ passToAlgorithm = {
     "ls_raw": [],
     "lh_raw": [],
     "b_raw": [],
-    "tb_raw": []
+    "tb_raw": [0,0,0,0,0,0,0,0,0]
 }
 
 
