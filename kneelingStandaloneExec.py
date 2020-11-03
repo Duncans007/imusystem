@@ -24,7 +24,7 @@ objLoBack = sensorObject("LB")
 
 kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff)
 
-rFile = open('standaloneKneelingData2.txt')
+rFile = open('standaloneKneelingData_6.txt')
 data = rFile.readlines()
 count = len(data)
 rFile.close()
@@ -95,7 +95,7 @@ for i in range(count):
 
 
 
-    kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLoBack)
+    kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneelingTorqueEstimationR2, kneelingTorqueEstimationL2, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLoBack)
     outputStr = f"{objLThigh.zAngle}\t{objRThigh.zAngle}\t{objLoBack.zAngle}\t{kneeAngleL}\t{kneeAngleR}\t{kneelingTorqueEstimationL}\t{kneelingTorqueEstimationR}\n"
     wFile.write(outputStr)
     print(outputStr)
