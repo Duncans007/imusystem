@@ -116,21 +116,27 @@ def receive_from_nuc(serialPort):
     receivedData = False
     outputArray = []
     
-    firstChar = serialPort.read() #Byte 1
+    print('Here')
+    firstChar = serialPort.read(1) #Byte 1
+    print(firstChar)
     firstCharInt = struct.unpack('B', firstChar)
     
-    if (firstCharInt[0] == 5):
+    if (firstCharInt[0] == 165):
+        print('Nuc received')
         recArray = []
             
         loByte = serialPort.read()
         hiByte = serialPort.read()
-        recArray += struct.unpack('<h', loByte + hiByte)
+        leftTorq = struct.unpack('<H', loByte + hiByte)
         
         loByte = serialPort.read()
         hiByte = serialPort.read()
-        recArray += struct.unpack('<h', loByte + hiByte)
-            
+        rightTorq = struct.unpack('<H', loByte + hiByte)
+        
+        recArray = [leftTorq[0], rightTorq[0]]
         receivedData = True
+        print(recArray)
+        outputArray = recArray
     
     return receivedData, outputArray
     
