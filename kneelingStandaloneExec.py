@@ -37,40 +37,40 @@ wFile = open('algDump.txt', 'w+')
 for i in range(count):
     outputStr = ''
     y = data[i].split()
-    objLThigh.gyX = float(y[0])
-    objLThigh.gyY = float(y[1])
-    objLThigh.gyZ = float(y[2])
-    objLThigh.acX = float(y[3])
-    objLThigh.acY = float(y[4])
-    objLThigh.acZ = float(y[5])
+    objLThigh.gyX = float(y[0])/2
+    objLThigh.gyY = float(y[1])/2
+    objLThigh.gyZ = float(y[2])/2
+    objLThigh.acX = float(y[3])/2
+    objLThigh.acY = float(y[4])/2
+    objLThigh.acZ = float(y[5])/2
 
-    objRThigh.gyX = float(y[6])
-    objRThigh.gyY = float(y[7])
-    objRThigh.gyZ = float(y[8])
-    objRThigh.acX = float(y[9])
-    objRThigh.acY = float(y[10])
-    objRThigh.acZ = float(y[11])
+    objRThigh.gyX = float(y[6])/2
+    objRThigh.gyY = float(y[7])/2
+    objRThigh.gyZ = float(y[8])/2
+    objRThigh.acX = float(y[9])/2
+    objRThigh.acY = float(y[10])/2
+    objRThigh.acZ = float(y[11])/2
 
-    objLShank.gyX = float(y[12])
-    objLShank.gyY = float(y[13])
-    objLShank.gyZ = float(y[14])
-    objLShank.acX = float(y[15])
-    objLShank.acY = float(y[16])
-    objLShank.acZ = float(y[17])
+    objLShank.gyX = float(y[12])/2
+    objLShank.gyY = float(y[13])/2
+    objLShank.gyZ = float(y[14])/2
+    objLShank.acX = float(y[15])/2
+    objLShank.acY = float(y[16])/2
+    objLShank.acZ = float(y[17])/2
 
-    objRShank.gyX = float(y[18])
-    objRShank.gyY = float(y[19])
-    objRShank.gyZ = float(y[20])
-    objRShank.acX = float(y[21])
-    objRShank.acY = float(y[22])
-    objRShank.acZ = float(y[23])
+    objRShank.gyX = float(y[18])/2
+    objRShank.gyY = float(y[19])/2
+    objRShank.gyZ = float(y[20])/2
+    objRShank.acX = float(y[21])/2
+    objRShank.acY = float(y[22])/2
+    objRShank.acZ = float(y[23])/2
     
-    objLoBack.gyX = float(y[24])
-    objLoBack.gyY = float(y[25])
-    objLoBack.gyZ = float(y[26])
-    objLoBack.acX = float(y[27])
-    objLoBack.acY = float(y[28])
-    objLoBack.acZ = float(y[29])
+    objLoBack.gyX = float(y[24])/2
+    objLoBack.gyY = float(y[25])/2
+    objLoBack.gyZ = float(y[26])/2
+    objLoBack.acX = float(y[27])/2
+    objLoBack.acY = float(y[28])/2
+    objLoBack.acZ = float(y[29])/2
     
     timestep = float(y[30])
         
