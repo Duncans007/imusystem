@@ -190,8 +190,9 @@ class sensorObject:
                 self.zAngle -= proportionality
             elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
                 self.zAngle += proportionality
+            self.zAngle += zAngleChange/2
         else:
-            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 500
+            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 100
             if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
                 self.zAngle -= proportionality
             elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
