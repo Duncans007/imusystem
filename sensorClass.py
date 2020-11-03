@@ -42,9 +42,9 @@ class sensorObject:
         self.gyY_calib = 0
         self.gyZ_calib = 0
         
-        self.gyX_range = 10
-        self.gyY_range = 10
-        self.gyZ_range = 10
+        self.gyX_range = 20
+        self.gyY_range = 20
+        self.gyZ_range = 20
         
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
@@ -164,6 +164,7 @@ class sensorObject:
     def angleCalc(self):
         import time
         import numpy as np
+        import math
         self.timeLastValue = self.currentTime
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
@@ -182,14 +183,15 @@ class sensorObject:
             self.zAngleChangeArray.pop(0)
             
     #manually set perturbation range for now, later set using calibration function
-        if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)) and (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)) and (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
+        #if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)) and (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)) and (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
+        if (math.sqrt((self.gyX ** 2) + (self.gyY ** 2) + (self.gyZ ** 2)) < 12):
             proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 10
             if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
                 self.zAngle -= proportionality
             elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
                 self.zAngle += proportionality
         else:
-            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 100
+            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 1000
         
         self.zAngle += zAngleChange
         
