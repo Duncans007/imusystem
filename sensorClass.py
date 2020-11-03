@@ -42,9 +42,9 @@ class sensorObject:
         self.gyY_calib = 0
         self.gyZ_calib = 0
         
-        self.gyX_range = 4
-        self.gyY_range = 4
-        self.gyZ_range = 4
+        self.gyX_range = 10
+        self.gyY_range = 10
+        self.gyZ_range = 10
         
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
