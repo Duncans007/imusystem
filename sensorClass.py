@@ -184,7 +184,7 @@ class sensorObject:
             
     #manually set perturbation range for now, later set using calibration function
         #if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)) and (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)) and (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
-        if (math.sqrt((self.gyX ** 2) + (self.gyY ** 2) + (self.gyZ ** 2)) < 12):
+        if (math.sqrt((self.gyX ** 2) + (self.gyY ** 2) + (self.gyZ ** 2)) < 20):
             proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 10
             if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
                 self.zAngle -= proportionality
