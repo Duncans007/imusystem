@@ -24,7 +24,7 @@ objLoBack = sensorObject("LB")
 
 kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff)
 
-rFile = open('standaloneKneelingData.txt')
+rFile = open('standaloneKneelingData2.txt')
 data = rFile.readlines()
 count = len(data)
 rFile.close()
@@ -71,6 +71,8 @@ for i in range(count):
     objLoBack.acX = float(y[27])/2
     objLoBack.acY = float(y[28])/2
     objLoBack.acZ = float(y[29])/2
+    
+    timestep = float(y[30])
         
     if i < 50:
         objRThigh.getCalib()

@@ -42,9 +42,9 @@ class sensorObject:
         self.gyY_calib = 0
         self.gyZ_calib = 0
         
-        self.gyX_range = 4
-        self.gyY_range = 4
-        self.gyZ_range = 4
+        self.gyX_range = 5
+        self.gyY_range = 5
+        self.gyZ_range = 5
         
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
@@ -73,7 +73,7 @@ class sensorObject:
         self.angleFromGravity = 0
         self.gravAngleArray = []
         self.gravAngleSmoothed = 0
-        self.gravAngleArrayLimit = 5
+        self.gravAngleArrayLimit = 3
 
         
         
@@ -164,6 +164,7 @@ class sensorObject:
     def angleCalc(self):
         import time
         import numpy as np
+        import math
         self.timeLastValue = self.currentTime
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
@@ -182,16 +183,23 @@ class sensorObject:
             self.zAngleChangeArray.pop(0)
             
     #manually set perturbation range for now, later set using calibration function
-        if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)):
-            if (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)):
-                if (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
-                    proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 20
-                    if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
-                        self.zAngle -= proportionality
-                    elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
-                        self.zAngle += proportionality
+        if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)) and (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)) and (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
+        #if (math.sqrt((self.gyX ** 2) + (self.gyY ** 2) + (self.gyZ ** 2)) < 20):
+            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 10
+            if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
+                self.zAngle -= proportionality
+            elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
+                self.zAngle += proportionality
+            self.zAngle += zAngleChange
+        else:
+            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 100
+            if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
+                self.zAngle -= proportionality
+            elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
+                self.zAngle += proportionality
+            self.zAngle += zAngleChange
         
-        self.zAngle += zAngleChange
+        
         
     #Keeps short array of values. Not currently used.
         self.zAngleArray.append(self.zAngle)
@@ -221,15 +229,11 @@ class sensorObject:
         #ratio = abs(magnitude / g)
         
     #Apply dot product to system in 2 steps to find the angle between where gravity is and should be.
-        dotProd = (g * self.acY) / (abs(g * magnitude))
-        self.angleFromGravity = math.degrees(math.acos(dotProd))
+        #dotProd = (g * magnitude) / (abs(g * magnitude))
+        #self.angleFromGravity = math.degrees(math.acos(dotProd))
         
-    #ACOS function has limited output, direction of angle movement determined by the direction of X acceleration on the heel.
-    #Negative X acc should imply toe up, while positive X acc should imply heel up. Values are originally only positive, so only necessary to change to negative when required.
-    #This is not entirely accurate during walking, which is why the drift cap is set so low while walking. 
-    #Note: this will not work at all as a primary method of angle detection. Works well to correct gyroscope values though.
-        if self.acX > 0:
-            self.angleFromGravity = -self.angleFromGravity
+        tanVal = -math.atan2(self.acX, -self.acY)
+        self.angleFromGravity = math.degrees(tanVal)
         
     #Populates and minimizes array of values to smooth curve. Usually set around 2-3 frames to minimize time delay while still smoothing peaks as much as possible.
     #2-3 frames adds up to .04-.06 seconds delay total, halved and averaged comes out to a .025 second (or approximately 1 frame) delay due to this method of smoothing.
