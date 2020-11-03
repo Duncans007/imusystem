@@ -24,7 +24,7 @@ objLoBack = sensorObject("LB")
 
 kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff)
 
-rFile = open('standaloneKneelingData.txt')
+rFile = open('standaloneKneelingData2.txt')
 data = rFile.readlines()
 count = len(data)
 rFile.close()
