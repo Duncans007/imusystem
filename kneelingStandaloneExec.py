@@ -99,5 +99,5 @@ for i in range(count):
     outputStr = f"{objLThigh.zAngle}\t{objRThigh.zAngle}\t{objLoBack.zAngle}\t{kneeAngleL}\t{kneeAngleR}\t{kneelingTorqueEstimationL}\t{kneelingTorqueEstimationR}\n"
     wFile.write(outputStr)
     print(outputStr)
-    time.sleep(timestep)
+    time.sleep(.02)
 wFile.close()
