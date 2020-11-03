@@ -182,14 +182,14 @@ class sensorObject:
             self.zAngleChangeArray.pop(0)
             
     #manually set perturbation range for now, later set using calibration function
-        if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)):
-            if (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)):
-                if (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
-                    proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 10
-                    if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
-                        self.zAngle -= proportionality
-                    elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
-                        self.zAngle += proportionality
+        if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)) and (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)) and (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
+            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 10
+            if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
+                self.zAngle -= proportionality
+            elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
+                self.zAngle += proportionality
+        else:
+            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 500
         
         self.zAngle += zAngleChange
         
