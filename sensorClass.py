@@ -42,9 +42,9 @@ class sensorObject:
         self.gyY_calib = 0
         self.gyZ_calib = 0
         
-        self.gyX_range = 10
-        self.gyY_range = 10
-        self.gyZ_range = 10
+        self.gyX_range = 5
+        self.gyY_range = 5
+        self.gyZ_range = 5
         
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
@@ -73,7 +73,7 @@ class sensorObject:
         self.angleFromGravity = 0
         self.gravAngleArray = []
         self.gravAngleSmoothed = 0
-        self.gravAngleArrayLimit = 5
+        self.gravAngleArrayLimit = 3
 
         
         
