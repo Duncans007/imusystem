@@ -42,9 +42,9 @@ class sensorObject:
         self.gyY_calib = 0
         self.gyZ_calib = 0
         
-        self.gyX_range = 20
-        self.gyY_range = 20
-        self.gyZ_range = 20
+        self.gyX_range = 10
+        self.gyY_range = 10
+        self.gyZ_range = 10
         
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
@@ -191,13 +191,14 @@ class sensorObject:
             elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
                 self.zAngle += proportionality
         else:
-            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 100
+            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 500
             if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
                 self.zAngle -= proportionality
             elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
                 self.zAngle += proportionality
+            self.zAngle += zAngleChange
         
-        self.zAngle += zAngleChange
+        
         
     #Keeps short array of values. Not currently used.
         self.zAngleArray.append(self.zAngle)
@@ -231,8 +232,6 @@ class sensorObject:
         #self.angleFromGravity = math.degrees(math.acos(dotProd))
         
         tanVal = -math.atan2(self.acX, -self.acY)
-        if self.limbCode == "RH":
-            print(tanVal, end='\t')
         self.angleFromGravity = math.degrees(tanVal)
         
     #Populates and minimizes array of values to smooth curve. Usually set around 2-3 frames to minimize time delay while still smoothing peaks as much as possible.
