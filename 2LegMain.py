@@ -430,6 +430,7 @@ def data_handler(address, *args):
 		
         if nucSend == False:
             #print(outputString)
+            continue
         fileDump.write(f"{outputString}")
 		
 
