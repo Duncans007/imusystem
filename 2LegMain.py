@@ -208,7 +208,7 @@ def data_handler(address, *args):
     global parent_conn, viconData
     
     if teensySend:
-        if parent_conn_teensy.poll(0):
+        if parent_conn_teensy.poll(.001):
             cuny_data = parent_conn_teensy.recv()
         
     if viconData:
@@ -419,6 +419,11 @@ def data_handler(address, *args):
         #    outputString += f"{x.angleFromGravity}\t\t"
 
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}\t{torqueROG}\t{torqueLOG}"
+        
+        if teensySend:
+            for x in cuny_data.values():
+                outputString += f"{x}\t"
+
         outputString += f"\n"
 		
         if nucSend == False:
