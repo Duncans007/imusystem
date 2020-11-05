@@ -429,8 +429,9 @@ def data_handler(address, *args):
         outputString += f"\n"
 		
         if nucSend == False:
+            print(cuny_data)
             #print(outputString)
-            pass
+            
         fileDump.write(f"{outputString}")
 		
 
