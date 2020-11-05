@@ -483,6 +483,7 @@ if __name__ == "__main__":
         parent_conn_teensy,child_conn_teensy = Pipe()
         p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
         p_teensy.start()
+        parent_conn_teensy.setblocking(False)
     
     
     
