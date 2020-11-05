@@ -45,6 +45,7 @@ def receive_from_teensy(serialPort):
             
             
             receivedData = True
+            outputArray = recArray
     
     return receivedData, outputArray
     
