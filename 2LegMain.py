@@ -429,7 +429,7 @@ def data_handler(address, *args):
         outputString += f"\n"
 		
         if nucSend == False:
-            print(f"Read Rate: {timeToRun}\t{kneeAngleR}\t{kneeAngleL}")
+            print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}")
             
         fileDump.write(f"{outputString}")
 		
@@ -480,7 +480,7 @@ def data_handler(address, *args):
                     serialArr.append(int(i[1]))
                     
                     
-            print(f"Read Rate: {timeToRun}") #print(serialArr)
+            print(f"Read Rate: {1/timeToRun}") #print(serialArr)
             send_over_serial(serialArr, intelNUCserial)
                 
             
