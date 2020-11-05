@@ -155,7 +155,8 @@ def data_handler(address, *args):
     global parent_conn, viconData
     
     if teensySend:
-        cuny_data = parent_conn_teensy.recv()
+        if parent_conn_teensy.poll(0):
+            cuny_data = parent_conn_teensy.recv()
         
     if viconData:
         nuc_data = parent_conn_teensy.recv()
@@ -483,7 +484,6 @@ if __name__ == "__main__":
         parent_conn_teensy,child_conn_teensy = Pipe()
         p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
         p_teensy.start()
-        p_teensy.setblocking(False)
     
     
     
