@@ -33,6 +33,7 @@ global objects
 global hip_heel_length
 global intelNUCserial
 global teensySend, teensyPort
+global cuny_data
 
 #ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
 #USER INPUTS
@@ -206,10 +207,11 @@ def data_handler(address, *args):
     global intelNUCserial, nucSend
     global teensySend, teensyPort
     global parent_conn, viconData
+    global cuny_data
     
     if teensySend:
-        if parent_conn_teensy.poll(.001):
-            cuny_data = parent_conn_teensy.recv()
+        #if parent_conn_teensy.poll(.001):
+        cuny_data = parent_conn_teensy.recv()
         
     if viconData:
         nuc_data = parent_conn_teensy.recv()
