@@ -7,6 +7,7 @@ def async_nuc(child_conn, nucPort):
     nuc_data = {
         "KneeL"  : 0,
         "KneeR"  : 0,
+        "Back"   : 0
 
     }
     
@@ -17,6 +18,7 @@ def async_nuc(child_conn, nucPort):
             try:
                 nuc_data["KneeL"]  = outputArray[0]
                 nuc_data["KneeR"]  = outputArray[1]
+                nuc_data["Back"] = outputArray[2]
             except IndexError:
                 continue
             
