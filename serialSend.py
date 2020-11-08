@@ -118,9 +118,13 @@ def receive_from_nuc(serialPort):
     firstChar = serialPort.read() #Byte 1
     firstCharInt = struct.unpack('B', firstChar)
     
-    if (firstCharInt[0] == 5):
+    if (firstCharInt[0] == 7):
         recArray = []
             
+        loByte = serialPort.read()
+        hiByte = serialPort.read()
+        recArray += struct.unpack('<h', loByte + hiByte)
+        
         loByte = serialPort.read()
         hiByte = serialPort.read()
         recArray += struct.unpack('<h', loByte + hiByte)
