@@ -18,11 +18,11 @@ def async_nuc(child_conn, nucPort):
                 nuc_data["KneeL"]  = outputArray[0]
                 nuc_data["KneeR"]  = outputArray[1]
             except IndexError:
-                pass
+                continue
             
             
 
-            child_conn.send(nuc_data)
+        child_conn.send(nuc_data)
                 
 
     child_conn.close()
