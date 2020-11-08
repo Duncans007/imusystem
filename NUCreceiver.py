@@ -5,9 +5,9 @@ from serialSend import *
 
 def async_nuc(child_conn, nucPort):
     nuc_data = {
-        "KneeL"  : 0,
-        "KneeR"  : 0,
-        "Back"   : 0
+        "L"  : 0,
+        "R"  : 0,
+        "B"   : 0
 
     }
     
@@ -16,9 +16,9 @@ def async_nuc(child_conn, nucPort):
         if receivedData:
             
             try:
-                nuc_data["KneeL"]  = outputArray[0]
-                nuc_data["KneeR"]  = outputArray[1]
-                nuc_data["Back"] = outputArray[2]
+                nuc_data["L"]  = outputArray[0]
+                nuc_data["R"]  = outputArray[1]
+                nuc_data["B"] = outputArray[2]
             except IndexError:
                 continue
             
