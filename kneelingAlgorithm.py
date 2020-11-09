@@ -110,6 +110,9 @@ class kneelingDetection:
 
         self.kneelingDetection()
         
+        torqueR = 0
+        torqueL = 0
+        
         if self.controllerType == "pid":
             torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
         
