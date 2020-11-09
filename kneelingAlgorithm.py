@@ -118,15 +118,15 @@ class kneelingDetection:
             torqueR = self.torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
             
         if self.controllerType == "ramp":
-            if legForward == "R":
-                torqueR = torqueRamping()
+            if self.legForward == "R":
+                torqueR = self.torqueRamping()
                 torqueL = 0
             elif self.legForward == "L":
-                torqueL = torqueRamping()
-                torqueL = 0
+                torqueL = self.torqueRamping()
+                torqueR = 0
         
             
-        return torqueR_YUSU, torqueL_YUSU, self.kneeAngleR, self.kneeAngleL, self.legForward
+        return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
     
     
     
