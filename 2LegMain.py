@@ -568,7 +568,7 @@ if __name__ == "__main__":
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
-    kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff)
+    kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff, ramping_delay_time, ramping_hold_time, ramping_slope, controller_type)
 
     #create lists that can be cycles through to iterate over every object, as well as create the file data header.
     if toggleFlagDict['topBack'] == True:
