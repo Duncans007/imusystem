@@ -5,6 +5,8 @@ mass = 80 #kg
 height = 1.80 #m
 torqueCutoff = 18 #Nm
 alpha = .1 #proportionality
+controller_type = "ramp"
+#Option: "pid","yusu","ramp"
 
 
 #Serial Send/Receive to NUC and Simulink
