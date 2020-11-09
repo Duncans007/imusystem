@@ -8,6 +8,10 @@ alpha = .1 #proportionality
 controller_type = "ramp"
 #Option: "pid","yusu","ramp"
 
+ramping_delay_time = 5 #seconds
+ramping_hold_time = 5 #seconds
+ramping_slope = 20 #Nm/s
+
 
 #Serial Send/Receive to NUC and Simulink
 #intelNUCport = "/dev/ttyUSB0"
