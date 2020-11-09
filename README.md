@@ -155,8 +155,11 @@ Running the Algorithm:
 
 1. Use the included run.sh file to start both the Notochord and algorithm at the same time.
     run.sh takes 3 True/False arguments.
+    
         1. T/F send serial data to Simulink (configured for Rutgers NUC)
+        
         2. T/F send/receive data to device microcontroller (configured for CUNY Teensy)
+        
         3. T/F receive and use L_THIGH_ANGLE, R_THIGH_ANGLE, LOW_BACK_ANGLE
 
 
@@ -168,24 +171,40 @@ Configuring the Algorithm:
 1. Open userinput.py
     nano imusystem/userinput.py
     
+    
 Subject Parameters:
+
     mass (kilograms)
+    
     height (meters)
     
+    
 Torque Controllers:
+
     torqueCutoff (maximum torque)
+    
     alpha (yu&su controller proportionality constant)
+    
     NMKG (PID controller proportionality constant)
     
+    
 Serial Communication:
+
     baud (typically 115200 or 256000, match to system. NUC simulink expects 115200)
+    
     port (port that the given device is attached to)
+    
         run "ls /dev/tty*" with and without device attached. Note the entry that changes.
+        
         ="/dev/ttyS0" (GPIO pins)
+        
         ="/dev/ttyUSB0" (generic USB output, ex. a serial cable)
+        
         ="/dev/ttyACM0" (USB Microcontroller, ex. arduino)
         
+        
 Additional Sensors:
+
     sensor8 (True/False. Enables top back sensor which connects to port 5 - middle top. Blocks program if enabled without sensor.)
 
 ----------------------------------------------------------------------------
