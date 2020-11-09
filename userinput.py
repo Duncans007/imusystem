@@ -16,13 +16,13 @@ ramping_slope = 20 #Nm/s
 #Serial Send/Receive to NUC and Simulink
 #intelNUCport = "/dev/ttyUSB0"
 intelNUCport = "/dev/ttyS0"
-intelNUCbaud = 115200
+intelNUCbaud = 256000
 
 
 #Serial Send/Receive to CUNY Teensy
 #teensyPort = "/dev/ttyACM0"
 teensyPort = "/dev/ttyS0"
-teensyBaud = 115200
+teensyBaud = 256000
 
 
 hip_heel_length = 1 #meters
