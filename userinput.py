@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 
-#Torque Controller
+#Option: "pid","yusu","ramp"
+controller_type = "ramp"
+
+#General Torque Controller Parameters
 mass = 80 #kg
 height = 1.80 #m
 torqueCutoff = 18 #Nm
-alpha = .1 #proportionality
-controller_type = "ramp"
-#Option: "pid","yusu","ramp"
+NMKG = 0.15 #Nm/kg
 
+#Yu&Su Specific Proportionality Constant
+alpha = .1
+
+#Ramping Specific Constants
 ramping_delay_time = 5 #seconds
 ramping_hold_time = 5 #seconds
 ramping_slope = 20 #Nm/s
@@ -26,6 +31,5 @@ teensyBaud = 256000
 
 
 hip_heel_length = 1 #meters
-NMKG = 0.15
 
 sensor8 = False
