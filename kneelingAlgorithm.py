@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import math
+import time
 
 class kneelingDetection:
-    import time
     def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType):
         self.NMKG = NMKG
         self.mass = mass
