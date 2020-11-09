@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-#Option: "pid","yusu","ramp"
-controller_type = "ramp"
+#Options: "pid","yusu","ramp"
+controller_type = "yusu"
 
 #General Torque Controller Parameters
 mass = 80 #kg
