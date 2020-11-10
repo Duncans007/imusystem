@@ -96,10 +96,12 @@ class kneelingDetection:
         self.kneelingDetection()
         
         #torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
-        torqueL = self.torqueYuSu("LEFT", self.thighAngleL, self.loBackAng)
-        torqueR = self.torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
+        torqueL_YUSU = self.torqueYuSu("LEFT", self.thighAngleL, self.loBackAng)
+        torqueR_YUSU = self.torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
+        torqueL_DTS, torqueR_DTS = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
+        
             
-        return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
+        return torqueR_YUSU, torqueL_YUSU, torqueR_DTS, torqueL_DTS, self.kneeAngleR, self.kneeAngleL, self.legForward
     
     
     

@@ -44,8 +44,9 @@ def receive_from_teensy(serialPort):
                 bytesTemp = struct.unpack('<H', hiByte + loByte)
                 recArray[x] = bytesTemp[0]
                 outputArray[x] = recArray[x]-32768
-
+            
             receivedData = True
+            #outputArray = recArray
     
     
     return receivedData, outputArray
@@ -88,14 +89,15 @@ def send_over_serial(msgArray, serialSend):
 #Angle = x * .0125
 #Accelerometer = x * 0.002394
 #Gyroscope = x * 0.07
-
+    
     if len(msgArray) < 60:
         sendStr = bytearray(struct.pack("B", 113))
     else:
         sendStr = bytearray(struct.pack("B", 113 + 98))
     
+
     for enum, x in enumerate(msgArray):
-        print(x)
+        #print(x)
         if enum == 50 or enum == 51:
             sendStr += bytearray(struct.pack("B", x))
         elif (enum > 0 and enum < 50) or enum > 51:
@@ -105,6 +107,7 @@ def send_over_serial(msgArray, serialSend):
     
     #Encode with UTF-8 and send over serial.
     serialSend.write(sendStr)
+
     
     
     
@@ -116,28 +119,26 @@ def receive_from_nuc(serialPort):
     receivedData = False
     outputArray = []
     
-    print('Here')
-    firstChar = serialPort.read(1) #Byte 1
-    print(firstChar)
+    firstChar = serialPort.read() #Byte 1
     firstCharInt = struct.unpack('B', firstChar)
     
     if (firstCharInt[0] == 165):
-        print('Nuc received')
         recArray = []
             
         loByte = serialPort.read()
         hiByte = serialPort.read()
-        leftTorq = struct.unpack('<H', loByte + hiByte)
+        leftTorq = struct.unpack('<h', loByte + hiByte)
         
         loByte = serialPort.read()
         hiByte = serialPort.read()
-        rightTorq = struct.unpack('<H', loByte + hiByte)
+        rightTorq = struct.unpack('<h', loByte + hiByte)
         
         recArray = [leftTorq[0], rightTorq[0]]
         receivedData = True
         print(recArray)
         outputArray = recArray
     
+
     return receivedData, outputArray
     
     

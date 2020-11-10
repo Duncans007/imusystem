@@ -33,6 +33,7 @@ global objects
 global hip_heel_length
 global intelNUCserial
 global teensySend, teensyPort
+global cuny_data
 
 #ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
 #USER INPUTS
@@ -111,6 +112,59 @@ dataDict = {
 }
 
 
+cuny_data = {
+    "ActTqL" : 0,
+    "ActTqR" : 0,
+    "KneeL"  : 0,
+    "KneeR"  : 0,
+    "LTangX" : 0,
+    "LTangY" : 0,
+    "LTangZ" : 0,
+    "LTgyX"  : 0,
+    "LTgyY"  : 0,
+    "LTgyZ"  : 0,
+    "LTacX"  : 0,
+    "LTacY"  : 0,
+    "LTacZ"  : 0,
+    "RTangX" : 0,
+    "RTangY" : 0,
+    "RTangZ" : 0,
+    "RTgyX"  : 0,
+    "RTgyY"  : 0,
+    "RTgyZ"  : 0,
+    "RTacX"  : 0,
+    "RTacY"  : 0,
+    "RTacZ"  : 0,
+    "LSangX" : 0,
+    "LSangY" : 0,
+    "LSangZ" : 0,
+    "LSgyX"  : 0,
+    "LSgyY"  : 0,
+    "LSgyZ"  : 0,
+    "LSacX"  : 0,
+    "LSacY"  : 0,
+    "LSacZ"  : 0,
+    "RSangX" : 0,
+    "RSangY" : 0,
+    "RSangZ" : 0,
+    "RSgyX"  : 0,
+    "RSgyY"  : 0,
+    "RSgyZ"  : 0,
+    "RSacX"  : 0,
+    "RSacY"  : 0,
+    "RSacZ"  : 0,
+    "BangX"  : 0,
+    "BangY"  : 0,
+    "BangZ"  : 0,
+    "BgyX"   : 0,
+    "BgyY"   : 0,
+    "BgyZ"   : 0,
+    "BacX"   : 0,
+    "BacY"   : 0,
+    "BacZ"   : 0
+}
+
+
 flagDict = {
     "rThigh": False,
     "rShank": False,
@@ -173,9 +227,11 @@ def data_handler(address, *args):
     global intelNUCserial, nucSend
     global teensySend, teensyPort
     global parent_conn, viconData
+    global cuny_data
     
     if teensySend:
-        cuny_data = parent_conn_teensy.recv()
+        if parent_conn_teensy.poll(0):
+            cuny_data = parent_conn_teensy.recv()
         
     if viconData:
         nuc_data = parent_conn_teensy.recv()
@@ -332,7 +388,7 @@ def data_handler(address, *args):
             #kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, objLowBack, nuc_data[0], nuc_data[1], nuc_data[2])
             kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, nuc_data[0], nuc_data[1], nuc_data[2])
         else:
-            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+            kneelingTorqueEstimationR, kneelingTorqueEstimationL, torqueROG, torqueLOG, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
 
 
 
@@ -385,13 +441,24 @@ def data_handler(address, *args):
         #for x in objects:
         #    outputString += f"{x.gravAngleSmoothed}\t"
         #    outputString += f"{x.angleFromGravity}\t\t"
+        if viconData:
+            torqueROG = 0
+            torqueLOG = 0
 
-        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
+        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}\t{torqueROG}\t{torqueLOG}"
+        
+        if teensySend:
+            for x in cuny_data.values():
+                outputString += f"{x}\t"
+
         outputString += f"\n"
 		
         if nucSend == False:
+
             #print(outputString)
             print('nucSendFalse')
+
+            print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}")
             
         fileDump.write(f"{outputString}")
 		
@@ -430,7 +497,8 @@ def data_handler(address, *args):
 #Magnetometer = x * 0.00014
 
         if nucSend:
-            serialArr = [time.time() - timeStart]
+            #serialArr = [time.time() - timeStart]
+            serialArr = [1.0/timeToRun]
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [int(x.acX_norm/2), int(x.acY_norm/2), int(x.acZ_norm/2), int(x.gyX_norm/2), int(x.gyY_norm/2), int(x.gyZ_norm/2), int(x.zAngle * 80)]
             serialArr += [int(gaitDetectRight.gaitStage), int(gaitDetectLeft.gaitStage), int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationL * 500), int(kneelingTorqueEstimationR * 500)]
@@ -442,7 +510,10 @@ def data_handler(address, *args):
                     serialArr.append(int(i[1]))
                     
                     
+
             #print(serialArr)
+
+            print(f"Read Rate: {1/timeToRun}") #print(serialArr)
             send_over_serial(serialArr, intelNUCserial)
                 
             

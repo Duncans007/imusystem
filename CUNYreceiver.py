@@ -111,13 +111,15 @@ def async_teensy(child_conn, teensyPort):
                 cuny_data["BacY" ]  = outputArray[47]
                 cuny_data["BacZ" ]  = outputArray[48]
             except IndexError:
-                pass
+                continue
             
             
             #Add in knee torque calculation
             
             
             send_to_teensy(1, 1, teensyPort)
+            child_conn.send(cuny_data)
+        else:
             child_conn.send(cuny_data)
                 
 

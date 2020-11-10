@@ -11,4 +11,4 @@ sleep 1
 
 sleep 6
 
-./2LegMain.py $1 $2 $3 >/dev/null
+./2LegMain.py $1 $2 $3 #>/dev/null
