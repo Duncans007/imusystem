@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 import math
+import time
+from userinput import *
 
 class kneelingDetection:
-    def __init__(self, NMKG, mass, height, alpha, torqueCutoff):
-        import time
+    def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType):
         self.NMKG = NMKG
         self.mass = mass
         self.height = height
         self.alpha = alpha
         self.torqueCutoff = torqueCutoff
+        self.controllerType = torqueType
         
         #Inputs updated on the first loop
         self.thighAngleR = 0
@@ -33,6 +35,7 @@ class kneelingDetection:
         self.Rcounter = 0
         self.Lcounter = 0
         self.isKneeling = False
+        self.wasKneeling = False
         self.stdMultiplier = 2
         self.counterDetectionLimit = 2
         self.startingToStand = False
@@ -46,9 +49,22 @@ class kneelingDetection:
         #torqueWindow()
         self.timeLastKneeling = time.time()
         self.run_loop = False
+        self.timeKneelStart = time.time()
         
         self.legForward = "X"
         self.lastLeg = "X"
+        
+        #torqueRamping()
+        self.ramp_time_delay = rampDelay
+        self.ramp_slope = rampSlope
+        self.ramp_time_hold = rampHold
+        
+        self.ramp_time_increase = self.NMKG * self.mass / self.ramp_slope
+        self.ramp_time_decrease = self.NMKG * self.mass / self.ramp_slope
+        
+        self.rampTorque = 0
+        self.time_last_ramp_loop = 0
+        
         
         #YuSu Torque Controller Values
         self.Mb = mass * (52.2/81.4) #kg
@@ -57,7 +73,7 @@ class kneelingDetection:
         self.g = 9.81 #m/s
         
         self.Lb = height * 0.160901
-        self.Lt = height * (0.441/1.784)
+        self.Lt = height * (0.441 / 1.784)
         self.Ltc = height * (0.245 / 1.784)
     
     
@@ -95,13 +111,27 @@ class kneelingDetection:
 
         self.kneelingDetection()
         
-        #torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
-        torqueL_YUSU = self.torqueYuSu("LEFT", self.thighAngleL, self.loBackAng)
-        torqueR_YUSU = self.torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
-        torqueL_DTS, torqueR_DTS = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
+        torqueR = 0
+        torqueL = 0
+        
+        if self.controllerType == "pid":
+            torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
+        
+        if self.controllerType == "yusu":
+            torqueL = self.torqueYuSu("LEFT", self.thighAngleL, self.loBackAng)
+            torqueR = self.torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
+            
+        if self.controllerType == "ramp":
+            self.legForward = "L"
+            if self.legForward == "R":
+                torqueR = self.torqueRamping()
+                torqueL = 0
+            elif self.legForward == "L":
+                torqueL = self.torqueRamping()
+                torqueR = 0
         
             
-        return torqueR_YUSU, torqueL_YUSU, torqueR_DTS, torqueL_DTS, self.kneeAngleR, self.kneeAngleL, self.legForward
+        return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
     
     
     
@@ -170,29 +200,80 @@ class kneelingDetection:
     
     
     def torqueYuSu(self, leg, thetaT, thetaB):
-        TqEst1 = self.Mb * self.g * (   (self.Lb * math.sin(math.radians(thetaB)))   +   (self.Lt * math.sin(math.radians(-thetaT)))   )
+        TqEst1 = self.Mb * self.g * (   (self.Lb * math.sin(math.radians(thetaB-lowBackAngleShift)))   +   (self.Lt * math.sin(math.radians(-thetaT)))   )
         TqEst2 = self.Mt * self.g * self.Ltc * math.sin(math.radians(-thetaT))
         TqEst = (-0.5) * (TqEst1 + TqEst2)
-        
+
         Tr = (self.alpha) * TqEst
         
         if True:   #alternate: (self.torqueWindow(leg)):
-            if Tr <= self.torqueCutoff:
-                return Tr
-            else:
+            
+            if Tr >= self.torqueCutoff:
                 return self.torqueCutoff
-            
-            if Tr < 0:
-                return 0
+            elif Tr <= -self.torqueCutoff:
+                return -self.torqueCutoff
             else:
                 return Tr
-            
+
         else:
             return 0
         
         
         
         
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    def torqueRamping(self):
+        if (self.time_last_ramp_loop != 0):
+            timeStep = time.time() - self.time_last_ramp_loop
+        else: 
+            timeStep = 0.02
+        
+        timeFromKneelStart = time.time() - self.timeKneelStart
+        rampingCurveEnd = self.ramp_time_delay + self.ramp_time_increase + self.ramp_time_hold + self.ramp_time_decrease
+        self.isKneeling = True
+        #Test if kneeling, activate after delay. Configuration options in userinput.py
+        if (timeFromKneelStart > self.ramp_time_delay) and (timeFromKneelStart < rampingCurveEnd) and (self.isKneeling == True):
+            if (timeFromKneelStart < self.ramp_time_delay + self.ramp_time_increase):
+                #increasing
+                self.rampTorque = self.rampTorque + (timeStep * self.ramp_slope)
+                print("reah here")
+            elif (timeFromKneelStart < self.ramp_time_delay + self.ramp_time_increase + self.ramp_time_hold):
+                #holding
+                self.rampTorque = self.rampTorque
+            elif (timeFromKneelStart < self.ramp_time_delay + self.ramp_time_increase + self.ramp_time_hold + self.ramp_time_delay):
+                #decreasing
+                self.rampTorque = self.rampTorque - (timeStep * self.ramp_slope)
+                
+            
+            if (self.rampTorque > self.torqueCutoff):
+                self.rampTorque = self.torqueCutoff
+            elif (self.rampTorque < 0):
+                self.rampTorque = 0
+            
+            self.time_last_ramp_loop = time.time()
+            
+        else:
+            self.rampTorque = 0
+            
+        return self.rampTorque
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -218,14 +299,14 @@ class kneelingDetection:
         #Knee angles oriented with staight leg at 0 degrees
         
         
-        if (self.torqueWindow("RIGHT")):
+        if True: # (self.torqueWindow("RIGHT")):
             torqueOutputR = (self.A * (kneeAngleR)) + (self.B * thighGyR) + self.C
             torqueOutputR = torqueOutputR * self.NMKG * self.mass * (12/15)
         else:
             torqueOutputR = 0
         
         
-        if (self.torqueWindow("LEFT")):
+        if True: # (self.torqueWindow("LEFT")):
             torqueOutputL = (self.A * (kneeAngleL)) + (self.B * thighGyL) + self.C
             torqueOutputL = torqueOutputL * self.NMKG * self.mass * (12/15)
         else:
@@ -305,6 +386,10 @@ class kneelingDetection:
         #Knee angles oriented with staight leg at 180 degrees
         import numpy as np
         
+        #sets kneel start time when the switch from not kneeling to kneeling occurs
+        if (self.isKneeling == True) and (self.wasKneeling == False):
+            self.timeKneelStart = time.time()
+        self.wasKneeling = self.isKneeling
         
         
     #Calculate mean and standard deviation of gyroscope data outside of if statements so that moving array is not compromised.

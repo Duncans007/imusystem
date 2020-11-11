@@ -34,6 +34,7 @@ global hip_heel_length
 global intelNUCserial
 global teensySend, teensyPort
 global cuny_data
+global alpha2, SecondsToChange
 
 #ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
 #USER INPUTS
@@ -228,13 +229,14 @@ def data_handler(address, *args):
     global teensySend, teensyPort
     global parent_conn, viconData
     global cuny_data
-    
+    global SecondsToChange, alpha2
+
     if teensySend:
         if parent_conn_teensy.poll(0):
             cuny_data = parent_conn_teensy.recv()
         
     if viconData:
-        nuc_data = parent_conn_teensy.recv()
+        nuc_data = parent_conn_nuc.recv()
     
     
 
@@ -339,6 +341,17 @@ def data_handler(address, *args):
             objLowBack.getCalib()
             if toggleFlagDict['topBack'] == True:
                 objTopBack.getCalib()
+        elif((time.time() - timeStart) >= 1 and (time.time() - timeStart) < 3):
+            objRThigh.angleCalib()
+            objRShank.angleCalib()
+            objRHeel.angleCalib()
+
+
+            objLThigh.angleCalib()
+            objLShank.angleCalib()
+            objLHeel.angleCalib()
+
+            objLowBack.angleCalib()
 
         else:
     #Right Leg Angle Approximations
@@ -383,13 +396,15 @@ def data_handler(address, *args):
 
 #Run Kneeling Detection Algorithm
         #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
+        if (time.time() - timeStart > SecondsToChange):
+            kneelingDetect.alpha = alpha2
         if viconData:
-            nuc_data = [1, 2, 3]
             #kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, objLowBack, nuc_data[0], nuc_data[1], nuc_data[2])
-            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, nuc_data[0], nuc_data[1], nuc_data[2])
+            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, nuc_data["R"], nuc_data["L"], nuc_data["B"])
         else:
-            kneelingTorqueEstimationR, kneelingTorqueEstimationL, torqueROG, torqueLOG, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
-
+            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+        #kneelingTorqueEstimationR = 40
+        #kneelingTorqueEstimationL = -40
 
 
         
@@ -445,7 +460,7 @@ def data_handler(address, *args):
             torqueROG = 0
             torqueLOG = 0
 
-        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}\t{torqueROG}\t{torqueLOG}"
+        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         
         if teensySend:
             for x in cuny_data.values():
@@ -508,12 +523,15 @@ def data_handler(address, *args):
             if teensySend:
                 for i in cuny_data.items():
                     serialArr.append(int(i[1]))
-                    
+
+                send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)    
                     
 
             #print(serialArr)
 
-            print(f"Read Rate: {1/timeToRun}") #print(serialArr)
+            #print(f"Read Rate: {1/timeToRun}") #print(serialArr)
+            #print([objLowBack.zAngle, objLThigh.zAngle, objRThigh.zAngle])
+            print("%9.5f %9.5f %9.5f" %(1.0/timeToRun, kneelingTorqueEstimationL, kneelingTorqueEstimationR))
             send_over_serial(serialArr, intelNUCserial)
                 
             
@@ -601,7 +619,7 @@ if __name__ == "__main__":
     #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
-    kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff)
+    kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff, ramping_delay_time, ramping_hold_time, ramping_slope, controller_type)
 
     #create lists that can be cycles through to iterate over every object, as well as create the file data header.
     if toggleFlagDict['topBack'] == True:

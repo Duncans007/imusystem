@@ -1,10 +1,25 @@
 #!/usr/bin/env python3
 
-#Torque Controller
+#Options: "pid","yusu","ramp"
+controller_type = "yusu"
+#controller_type = "ramp"
+
+#General Torque Controller Parameters
 mass = 80 #kg
 height = 1.80 #m
-torqueCutoff = 18 #Nm
-alpha = .1 #proportionality
+torqueCutoff = 30 #Nm
+NMKG = 0.3 #Nm/kg
+lowBackAngleShift = 18
+
+#Yu&Su Specific Proportionality Constant
+alpha = .1
+alpha2 = 0.15
+SecondsToChange = 1
+
+#Ramping Specific Constants
+ramping_delay_time = 5 #seconds
+ramping_hold_time = 5 #seconds
+ramping_slope = 20 #Nm/s
 
 
 #Serial Send/Receive to NUC and Simulink
@@ -15,10 +30,10 @@ intelNUCbaud = 115200
 #Serial Send/Receive to CUNY Teensy
 teensyPort = "/dev/ttyACM0"
 #teensyPort = "/dev/ttyS0"
-teensyBaud = 256000
+#teensyBaud = 256000
+teensyBaud = 115200
 
 
 hip_heel_length = 1 #meters
-NMKG = 0.15
 
 sensor8 = False

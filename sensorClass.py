@@ -42,6 +42,9 @@ class sensorObject:
         self.gyY_calib = 0
         self.gyZ_calib = 0
         
+        self.angleZ_calib = 0
+        self.angleZ_calib_arr = []
+
         self.gyX_range = 5
         self.gyY_range = 5
         self.gyZ_range = 5
@@ -63,7 +66,8 @@ class sensorObject:
         self.calibVal = .1  #How much gravity can affect angle during walking
         self.zAngle = 0
         self.gravAngleWindow = 0
-        
+        self.zAngle_calibrated = 0
+
         #angularAcceleration() variables
         self.gyZarray = [0]
         self.angularAcceleration = 0
@@ -129,9 +133,15 @@ class sensorObject:
         self.gyY_calib = sum(self.gyY_calib_arr)/len(self.gyY_calib_arr)
         self.gyZ_calib = sum(self.gyZ_calib_arr)/len(self.gyZ_calib_arr)
 
-        
-        
-        
+
+    def angleCalib(self):
+        self.angleCalc(True)
+        self.angleZ_calib_arr.append(self.zAngle)
+
+
+        self.angleZ_calib = sum(self.angleZ_calib_arr)/len(self.angleZ_calib_arr)
+
+
 #--------------------------------------------------------------------------------------------------        
     def angularAccCalc(self):
         import time
@@ -161,15 +171,18 @@ class sensorObject:
     
 #--------------------------------------------------------------------------------------------------    
 #Angle Calcluation function        
-    def angleCalc(self):
+    def angleCalc(self, isCalib = False):
         import time
         import numpy as np
         import math
+
+        
+
         self.timeLastValue = self.currentTime
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
         
-        self.gravityVectorAngle()
+        self.gravityVectorAngle(isCalib)
         self.angularAccCalc()
         
 #Integrates gyroscope to get angle. Includes drift.
@@ -206,7 +219,12 @@ class sensorObject:
     
         if len(self.zAngleArray) > self.zAngleArrayLimit:
             self.zAngleArray.pop(0)
-            
+        
+        #if not isCalib:
+        #    self.zAngle_calibrated = self.zAngle + self.angleZ_calib
+        #print("AngleCalib ===")
+        #print(self.angleZ_calib)
+        
         return self.zAngle
     
     
@@ -216,7 +234,7 @@ class sensorObject:
     
 #--------------------------------------------------------------------------------------------------
 #Gravity vector calculations function
-    def gravityVectorAngle(self):
+    def gravityVectorAngle(self, isCalib = False):
         import math
         import numpy as np
         
@@ -244,7 +262,8 @@ class sensorObject:
     #Take mean of populated array, save to object.
         self.gravAngleSmoothed = np.mean(self.gravAngleArray)
         
-        
+        #if not isCalib:
+            #self.gravAngleSmoothed = self.gravAngleSmoothed - self.angleZ_calib
         
         
         

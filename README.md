@@ -5,6 +5,7 @@
 Putting on the System:
 
 1. There are 7x k-ceptors (sensors), 7x cables, 1x hub, 1x Raspberry Pi, 1x battery.
+    There is 1x extra optional k-ceptor that can be enabled in userinput.py by toggling sensor8 to True.
 2. Hub, Pi, Battery attach to back brace with velcro.
 3. Sensors each have designated locations. All information is on label. 
     
@@ -12,7 +13,9 @@ Putting on the System:
     
     Right leg (hub slot 1) has silver labels.
     
-    Back sensors (hub slot 2) have yellow lables. There is only one back sensor in use currently. It attaches to the velcro at the bottom of the back brace.
+    Back sensors (hub slot 2) have yellow labels. 
+    Lower back sensor attaches to the velcro at the bottom of the back brace.
+    Upper back sensor mus be enabled by toggling sensor8 to True, and attaches to velcro at the top of the back.
 4. Sensors also have orientation lablels for X, Y and Z axes. Line these up so that on every sensor the...
     
     Y arrow points UP
@@ -150,24 +153,59 @@ sudo chmod 777 *.py
 
 Running the Algorithm:
 
-1. Follow steps above to run the Notochord, using "./notochord/bin/notochord --raw --scan --odr=97 --no_bundles -y localhost"
-2. Run 2LegMain.py in ./imusystem
-note: 1LegMain.py never had serial communication implemented, as it was never necessary. Will update.
+1. Use the included run.sh file to start both the Notochord and algorithm at the same time.
+    run.sh takes 3 True/False arguments.
+    
+        1. T/F send serial data to Simulink (configured for Rutgers NUC)
+        
+        2. T/F send/receive data to device microcontroller (configured for CUNY Teensy)
+        
+        3. T/F receive and use L_THIGH_ANGLE, R_THIGH_ANGLE, LOW_BACK_ANGLE
 
-note: the algorithm dumps to the same file every time (algDump.txt). If you want to save your results on the pi, run "sudo mv algDump.txt desiredName.txt"
-        the algDump.txt output is formatted to be pasted directly into any spreadsheet program with proper spacing and no extra work.
-        to grab results from the pi on the computer, use "scp pi@IP:imusystem/algDump.txt desiredLocation.txt"
 
 .
 
 
-Running the Algorithm (Cheat Sheet):
+Configuring the Algorithm:
 
-Fill in IP
+1. Open userinput.py
+    nano imusystem/userinput.py
+    
+    
+Subject Parameters:
 
-ssh pi@IP ./notochord/bin/notochord --raw --scan --odr=97 --no_bundles -y localhost
+    mass (kilograms)
+    
+    height (meters)
+    
+    
+Torque Controllers:
 
-ssh pi@IP ./imusystem/2LegMain.py
+    torqueCutoff (maximum torque)
+    
+    alpha (yu&su controller proportionality constant)
+    
+    NMKG (PID controller proportionality constant)
+    
+    
+Serial Communication:
+
+    baud (typically 115200 or 256000, match to system. NUC simulink expects 115200)
+    
+    port (port that the given device is attached to)
+    
+        run "ls /dev/tty*" with and without device attached. Note the entry that changes.
+        
+        ="/dev/ttyS0" (GPIO pins)
+        
+        ="/dev/ttyUSB0" (generic USB output, ex. a serial cable)
+        
+        ="/dev/ttyACM0" (USB Microcontroller, ex. arduino)
+        
+        
+Additional Sensors:
+
+    sensor8 (True/False. Enables top back sensor which connects to port 5 - middle top. Blocks program if enabled without sensor.)
 
 ----------------------------------------------------------------------------
 
@@ -175,13 +213,16 @@ LIMITATIONS OF THE SYSTEM:
 
 Currently, this system is derived from the Chordata beta motion capture system. Usually, this data is directly transmitted to a client computer where a custom Blender addon does the calibration.
 Running the data through the Blender processing greatly improves the accuracy of the angle measurements from the device. However, it comes at the cost of halving the send rate. (50Hz to ~20Hz)
-To take advantage of the higher send rate, I had to write my own algorithm to manually convert the raw values to angles. This algorithm is fairly accurate, but has some limitation to get that accuracy.
-The algorithm cancels drift by using gait stages. When the subject is standing, the angles get re-zeroed. Thus, the angles are only accurate during walking and up until the end of a slip.
-It is in the process of being updated to use additional sensor readings to improve accuracy, and allow the angles to be accurate for kneeling.
-As it is now, accurate kneeling angles can only be obtained if kneeling then immediately standing up. (not giving the algorithm time to detect standing still)
+To take advantage of the higher send rate, I had to write my own algorithm to manually convert the raw values to angles. This algorithm is fairly accurate, but has some limitation to get that accuracy without writing a full sensor fusion algorithm.
+The Chordata roadmap estimates that its functions will be reprogrammed to be used more easily natively before the end of 2020
+
 
 The slip algorithm itself works well but has false positives sometimes, particularly if the toe is pointed directly at the floor and the accelerometer reading is distorted due to gravity.
-Like I said about the angles, it is most accurate during normal gait, with future updates coming to get it more accurate after collecting data from actual slip with harness. (all previous tests have been faux slip)
+
+----------------------------------------------------------------------------
+
+SERIAL SEND/RECEIVE PROTOCOLS
+
 
 ----------------------------------------------------------------------------
 
