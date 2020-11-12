@@ -3,6 +3,9 @@ from hx711 import HX711
 from time import sleep
 import RPi.GPIO as GPIO
 
+GPIO.setup(5, GPIO.IN)
+GPIO.setup(6, GPIO.IN)
+
 while True:
     try:
         hx711 = HX711(
