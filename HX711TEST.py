@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from hx711 import HX711
 from time import sleep
+import RPi.GPIO as GPIO
 
 while True:
     try:
