@@ -22,8 +22,11 @@ def receive_from_teensy(serialPort):
     outputArray = []
     
     firstChar = serialPort.read() #Byte 1
-    firstCharInt = struct.unpack('B', firstChar)
-    
+    try:
+        firstCharInt = struct.unpack('B', firstChar)
+    except:
+        firstCharInt = (0,0)
+        
     if (firstCharInt[0] == 165):
         secondChar = serialPort.read() #Byte 2
         secondCharInt = struct.unpack('B', secondChar)
@@ -62,6 +65,11 @@ def send_to_teensy(torqueLeft, torqueRight, serialPort):
     #4: left torque low byte
     #5: right torque high byte
     #6: right torque low byte
+    
+    if torqueLeft < 0:
+        torqueLeft = 0
+    if torqueRight < 0:
+        torqueRight = 0
     
     sendStr = bytearray(struct.pack("B", 165))
     sendStr += bytearray(struct.pack("B", 90))
@@ -116,7 +124,10 @@ def receive_from_nuc(serialPort):
     outputArray = []
     
     firstChar = serialPort.read() #Byte 1
-    firstCharInt = struct.unpack('B', firstChar)
+    try:
+        firstCharInt = struct.unpack('B', firstChar)
+    except:
+        firstChartInt = (0,0)
     
     if (firstCharInt[0] == 7):
         recArray = []
