@@ -36,7 +36,7 @@ global teensySend, teensyPort
 global parent_conn_nuc, parent_conn_teensy
 global cuny_data, nuc_data
 
-set_start_method("forkserver")
+#set_start_method("spawn")
 
 #ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
 #USER INPUTS
