@@ -28,6 +28,7 @@ intelNUCbaud = 256000
 teensyPort = "/dev/ttyACM0"
 #teensyPort = "/dev/ttyS0"
 teensyBaud = 256000
+addGravityToTorque = False
 
 
 hip_heel_length = 1 #meters
