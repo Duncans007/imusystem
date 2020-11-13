@@ -127,6 +127,6 @@ def async_teensy(child_conn, teensyPort):
         else:
             child_conn.send(cuny_data)
             
-        time.sleep(0.005)
+        sleep(0.005)
 
     child_conn.close()
