@@ -214,17 +214,7 @@ def data_handler(address, *args):
     global intelNUCserial, nucSend
     global teensySend, teensyPort
     global parent_conn, viconData
-    global cuny_data, nuc_data
-    
-    if teensySend:
-        if parent_conn_teensy.poll(0):
-            cuny_data = parent_conn_teensy.recv()
-        
-    if viconData:
-        if parent_conn_nuc.poll(0):
-            nuc_data = parent_conn_nuc.recv()
-            print(nuc_data)
-    
+    global cuny_data, nuc_data   
 
 	
 #Collects variable type and sensor address as numbers
@@ -296,6 +286,16 @@ def data_handler(address, *args):
         objLHeel.newValues(passToAlgorithm['lh_raw'])
         objLowBack.newValues(passToAlgorithm['b_raw'])
         objTopBack.newValues(passToAlgorithm['tb_raw'])
+        
+        
+        if teensySend:
+            if parent_conn_teensy.poll(0):
+                cuny_data = parent_conn_teensy.recv()
+
+        if viconData:
+            if parent_conn_nuc.poll(0):
+                nuc_data = parent_conn_nuc.recv()
+                print(nuc_data)
         
         
         
@@ -496,6 +496,9 @@ def data_handler(address, *args):
                 send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
             else:
                 send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
+                
+                
+    time.sleep(0.0001)
 
 
 
