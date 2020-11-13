@@ -36,6 +36,8 @@ global teensySend, teensyPort
 global parent_conn_nuc, parent_conn_teensy
 global cuny_data, nuc_data
 
+set_start_method("forkserver")
+
 #ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
 #USER INPUTS
 ip = "localhost"
@@ -533,9 +535,7 @@ def main_func(ip, port):
     
     
 
-if __name__ == "__main__":
-    set_start_method("spawn")
-    
+if __name__ == "__main__":    
     #Variable initializations
     #serial object for NUC. Comment out if not used.
     if nucSend:
