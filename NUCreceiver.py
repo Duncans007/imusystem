@@ -2,7 +2,7 @@
 
 from multiprocessing import Process,Pipe
 from serialSend import *
-fromt time import sleep
+import time
 
 def async_nuc(child_conn, nucPort):
     nuc_data = {
@@ -31,7 +31,7 @@ def async_nuc(child_conn, nucPort):
         else:
             child_conn.send(nuc_data)
             
-        sleep(0.005)
+        time.sleep(0.005)
                 
 
     child_conn.close()
