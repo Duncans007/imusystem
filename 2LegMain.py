@@ -488,7 +488,7 @@ def data_handler(address, *args):
                     
                     
             print(f"Read Rate: {1/timeToRun}") #print(serialArr)
-            send_over_serial(serialArr, intelNUCserial)
+            parent_conn_nuc.send(serialArr)
 #-----------------------------------------------------
         if teensySend:
             if addGravityToTorque:
