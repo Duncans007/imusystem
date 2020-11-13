@@ -2,7 +2,7 @@
 
 from multiprocessing import Process,Pipe
 from serialSend import *
-import time
+from time import *
 
 def async_teensy(child_conn, teensyPort):
     cuny_data = {
