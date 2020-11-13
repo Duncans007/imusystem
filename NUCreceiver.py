@@ -31,7 +31,7 @@ def async_nuc(child_conn, nucPort):
         else:
             child_conn.send(nuc_data)
             
-        time.sleep(0.005)
+        sleep(0.005)
                 
 
     child_conn.close()
