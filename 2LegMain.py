@@ -14,7 +14,7 @@ from userinput import *
 #Importing python libraries
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import BlockingOSCUDPServer
-from multiprocessing import Process,Queue,Pipe
+from multiprocessing import Process,Queue,Pipe,set_start_method
 import serial
 import time
 from math import sin, cos, sqrt, atan2
@@ -534,6 +534,8 @@ def main_func(ip, port):
     
 
 if __name__ == "__main__":
+    set_start_method("spawn")
+    
     #Variable initializations
     #serial object for NUC. Comment out if not used.
     if nucSend:
