@@ -214,7 +214,8 @@ def data_handler(address, *args):
             cuny_data = parent_conn_teensy.recv()
         
     if viconData:
-        nuc_data = parent_conn_teensy.recv()
+        if parent_conn_nuc.poll(0):
+            nuc_data = parent_conn_nuc.recv()
     
     
 
