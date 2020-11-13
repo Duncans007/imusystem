@@ -127,7 +127,7 @@ def receive_from_nuc(serialPort):
     try:
         firstCharInt = struct.unpack('B', firstChar)
     except:
-        firstChartInt = (0,0)
+        firstCharInt = (0,0)
     
     if (firstCharInt[0] == 7):
         recArray = []
