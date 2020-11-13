@@ -116,8 +116,6 @@ def async_teensy(child_conn, teensyPort):
             
             #Add in knee torque calculation
             
-            
-            send_to_teensy(1, 1, teensyPort)
             child_conn.send(cuny_data)
         else:
             child_conn.send(cuny_data)
