@@ -491,11 +491,11 @@ def data_handler(address, *args):
             print(f"Read Rate: {1/timeToRun}") #print(serialArr)
             send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------
-        if teensySend:
-            if addGravityToTorque:
-                send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
-            else:
-                send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
+        #if teensySend:
+        #    if addGravityToTorque:
+        #        send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
+        #    else:
+        #        send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
                 
                 
     time.sleep(0.0001)
