@@ -63,6 +63,11 @@ def send_to_teensy(torqueLeft, torqueRight, serialPort):
     #5: right torque high byte
     #6: right torque low byte
     
+    if torqueLeft < 0:
+        torqueLeft = 0
+    if torqueRight < 0:
+        torqueRight = 0
+    
     sendStr = bytearray(struct.pack("B", 165))
     sendStr += bytearray(struct.pack("B", 90))
     sendStr += bytearray(struct.pack("B", 52))
