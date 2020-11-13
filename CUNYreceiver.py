@@ -2,7 +2,7 @@
 
 from multiprocessing import Process,Pipe
 from serialSend import *
-from time import sleep
+import time
 
 def async_teensy(child_conn, teensyPort):
     cuny_data = {
@@ -127,6 +127,6 @@ def async_teensy(child_conn, teensyPort):
         else:
             child_conn.send(cuny_data)
             
-        sleep(0.005)
+        time.sleep(0.005)
 
     child_conn.close()
