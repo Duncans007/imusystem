@@ -289,13 +289,12 @@ def data_handler(address, *args):
         
         
         if teensySend:
-            if parent_conn_teensy.poll(0):
-                cuny_data = parent_conn_teensy.recv()
+            #if parent_conn_teensy.poll(0):
+            cuny_data = parent_conn_teensy.recv()
 
         if viconData:
-            if parent_conn_nuc.poll(0):
-                nuc_data = parent_conn_nuc.recv()
-                print(nuc_data)
+            #if parent_conn_nuc.poll(0):
+            nuc_data = parent_conn_nuc.recv()
         
         
         
