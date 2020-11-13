@@ -22,9 +22,9 @@ def async_nuc(child_conn, nucPort):
             except IndexError:
                 continue
             
-            
-
-        child_conn.send(nuc_data)
+            child_conn.send(nuc_data)
+        else:
+            child_conn.send(nuc_data)
                 
 
     child_conn.close()
