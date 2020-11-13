@@ -54,6 +54,7 @@ if str((sys.argv)[2]) == "false":
     teensySend = False
 if str((sys.argv)[3]) == "true":
     viconData = True
+    teensySend = False
 if str((sys.argv)[3]) == "false":
     viconData = False
 
@@ -491,6 +492,12 @@ def data_handler(address, *args):
             send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------
         if teensySend:
+            if addGravityToTorque:
+                send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
+            else:
+                send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
+                
+        elif viconData:
             if addGravityToTorque:
                 send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
             else:
