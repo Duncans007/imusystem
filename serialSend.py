@@ -25,14 +25,14 @@ def receive_from_teensy(serialPort):
     try:
         firstCharInt = struct.unpack('B', firstChar)
     except:
-        firstCharInt = 0
+        firstCharInt = (0,0)
     
     if (firstCharInt[0] == 165):
         secondChar = serialPort.read() #Byte 2
         try:
             secondCharInt = struct.unpack('B', secondChar)
         except:
-            secondCharInt = 0
+            secondCharInt = (0,0)
         
         if (secondCharInt[0] == 90):
             
@@ -131,7 +131,7 @@ def receive_from_nuc(serialPort):
     try:
         firstCharInt = struct.unpack('B', firstChar)
     except:
-        firstCharInt = 0
+        firstCharInt = (0,0)
     
     if (firstCharInt[0] == 7):
         recArray = []
