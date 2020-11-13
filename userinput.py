@@ -25,8 +25,8 @@ intelNUCbaud = 256000
 
 
 #Serial Send/Receive to CUNY Teensy
-#teensyPort = "/dev/ttyACM0"
-teensyPort = "/dev/ttyS0"
+teensyPort = "/dev/ttyACM0"
+#teensyPort = "/dev/ttyS0"
 teensyBaud = 256000
 
 
