@@ -33,6 +33,7 @@ global objects
 global hip_heel_length
 global intelNUCserial
 global teensySend, teensyPort
+global parent_conn_nuc, parent_conn_teensy
 global cuny_data, nuc_data
 
 #ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
@@ -213,8 +214,8 @@ def data_handler(address, *args):
     global hip_heel_length
     global intelNUCserial, nucSend
     global teensySend, teensyPort
-    global parent_conn, viconData
-    global cuny_data, nuc_data   
+    global parent_conn_nuc, parent_conn_teensy, viconData
+    global cuny_data, nuc_data
 
 	
 #Collects variable type and sensor address as numbers
