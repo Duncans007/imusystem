@@ -538,10 +538,9 @@ if __name__ == "__main__":
     #serial object for NUC. Comment out if not used.
     if nucSend:
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
-        if viconData:
-            parent_conn_nuc,child_conn_nuc = Pipe()
-            p_nuc = Process(target=async_nuc, args=(child_conn_nuc, intelNUCserial))
-            p_nuc.start()
+        parent_conn_nuc,child_conn_nuc = Pipe()
+        p_nuc = Process(target=async_nuc, args=(child_conn_nuc, intelNUCserial))
+        p_nuc.start()
 	
     
 
