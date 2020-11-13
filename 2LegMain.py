@@ -145,6 +145,13 @@ cuny_data = {
 }
 
 
+nuc_data = {
+    "L"  : 0,
+    "R"  : 0,
+    "B"   : 0
+}
+
+
 flagDict = {
     "rThigh": False,
     "rShank": False,
