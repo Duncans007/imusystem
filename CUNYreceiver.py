@@ -57,6 +57,12 @@ def async_teensy(child_conn, teensyPort):
     }
     
     while True:
+        if child_conn.poll(0):
+            torqueArray = child_conn.recv()
+            torqueL = torqueArray[0]
+            torqueR = torqueArray[1]
+            send_to_teensy(torqueL, torqueR, teensyPort)
+        
         receivedData, outputArray = receive_from_teensy(teensyPort)
         if receivedData:
             
