@@ -223,7 +223,6 @@ def data_handler(address, *args):
     if viconData:
         if parent_conn_nuc.poll(0):
             nuc_data = parent_conn_nuc.recv()
-            print(nuc_data)
     
 
 	
