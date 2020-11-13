@@ -12,6 +12,10 @@ def async_nuc(child_conn, nucPort):
     }
     
     while True:
+        if child_conn.poll(0):
+            sendArray = child_conn.recv()
+            send_over_serial(sendArray, nucPort)
+        
         receivedData, outputArray = receive_from_nuc(nucPort)
         if receivedData:
             
