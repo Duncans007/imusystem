@@ -30,6 +30,8 @@ teensyPort = "/dev/ttyACM0"
 teensyBaud = 256000
 addGravityToTorque = False
 
+sensorCalibTime = 1
+angleCalibTime = 2
 
 hip_heel_length = 1 #meters
 
