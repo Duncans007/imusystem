@@ -74,6 +74,10 @@ class sensorObject:
         self.gravAngleArray = []
         self.gravAngleSmoothed = 0
         self.gravAngleArrayLimit = 3
+        
+        self.zAngleZeroed = 0
+        self.angleCalib = 0
+        self.angleCalibArray = []
 
         
         
@@ -82,6 +86,8 @@ class sensorObject:
         
         
 #--------------------------------------------------------------------------------------------------
+
+
 #Function to dump new values from sensors
     def newValues(self, valueArray):
         outArray = []
@@ -119,6 +125,9 @@ class sensorObject:
         
         
 #-------------------------------------------------------------------------------------------------- 
+
+
+
 #Run instead of angleCalc() for first X seconds of the script. Use if time < X: else:
     def getCalib(self):
         self.gyX_calib_arr.append(self.gyX)
@@ -152,14 +161,25 @@ class sensorObject:
             self.angularAcceleration = 0
             
         return self.angularAcceleration
+    
+    
+#--------------------------------------------------------------------------------------------------      
+    
+    
+    def angleCalib():
+        angleCalc()
+        self.angleCalibArray.append(self.zAngle)
+        self.angleCalib = sum(self.angleCalibArray)/len(self.angleCalibArray)
 
     
-    
-    
-    
-    
+
     
 #--------------------------------------------------------------------------------------------------    
+
+
+
+
+
 #Angle Calcluation function        
     def angleCalc(self):
         import time
@@ -200,7 +220,7 @@ class sensorObject:
             self.zAngle += zAngleChange
         
         
-        
+        self.zAngleZeroed = self.zAngle - self.angleCalib
     #Keeps short array of values. Not currently used.
         self.zAngleArray.append(self.zAngle)
     
@@ -215,6 +235,11 @@ class sensorObject:
     
     
 #--------------------------------------------------------------------------------------------------
+
+
+
+
+
 #Gravity vector calculations function
     def gravityVectorAngle(self):
         import math
@@ -252,6 +277,9 @@ class sensorObject:
         
         
 #--------------------------------------------------------------------------------------------------
+
+
+
 #Function to streamline implementation of Alborz's new communication protocol while changing minimal code.
 #This object now has the original signed 16-bit integers from the Notochord added directly to it.
 #This function serves to put the 16-bit integers back to their more floated values with units for calculation.
