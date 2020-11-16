@@ -314,7 +314,7 @@ def data_handler(address, *args):
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
 
-        if (time.time() - timeStart) < 1:
+        if (time.time() - timeStart) < sensorCalibTime:
             objRThigh.getCalib()
             objRShank.getCalib()
             objRHeel.getCalib()
@@ -326,6 +326,20 @@ def data_handler(address, *args):
             objLowBack.getCalib()
             if toggleFlagDict['topBack'] == True:
                 objTopBack.getCalib()
+                
+        elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+            objRThigh.angleCalib()
+            objRShank.angleCalib()
+            objRHeel.angleCalib()
+
+    #Left Leg Angle Approximations
+            objLThigh.angleCalib()
+            objLShank.angleCalib()
+            objLHeel.angleCalib()
+            
+            objLowBack.angleCalc()
+            if toggleFlagDict['topBack'] == True:
+                objTopBack.angleCalib()
 
         else:
     #Right Leg Angle Approximations
