@@ -166,7 +166,7 @@ class sensorObject:
 #--------------------------------------------------------------------------------------------------      
     
     
-    def angleCalib():
+    def angleCalib(self):
         angleCalc()
         self.angleCalibArray.append(self.zAngle)
         self.angleCalibInt = sum(self.angleCalibArray)/len(self.angleCalibArray)
