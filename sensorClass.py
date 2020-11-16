@@ -76,7 +76,7 @@ class sensorObject:
         self.gravAngleArrayLimit = 3
         
         self.zAngleZeroed = 0
-        self.angleCalib = 0
+        self.angleCalibInt = 0
         self.angleCalibArray = []
 
         
@@ -169,7 +169,7 @@ class sensorObject:
     def angleCalib():
         angleCalc()
         self.angleCalibArray.append(self.zAngle)
-        self.angleCalib = sum(self.angleCalibArray)/len(self.angleCalibArray)
+        self.angleCalibInt = sum(self.angleCalibArray)/len(self.angleCalibArray)
 
     
 
@@ -220,7 +220,7 @@ class sensorObject:
             self.zAngle += zAngleChange
         
         
-        self.zAngleZeroed = self.zAngle - self.angleCalib
+        self.zAngleZeroed = self.zAngle - self.angleCalibInt
     #Keeps short array of values. Not currently used.
         self.zAngleArray.append(self.zAngle)
     
