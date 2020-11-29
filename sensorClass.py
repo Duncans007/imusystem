@@ -191,7 +191,7 @@ class sensorObject:
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
         self.timeToRun_arr.append(self.timeToRun)
-        if (length(timeToRun_arr > 100)):
+        if (len(timeToRun_arr > 50)):
             timeToRun_arr.pop(0)
         
         self.timeToRun_avg = avg(self.timeToRun_arr)
