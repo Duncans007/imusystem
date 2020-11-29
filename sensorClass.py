@@ -52,6 +52,8 @@ class sensorObject:
         
         #angleCalc() variables
         self.timeToRun = 0
+        self.timeToRun_arr = []
+        self.timeToRun_avg = 0
         self.timeLastValue = time.time()
         self.currentTime = time.time()
         
@@ -188,12 +190,17 @@ class sensorObject:
         self.timeLastValue = self.currentTime
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
+        self.timeToRun_arr = self.timeToRun_arr + self.timeToRun
+        if (length(timeToRun_arr > 100)):
+            timeToRun_arr.pop(0)
+        
+        self.timeToRun_avg = avg(self.timeToRun_arr)
         
         self.gravityVectorAngle()
         self.angularAccCalc()
         
 #Integrates gyroscope to get angle. Includes drift.
-        zAngleChange = (self.gyZ-self.gyZ_calib) * self.timeToRun
+        zAngleChange = (self.gyZ-self.gyZ_calib) * self.timeToRun_avg
         
 #Keeps track of previous values. Used when standing is turned off to make up for the 4-5 frame delay.
         self.zAngleChangeArray.append(zAngleChange)
