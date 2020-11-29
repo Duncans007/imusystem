@@ -52,7 +52,7 @@ class sensorObject:
         
         #angleCalc() variables
         self.timeToRun = 0
-        self.timeToRun_arr = [0]
+        self.timeToRun_arr = []
         self.timeToRun_avg = 0
         self.timeLastValue = time.time()
         self.currentTime = time.time()
