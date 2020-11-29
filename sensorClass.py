@@ -194,7 +194,7 @@ class sensorObject:
         if (len(self.timeToRun_arr)>50):
             self.timeToRun_arr.pop(0)
         
-        self.timeToRun_avg = avg(self.timeToRun_arr)
+        self.timeToRun_avg = np.mean(self.timeToRun_arr)
         
         self.gravityVectorAngle()
         self.angularAccCalc()
