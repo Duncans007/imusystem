@@ -84,11 +84,11 @@ class kneelingDetection:
     #Main function to run for third party input and export
     def getTorque(self, rThigh, rShank, lThigh, lShank, loBack):
         
-        self.thighAngleR = rThigh.zAngle
-        self.shankAngleR = rShank.zAngle
+        self.thighAngleR = rThigh.zAngleZeroed
+        self.shankAngleR = rShank.zAngleZeroed
         
-        self.thighAngleL = lThigh.zAngle
-        self.shankAngleL = lShank.zAngle
+        self.thighAngleL = lThigh.zAngleZeroed
+        self.shankAngleL = lShank.zAngleZeroed
         
         self.thighRAngV  = rThigh.gyZ
         self.shankRAngV  = rShank.gyZ
@@ -96,7 +96,7 @@ class kneelingDetection:
         self.thighLAngV  = lThigh.gyZ
         self.shankLAngV  = lShank.gyZ
         
-        self.loBackAng = loBack.zAngle
+        self.loBackAng = loBack.zAngleZeroed
         
         if (self.legForward == "L"):
             self.lastLeg = "L"
@@ -147,10 +147,10 @@ class kneelingDetection:
     def getTorqueFromVicon(self, rThigh, rShank, lThigh, lShank, RTA, LTA, BA):
         
         self.thighAngleR = RTA
-        self.shankAngleR = rShank.zAngle
+        self.shankAngleR = rShank.zAngleZeroed
         
         self.thighAngleL = LTA
-        self.shankAngleL = lShank.zAngle
+        self.shankAngleL = lShank.zAngleZeroed
         
         self.thighRAngV  = rThigh.gyZ
         self.shankRAngV  = rShank.gyZ
