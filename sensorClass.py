@@ -190,7 +190,7 @@ class sensorObject:
         self.timeLastValue = self.currentTime
         self.currentTime = time.time()
         self.timeToRun = self.currentTime - self.timeLastValue
-        self.timeToRun_arr = self.timeToRun_arr + self.timeToRun
+        self.timeToRun_arr = self.timeToRun_arr.append(self.timeToRun)
         if (length(timeToRun_arr > 100)):
             timeToRun_arr.pop(0)
         
