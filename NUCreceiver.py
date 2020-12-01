@@ -3,7 +3,7 @@
 from multiprocessing import Process,Pipe
 from serialSend import *
 
-def async_nuc(child_conn, nucPort):
+def async_nuc(child_conn, intelNUCserial):
     nuc_data = {
         "L"  : 0,
         "R"  : 0,
@@ -12,7 +12,7 @@ def async_nuc(child_conn, nucPort):
     }
     
     while True:
-        receivedData, outputArray = receive_from_nuc(nucPort)
+        receivedData, outputArray = receive_from_nuc(intelNUCserial)
         if receivedData:
             
             try:

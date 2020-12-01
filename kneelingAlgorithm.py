@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import math
 import time
+from userinput import *
 
 class kneelingDetection:
     def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType):
@@ -98,6 +99,10 @@ class kneelingDetection:
         
         self.loBackAng = loBack.zAngleZeroed
         
+        #print(self.thighAngleL)
+        #print(self.thighAngleR)
+        #print(self.loBackAng)
+
         if (self.legForward == "L"):
             self.lastLeg = "L"
         if (self.legForward == "R"):
@@ -121,6 +126,7 @@ class kneelingDetection:
             torqueR = self.torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
             
         if self.controllerType == "ramp":
+            self.legForward = "L"
             if self.legForward == "R":
                 torqueR = self.torqueRamping()
                 torqueL = 0
@@ -198,23 +204,22 @@ class kneelingDetection:
     
     
     def torqueYuSu(self, leg, thetaT, thetaB):
-        TqEst1 = self.Mb * self.g * (   (self.Lb * math.sin(math.radians(thetaB)))   +   (self.Lt * math.sin(math.radians(-thetaT)))   )
+        TqEst1 = self.Mb * self.g * (   (self.Lb * math.sin(math.radians(thetaB-lowBackAngleShift)))   +   (self.Lt * math.sin(math.radians(-thetaT)))   )
         TqEst2 = self.Mt * self.g * self.Ltc * math.sin(math.radians(-thetaT))
         TqEst = (-0.5) * (TqEst1 + TqEst2)
         
         Tr = (self.alpha) * TqEst
         
+
         if True:   #alternate: (self.torqueWindow(leg)):
-            if Tr <= self.torqueCutoff:
-                return Tr
-            else:
+            
+            if Tr >= self.torqueCutoff:
                 return self.torqueCutoff
-            
-            if Tr < 0:
-                return 0
+            elif Tr <= -self.torqueCutoff:
+                return -self.torqueCutoff
             else:
                 return Tr
-            
+
         else:
             return 0
         
@@ -240,12 +245,13 @@ class kneelingDetection:
         
         timeFromKneelStart = time.time() - self.timeKneelStart
         rampingCurveEnd = self.ramp_time_delay + self.ramp_time_increase + self.ramp_time_hold + self.ramp_time_decrease
-        
+        self.isKneeling = True
         #Test if kneeling, activate after delay. Configuration options in userinput.py
         if (timeFromKneelStart > self.ramp_time_delay) and (timeFromKneelStart < rampingCurveEnd) and (self.isKneeling == True):
             if (timeFromKneelStart < self.ramp_time_delay + self.ramp_time_increase):
                 #increasing
                 self.rampTorque = self.rampTorque + (timeStep * self.ramp_slope)
+                print("reah here")
             elif (timeFromKneelStart < self.ramp_time_delay + self.ramp_time_increase + self.ramp_time_hold):
                 #holding
                 self.rampTorque = self.rampTorque
