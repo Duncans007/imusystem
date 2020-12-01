@@ -1,13 +1,3 @@
-def ardno(msg):
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-    ser.write(b"{}".format(msg))
-
-    
-    
-
-    
-    
-    
 def receive_from_teensy(serialPort):
     import struct
 #[ 165, 90, LENGTH(101),
