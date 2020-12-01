@@ -171,7 +171,10 @@ class sensorObject:
     def angleCalib(self):
         self.angleCalc()
         self.angleCalibArray.append(self.zAngle)
-        self.angleCalibInt = sum(self.angleCalibArray)/len(self.angleCalibArray)
+        if len(self.angleCalibArray) <= 50:
+            self.angleCalibInt = sum(self.angleCalibArray)/len(self.angleCalibArray)
+        else:
+            self.angleCalibInt = sum(self.angleCalibArray[-50:])/50
 
     
 
