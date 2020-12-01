@@ -19,7 +19,7 @@ def receive_from_teensy(serialPort):
 # BB angX, BB angY, BB angZ, BB gyX, BB gyY, BB gyZ, BB acX, BB acY, BB acZ]
 
     receivedData = False
-    outputArray = []
+    outputArray = [None] * 49
     
     firstChar = serialPort.read() #Byte 1
     try:
@@ -35,20 +35,17 @@ def receive_from_teensy(serialPort):
             dataSize = serialPort.read() #Byte 3
             dataSizeInt = struct.unpack('B',dataSize)
             
-            recArray = []
+            recArray = [None] * 49
             
             
-            
-#THIS IS THE NEW BIT INCASE THERE ARE ERRORS
-#--------------------------------------------------------
             for x in range(49):
                 loByte = serialPort.read()
                 hiByte = serialPort.read()
-                recArray += struct.unpack('<h', loByte + hiByte)
-            
+                bytesTemp = struct.unpack('<h', hiByte + loByte)
+                recArray[x] = bytesTemp[0]
+                outputArray[x] = recArray[x]/100.0#-32768
             
             receivedData = True
-            outputArray = recArray
     
     return receivedData, outputArray
     
@@ -66,20 +63,25 @@ def send_to_teensy(torqueLeft, torqueRight, serialPort):
     #5: right torque high byte
     #6: right torque low byte
     
-    if torqueLeft < 0:
-        torqueLeft = 0
-    if torqueRight < 0:
-        torqueRight = 0
-    
+    teest1 = int(torqueLeft * 100)
+    #teest2 = int((torqueLeft * 100)%256)
+    teest3 = int(torqueRight * 100)
+    #teest4 = int((torqueRight * 100)%256)
     sendStr = bytearray(struct.pack("B", 165))
     sendStr += bytearray(struct.pack("B", 90))
     sendStr += bytearray(struct.pack("B", 52))
-    sendStr += bytearray(struct.pack("<H", int(torqueLeft * 100)))
-    sendStr += bytearray(struct.pack("<H", int(torqueRight * 100)))
+    sendStr += bytearray(struct.pack("<h", int(torqueLeft * 100)))
+    #sendStr += bytearray(struct.pack("c", teest2)
+    sendStr += bytearray(struct.pack("<h", int(torqueRight * 100)))
+    #sendStr += bytearray(struct.pack("c", teest4)
+    #teest1 = int((torqueLeft * 100)//256)
+    #print(sendStr)
+    #print(int(torqueLeft * 100))
+    #print(int(torqueRight * 100))
     serialPort.write(sendStr)
 
     
-    
+# Send to NUC    
 def send_over_serial(msgArray, serialSend):
     import struct
 #IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
@@ -106,9 +108,9 @@ def send_over_serial(msgArray, serialSend):
         if enum == 50 or enum == 51:
             sendStr += bytearray(struct.pack("B", x))
         elif (enum > 0 and enum < 50) or enum > 51:
-            sendStr += bytearray(struct.pack("<h", x))
+            sendStr += bytearray(struct.pack("<h", int(x)))
         elif enum == 0:
-            sendStr += bytearray(struct.pack("<f", x))
+            sendStr += bytearray(struct.pack("<f", int(x)))
     
     #Encode with UTF-8 and send over serial.
     serialSend.write(sendStr)
@@ -129,7 +131,8 @@ def receive_from_nuc(serialPort):
     except:
         firstCharInt = (0,0)
     
-    if (firstCharInt[0] == 7):
+
+    if (firstCharInt[0] == 165):
         recArray = []
             
         loByte = serialPort.read()
@@ -148,23 +151,3 @@ def receive_from_nuc(serialPort):
         outputArray = recArray
     
     return receivedData, outputArray
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-#Cuts number to "digits" number of decimal points.
-def truncate(number, digits) -> float:
-    import math
-    stepper = 10.0 ** digits
-    return math.trunc(stepper * number) / stepper
