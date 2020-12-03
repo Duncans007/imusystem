@@ -300,7 +300,7 @@ class kneelingDetection:
         #Knee angles oriented with staight leg at 0 degrees
         
         
-        if True: # (self.torqueWindow("RIGHT")):
+        if (self.torqueWindow("RIGHT")):
             torqueOutputR = (self.A * (kneeAngleR)) + (self.B * thighGyR) + self.C
             torqueOutputR = torqueOutputR * self.NMKG * self.mass * (12/15)
             if torqueOutputR > self.torqueCutoff:
@@ -309,7 +309,7 @@ class kneelingDetection:
             torqueOutputR = 0
         
         
-        if True: # (self.torqueWindow("LEFT")):
+        if (self.torqueWindow("LEFT")):
             torqueOutputL = (self.A * (kneeAngleL)) + (self.B * thighGyL) + self.C
             torqueOutputL = torqueOutputL * self.NMKG * self.mass * (12/15)
             if torqueOutputL > self.torqueCutoff:
@@ -318,13 +318,13 @@ class kneelingDetection:
             torqueOutputL = 0
         
         
-        if self.legForward[0] == "R":
-            torqueOutputR = torqueOutputR * self.front_pid_proportion
-            torqueOutputL = torqueOutputR * self.rear_pid_proportion
+        #if self.legForward[0] == "R":
+        #    torqueOutputR = torqueOutputR * self.front_pid_proportion
+        #    torqueOutputL = torqueOutputR * self.rear_pid_proportion
             
-        if self.legForward[0] == "L":
-            torqueOutputR = torqueOutputR * self.rear_pid_proportion
-            torqueOutputL = torqueOutputR * self.front_pid_proportion
+        #if self.legForward[0] == "L":
+        #    torqueOutputR = torqueOutputR * self.rear_pid_proportion
+        #    torqueOutputL = torqueOutputR * self.front_pid_proportion
         
 
         return torqueOutputL, torqueOutputR
