@@ -392,8 +392,8 @@ def data_handler(address, *args):
 
 #Run Kneeling Detection Algorithm
         #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
-        if (time.time() - timeStart > SecondsToChange):
-            kneelingDetect.alpha = alpha2
+        #if (time.time() - timeStart > SecondsToChange):
+        #    kneelingDetect.alpha = alpha2
         if viconData:
             kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, nuc_data["R"], nuc_data["L"], nuc_data["B"])
         else:
