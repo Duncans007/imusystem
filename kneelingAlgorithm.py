@@ -318,11 +318,11 @@ class kneelingDetection:
             torqueOutputL = 0
         
         
-        if self.legForward[0] = "R":
+        if self.legForward[0] == "R":
             torqueOutputR = torqueOutputR * self.front_pid_proportion
             torqueOutputL = torqueOutputR * self.rear_pid_proportion
             
-        if self.legForward[0] = "L":
+        if self.legForward[0] == "L":
             torqueOutputR = torqueOutputR * self.rear_pid_proportion
             torqueOutputL = torqueOutputR * self.front_pid_proportion
         
