@@ -10,7 +10,11 @@ mass = 80 #kg
 height = 1.80 #m	
 torqueCutoff = 30 #Nm	
 NMKG = 0.3 #Nm/kg	
-lowBackAngleShift = 18	
+
+
+#PID Specific Constants
+front_leg_proportion = 1;
+rear_leg_proportion = 0.2;
 
 
 #Yu&Su Specific Proportionality Constant	
