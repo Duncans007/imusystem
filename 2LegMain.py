@@ -397,9 +397,9 @@ def data_handler(address, *args):
         if viconData:
             kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, nuc_data["R"], nuc_data["L"], nuc_data["B"])
         else:
-            kneelingDetect.torqueController = "pid"
+            kneelingDetect.controllerType = "pid"
             kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
-            kneelingDetect.torqueController = "yusu"
+            kneelingDetect.controllerType = "yusu"
             kneelingTorqueEstimationR2, kneelingTorqueEstimationL2, kneeAngleR2, kneeAngleL2, legForward2 = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
 
 
