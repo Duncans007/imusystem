@@ -34,7 +34,7 @@ global hip_heel_length
 global intelNUCserial
 global teensySend, teensyPort
 global cuny_data
-global alpha2, SecondsToChange, front_leg_proportion, rear_leg_proportion
+global alpha2, SecondsToChange
 
 #ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
 #USER INPUTS
