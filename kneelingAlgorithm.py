@@ -210,14 +210,24 @@ class kneelingDetection:
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleR))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleL))
         
-        TqR = ((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r)) * self.NMKG * self.mass * (12/15)
+        TqR = ((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r)) * self.NMKG * self.mass / 250
+        
+        if TqR < 0:
+            TqR = 0
+        elif TqR > self.torqueCutoff:
+            TqR = self.torqueCutoff
         
         #Left
         d1r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_HAT * math.sin(math.radians(self.loBackAng))
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleL))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleR))
         
-        TqL = ((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r)) * self.NMKG * self.mass * (12/15)
+        TqL = ((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r)) * self.NMKG * self.mass /250
+        
+        if TqL < 0:
+            TqL = 0
+        elif TqL > self.torqueCutoff:
+            TqL = self.torqueCutoff
         
         return TqL, TqR
         
