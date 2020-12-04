@@ -84,7 +84,7 @@ class kneelingDetection:
         self.m_HAT = mass * .678
         self.m_T = mass * .1
         self.L_T = height * .245
-        self.L_HAT_distal = height * .52 * .374
+        self.L_HAT = height * .52 * .374
         self.L_T_distal = self.L_T * .567
         self.L_T_proximal = self.L_T * .433
     
