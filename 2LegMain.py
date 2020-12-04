@@ -453,7 +453,7 @@ def data_handler(address, *args):
             torqueROG = 0
             torqueLOG = 0
 
-        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}\t{kneelingTorqueEstimationR2}\t{kneelingTorqueEstimationL2}"
+        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         
         if teensySend:
             for x in cuny_data.values():
