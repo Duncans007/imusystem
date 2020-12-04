@@ -397,7 +397,13 @@ def data_handler(address, *args):
         if viconData:
             kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, nuc_data["R"], nuc_data["L"], nuc_data["B"])
         else:
+            kneelingDetect.backOffset = 0
             kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+            kneelingDetect.backOffset = 10
+            kneelingTorqueEstimationR2, kneelingTorqueEstimationL2, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+            kneelingDetect.backOffset = -10
+            kneelingTorqueEstimationR3, kneelingTorqueEstimationL3, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+
 
 
         
@@ -453,7 +459,7 @@ def data_handler(address, *args):
             torqueROG = 0
             torqueLOG = 0
 
-        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
+        outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}\t{kneelingTorqueEstimationR2}\t{kneelingTorqueEstimationL2}\t{kneelingTorqueEstimationR3}\t{kneelingTorqueEstimationL3}"
         
         if teensySend:
             for x in cuny_data.values():
