@@ -1,15 +1,15 @@
 #!/usr/bin/env python3	
 
 
-#Options: "pid","yusu","ramp"	
-controller_type = "yusu"	
+#Options: "pid","yusu","ramp", "trkov"
+controller_type = "trkov"	
 
 
 #General Torque Controller Parameters	
-mass = 80 #kg	
+mass = 68 #kg	
 height = 1.80 #m	
 torqueCutoff = 30 #Nm	
-NMKG = 0.3 #Nm/kg	
+NMKG = 0.25 #Nm/kg	
 
 
 #Low Back Angle Proportionality (experimental)
