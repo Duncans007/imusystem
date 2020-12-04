@@ -77,6 +77,16 @@ class kneelingDetection:
         self.Lb = height * 0.160901
         self.Lt = height * (0.441 / 1.784)
         self.Ltc = height * (0.245 / 1.784)
+        
+        
+        
+        #Trkov Equations of Motion
+        self.m_HAT = mass * .678
+        self.m_T = mass * .1
+        self.L_T = height * .245
+        self.L_HAT_distal = height * .52 * .374
+        self.L_T_distal = self.L_T * .567
+        self.L_T_proximal = self.L_T * .433
     
     
     
@@ -130,6 +140,10 @@ class kneelingDetection:
             elif self.legForward == "L":
                 torqueL = self.torqueRamping()
                 torqueR = 0
+                
+                
+        if self.controllerType == "trkov":
+            torqueL, torqueR = self.torqueTrkov()
         
             
         return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
@@ -190,12 +204,22 @@ class kneelingDetection:
         
         
         
+    def torqueTrkov(self):
+        #Right
+        d1r = self.L_T * sin(self.thighAngleR) - self.L_HAT * sin(self.loBackAng)
+        d2r = self.L_T_distal * sin(self.thighAngleR)
+        d3r = self.L_T * sin(self.thighAngleR) - self.L_T_proximal * sin(self.thighAngleL)
         
+        TqR = -((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r))
         
+        #Left
+        d1r = self.L_T * sin(self.thighAngleL) - self.L_HAT * sin(self.loBackAng)
+        d2r = self.L_T_distal * sin(self.thighAngleL)
+        d3r = self.L_T * sin(self.thighAngleL) - self.L_T_proximal * sin(self.thighAngleR)
         
+        TqL = -((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r))
         
-        
-        
+        return TqL, TqR
         
         
     
