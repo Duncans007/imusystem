@@ -210,14 +210,14 @@ class kneelingDetection:
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleR))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleL))
         
-        TqR = -((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r))
+        TqR = ((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r)) * self.NMKG * self.mass * (12/15)
         
         #Left
         d1r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_HAT * math.sin(math.radians(self.loBackAng))
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleL))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleR))
         
-        TqL = -((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r))
+        TqL = ((self.m_HAT * self.g * d1r) + (self.m_T * self.g * d2r) + (self.m_T * self.g * d3r)) * self.NMKG * self.mass * (12/15)
         
         return TqL, TqR
         
