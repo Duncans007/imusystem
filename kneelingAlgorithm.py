@@ -3,7 +3,7 @@ import math
 import time
 
 class kneelingDetection:
-    def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType, front_pid_proportion, rear_pid_proportion, back_proportion):
+    def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType, front_pid_proportion, rear_pid_proportion, back_proportion, back_offset):
         self.NMKG = NMKG
         self.mass = mass
         self.height = height
@@ -87,6 +87,7 @@ class kneelingDetection:
         self.L_HAT = height * .52 * .374
         self.L_T_distal = self.L_T * .567
         self.L_T_proximal = self.L_T * .433
+        self.backOffset = back_offset
     
     
     
@@ -206,7 +207,7 @@ class kneelingDetection:
         
     def torqueTrkov(self):
         #Right
-        d1r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_HAT * math.sin(math.radians(-self.loBackAng))
+        d1r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_HAT * math.sin(math.radians(-self.loBackAng-self.backOffset))
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleR))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleL))
         
@@ -218,7 +219,7 @@ class kneelingDetection:
             TqR = self.torqueCutoff
         
         #Left
-        d1r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_HAT * math.sin(math.radians(self.loBackAng))
+        d1r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_HAT * math.sin(math.radians(-self.loBackAng-self.backOffset))
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleL))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleR))
         
