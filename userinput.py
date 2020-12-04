@@ -12,9 +12,15 @@ torqueCutoff = 30 #Nm
 NMKG = 0.3 #Nm/kg	
 
 
-#PID Specific Constants
+#Low Back Angle Proportionality (experimental)
+back_proportion = 1 #0 degrees or usual operation
+#back_proportion = 0.3432 #10 degrees
+#back_proportion = 0.4456 #20 degrees
+
+
+#PID Specific Constants (unused)
 front_leg_proportion = 1;
-rear_leg_proportion = 0.2;
+rear_leg_proportion = 1;
 
 
 #Yu&Su Specific Proportionality Constant	
