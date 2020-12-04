@@ -12,6 +12,10 @@ torqueCutoff = 30 #Nm
 NMKG = 0.25 #Nm/kg	
 
 
+#Back offset - used for configuring torque to slopes
+back_offset = 0
+
+
 #Low Back Angle Proportionality (experimental)
 back_proportion = 1 #0 degrees or usual operation
 #back_proportion = 0.3432 #10 degrees
