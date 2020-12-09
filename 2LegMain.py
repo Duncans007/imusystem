@@ -610,6 +610,7 @@ if __name__ == "__main__":
         parent_conn_arduino,child_conn_arduino = Pipe()
         p_arduino = Process(target=async_arduino, args=(child_conn_arduino, arduinoPort))
         p_arduino.start()
+        loadcell_data = 0
     
     
     
