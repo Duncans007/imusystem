@@ -10,7 +10,5 @@ def async_arduino(child_conn, arduinoPort):
         receivedData, output_value = receive_from_arduino(arduinoPort)
         if receivedData:
             child_conn.send(output_value)
-        else:
-            child_conn.send(-1)
                 
     child_conn.close()
