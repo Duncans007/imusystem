@@ -58,6 +58,7 @@ angleCalibTime = 2
 
 #Turn upper back sensor on or off
 sensor8 = False
+loadCell = False
 
 
 hip_heel_length = 1 #meters	
