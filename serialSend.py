@@ -151,7 +151,7 @@ def receive_from_arduino(serialPort):
 #[165, val loByte, val hiByte]
 
     receivedData = False
-    outputArray = []
+    outputVal = 0
     
     firstChar = serialPort.read() #Byte 1
     try:
