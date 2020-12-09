@@ -59,9 +59,9 @@ angleCalibTime = 2
 #Turn upper back sensor on or off
 sensor8 = False
 
-loadCell = False
+loadCell = True
 arduinoPort = "/dev/ttyACM0"
-arduinoBaud = 115200
+arduinoBaud = 256000
 
 
 hip_heel_length = 1 #meters	
