@@ -468,7 +468,11 @@ def data_handler(address, *args):
         outputString += f"\n"
 		
         if nucSend == False:
-            print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}")
+            if loadCell:
+                print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
+            else:
+                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}")
+        
             
         fileDump.write(f"{outputString}")
 		
