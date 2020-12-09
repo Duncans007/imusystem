@@ -8,6 +8,9 @@ def async_arduino(child_conn, arduinoPort):
     
     while True:
         receivedData, output_value = receive_from_arduino(teensyPort)
-        child_conn.send(output_value)
+        if receivedData:
+            child_conn.send(output_value)
+        else:
+            child_conn.send(-1)
                 
     child_conn.close()
