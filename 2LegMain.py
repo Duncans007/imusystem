@@ -9,6 +9,7 @@ from slipAlgorithmFunc import * #slipAlgorithm(pelvis_forward_acc, heel_forward_
 from kneelingAlgorithm import * #kneelingDetection.kneelingDetection(objRT, objRS, objRH, objLT, objLS, objLH)
 from CUNYreceiver import *
 from NUCreceiver import *
+from ARDUINOreceiver import *
 from userinput import *
 
 #Importing python libraries
