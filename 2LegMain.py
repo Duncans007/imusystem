@@ -233,7 +233,8 @@ def data_handler(address, *args):
             nuc_data = parent_conn_nuc.recv()
             
     if loadCell:
-        dataReceived, loadcell_data = receive_from_arduino(arduinoPort)
+        if parent_conn_arduino.poll(0):
+            loadcell_data = parent_conn_arduino.recv()
     
 
 	
@@ -605,6 +606,9 @@ if __name__ == "__main__":
         
     if loadCell:
         arduinoPort = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
+        parent_conn_arduino,child_conn_arduino = Pipe()
+        p_arduino = Process(target=async_arduino, args=(child_conn_arduino, arduinoPort))
+        p_arduino.start()
     
     
     
