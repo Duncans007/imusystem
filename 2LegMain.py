@@ -461,7 +461,7 @@ def data_handler(address, *args):
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         
         if loadCell:
-            outputString += f"{loadcell_data}\t"
+            outputString += f"\t{loadcell_data[0]}\t"
         
         if teensySend:
             for x in cuny_data.values():
