@@ -231,6 +231,10 @@ def data_handler(address, *args):
     if viconData:
         if parent_conn_nuc.poll(0):
             nuc_data = parent_conn_nuc.recv()
+            
+    if loadCell:
+        if parent_conn_arduino.poll(0):
+            loadcell_data = parent_conn_arduino.recv()
     
 
 	
@@ -455,6 +459,9 @@ def data_handler(address, *args):
 
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         
+        if loadCell:
+            outputString += f"{loadcell_data}\t"
+        
         if teensySend:
             for x in cuny_data.values():
                 outputString += f"{x}\t"
@@ -590,6 +597,14 @@ if __name__ == "__main__":
         parent_conn_teensy,child_conn_teensy = Pipe()
         p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
         p_teensy.start()
+        
+        
+        
+    if loadCell:
+        arduinoPort = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
+        parent_conn_arduino,child_conn_arduino = Pipe()
+        p_arduino = Process(target=async_arduino_loadcell, args=(child_conn_arduino, arduinoPort))
+        p_arduino.start()
     
     
     
