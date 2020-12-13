@@ -141,3 +141,30 @@ def receive_from_nuc(serialPort):
         outputArray = recArray
     
     return receivedData, outputArray
+
+
+
+
+
+def receive_from_arduino(serialPort):
+    import struct
+#[165, val loByte, val hiByte]
+
+    receivedData = False
+    outputVal = 0
+    
+    firstChar = serialPort.read() #Byte 1
+    try:
+        firstCharInt = struct.unpack('B', firstChar)
+    except:
+        firstCharInt = (0,0)
+    
+
+    if (firstCharInt[0] == 165):
+        loByte = serialPort.read()
+        hiByte = serialPort.read()
+        outputVal = struct.unpack('<h', loByte + hiByte)
+
+        receivedData = True
+    
+    return receivedData, outputVal

@@ -9,6 +9,7 @@ from slipAlgorithmFunc import * #slipAlgorithm(pelvis_forward_acc, heel_forward_
 from kneelingAlgorithm import * #kneelingDetection.kneelingDetection(objRT, objRS, objRH, objLT, objLS, objLH)
 from CUNYreceiver import *
 from NUCreceiver import *
+from ARDUINOreceiver import *
 from userinput import *
 
 #Importing python libraries
@@ -34,7 +35,7 @@ global hip_heel_length
 global intelNUCserial
 global teensySend, teensyPort
 global cuny_data
-global alpha2, SecondsToChange
+global alpha2, SecondsToChange, loadcell_data, loadCell
 
 #ALL USER INPUT VARIABLES HAVE BEEN MOVED TO USERINPUT.PY
 #USER INPUTS
@@ -222,7 +223,7 @@ def data_handler(address, *args):
     global teensySend, teensyPort
     global parent_conn, viconData
     global cuny_data
-    global SecondsToChange, alpha2
+    global SecondsToChange, alpha2, loadcell_data, loadCell
 
     if teensySend:
         if parent_conn_teensy.poll(0):
@@ -231,6 +232,10 @@ def data_handler(address, *args):
     if viconData:
         if parent_conn_nuc.poll(0):
             nuc_data = parent_conn_nuc.recv()
+            
+    if loadCell:
+        if parent_conn_arduino.poll(0):
+            loadcell_data = parent_conn_arduino.recv()
     
 
 	
@@ -455,6 +460,9 @@ def data_handler(address, *args):
 
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         
+        if loadCell:
+            outputString += f"\t{loadcell_data[0]}\t"
+        
         if teensySend:
             for x in cuny_data.values():
                 outputString += f"{x}\t"
@@ -462,7 +470,11 @@ def data_handler(address, *args):
         outputString += f"\n"
 		
         if nucSend == False:
-            print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}")
+            if loadCell:
+                print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
+            else:
+                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}")
+        
             
         fileDump.write(f"{outputString}")
 		
@@ -590,6 +602,15 @@ if __name__ == "__main__":
         parent_conn_teensy,child_conn_teensy = Pipe()
         p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
         p_teensy.start()
+        
+        
+        
+    if loadCell:
+        arduinoPort = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
+        parent_conn_arduino,child_conn_arduino = Pipe()
+        p_arduino = Process(target=async_arduino, args=(child_conn_arduino, arduinoPort))
+        p_arduino.start()
+        loadcell_data = 0
     
     
     
