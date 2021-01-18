@@ -38,7 +38,18 @@ def receive_from_teensy(serialPort):
             receivedData = True
     
     return receivedData, outputArray
-    
+
+
+
+
+
+#---------------------------------------------------------------------------------------
+
+
+
+
+
+
 def send_to_teensy(torqueLeft, torqueRight, serialPort):
     import struct
     import serial
@@ -70,7 +81,15 @@ def send_to_teensy(torqueLeft, torqueRight, serialPort):
     #print(int(torqueRight * 100))
     serialPort.write(sendStr)
 
-    
+
+
+
+
+#---------------------------------------------------------------------------------------
+
+
+
+
 # Send to NUC    
 def send_over_serial(msgArray, serialSend):
     import struct
@@ -105,7 +124,16 @@ def send_over_serial(msgArray, serialSend):
     #Encode with UTF-8 and send over serial.
     serialSend.write(sendStr)
     
-    
+
+
+
+
+#---------------------------------------------------------------------------------------
+
+
+
+
+
     
 def receive_from_nuc(serialPort):
     import struct
@@ -141,6 +169,13 @@ def receive_from_nuc(serialPort):
         outputArray = recArray
     
     return receivedData, outputArray
+
+
+
+
+
+#---------------------------------------------------------------------------------------
+
 
 
 
