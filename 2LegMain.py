@@ -13,6 +13,7 @@ from ARDUINOreceiver import *
 from userinput import *
 from variableDeclarations import *
 
+
 #Importing python libraries
 from pythonosc.dispatcher import Dispatcher
 from pythonosc.osc_server import BlockingOSCUDPServer
@@ -23,6 +24,8 @@ from math import sin, cos, sqrt, atan2
 import numpy as np
 import sys
 
+
+#Globalises all variables used inside the OSC reader b/c it is a separate process of sorts and allows variables to retain state between loops.
 #These will all be passed, rather than global eventually.
 global timeCurrent, varType, timeStart
 global dataDict, flagDict, toggleFlagDict
@@ -39,9 +42,9 @@ global cuny_data
 global alpha2, SecondsToChange, loadcell_data, loadCell
 
 
-
-
-
+#Takes input arguments and switches appropriate booleans for running.
+#Add toLower to standardsize
+#Move to userinput.py file
 if str((sys.argv)[1]) == "true":
     nucSend = True
 if str((sys.argv)[1]) == "false":
@@ -63,6 +66,7 @@ if str((sys.argv)[3]) == "false":
 
 
 #Turns data collection for particular sensors on/off if necessary.
+#Move to userinput.py file and standardize so system can be run with any # of sensors
 toggleFlagDict = {
     "rThigh": True,
     "rShank": True,
@@ -74,7 +78,8 @@ toggleFlagDict = {
     "topBack": sensor8
 }
 
-#Variable Initializations
+
+#Variable initializations that can't be offloaded to another file. (time)
 timeCurrent = time.time()
 timeStart = time.time()
 
@@ -96,6 +101,8 @@ def data_handler(address, *args):
     global cuny_data
     global SecondsToChange, alpha2, loadcell_data, loadCell
 
+    
+#Pull data from [CUNY teensy / Rutgers VICON / Chadi Load Cell] if enabled
     if teensySend:
         if parent_conn_teensy.poll(0):
             cuny_data = parent_conn_teensy.recv()
@@ -118,7 +125,7 @@ def data_handler(address, *args):
     addr += str(address[len(address) - 1])
     
     
-#Takes in individual data and assembles into easily indexable dictionary packages.
+#Takes in individual datapoints and assembles into easily indexable dictionary packages.
     if addr in addressDict:
         limb = addressDict[addr]
 
@@ -140,7 +147,7 @@ def data_handler(address, *args):
             rPacketReady = True
     
     
-#Assembles full packet so that entire IMU state can be analyzed by algorithm at once.
+#Waits until full packet is assembled with all sensors, so that entire IMU state can be analyzed by algorithm at once.
     if rPacketReady:
         rPacketReady = False
         
@@ -170,7 +177,7 @@ def data_handler(address, *args):
         timeCurrent = time.time()
         timeToRun = timeCurrent - timeLastRun
         
-#Update data        
+#Update data in individual sensor objects 
         objRThigh.newValues(passToAlgorithm['rt_raw'])
         objRShank.newValues(passToAlgorithm['rs_raw'])
         objRHeel.newValues(passToAlgorithm['rh_raw'])
@@ -197,7 +204,8 @@ def data_handler(address, *args):
         
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
-
+#Calibrations - subject must stand still in a natural standing position. Whatever position sensors are in is zero position.
+#Gyroscope calibration (function included in sensor object)
         if (time.time() - timeStart) < sensorCalibTime:
             objRThigh.getCalib()
             objRShank.getCalib()
@@ -210,13 +218,13 @@ def data_handler(address, *args):
             objLowBack.getCalib()
             if toggleFlagDict['topBack'] == True:
                 objTopBack.getCalib()
-                
+
+#Run angle zeroing (function included in sensor object)
         elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
             objRThigh.angleCalib()
             objRShank.angleCalib()
             objRHeel.angleCalib()
-
-    #Left Leg Angle Approximations
+            
             objLThigh.angleCalib()
             objLShank.angleCalib()
             objLHeel.angleCalib()
@@ -226,12 +234,12 @@ def data_handler(address, *args):
                 objTopBack.angleCalib()
 
         else:
-    #Right Leg Angle Approximations
+    
+#Run angle calculations for each individual sensor (function included in sensor object)
             objRThigh.angleCalc()
             objRShank.angleCalc()
             objRHeel.angleCalc()
 
-    #Left Leg Angle Approximations
             objLThigh.angleCalc()
             objLShank.angleCalc()
             objLHeel.angleCalc()
@@ -241,28 +249,16 @@ def data_handler(address, *args):
                 objTopBack.angleCalc()
 
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
 #-----------------------------------------------------------
 #NO CALCULATIONS BEFORE ANGLECALC() OTHERWISE THEY WILL RUN USING RAW DATA INSTEAD OF PROPER UNITS
+
+#Algorithms and secondary angle calculations
 	
 #Right and Left Gait Detection
         gaitDetectRight.testVal(objRThigh.gyZ, objRShank.gyZ, objRHeel.gyZ)
         gaitDetectLeft.testVal(objLThigh.gyZ, objLShank.gyZ, objLHeel.gyZ)
 
-#Calculates Slip Indicator from Trkov IFAC 2017 paper
+#Slip Algorithm - Calculates Slip Indicator from Trkov IFAC 2017 paper
         slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngleZeroed * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngleZeroed * .01745))), hip_heel_length)
         slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngleZeroed * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngleZeroed * .01745))), hip_heel_length)
 
@@ -280,29 +276,13 @@ def data_handler(address, *args):
         
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-#PRINT TO OUTPUT STRING -------------------------------------------------------------------------------------------------------------
 
-#Append beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
+        
+#DATA OUTPUT -------------------------------------------------------------------------------------------------------------
+
+#Create beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
         outputString = f"{time.time() - timeStart}\t{timeToRun}\t{gaitDetectRight.gaitStage}\t{gaitDetectLeft.gaitStage}\t{slipRight}\t{slipLeft}\t{legForward}\t\t"
+
 
 #Cycle through all sensor objects to append formatted version of every sensor's raw data to output string
         for x in objects:
@@ -426,7 +406,7 @@ def data_handler(address, *args):
 
 
 
-#Handles any OSC messages that aren't picked up by dataHandler
+#Handles any OSC messages that aren't picked up by dataHandler (doesn't do anything with them.)
 def default_handler(address, *args):
     out = 'DEFAULT '
     out += str(address)
@@ -458,7 +438,8 @@ def main_func(ip, port):
 
 if __name__ == "__main__":
     #Variable initializations
-    #serial object for NUC. Comment out if not used.
+    
+    #Creation of objects for communication with Rutgers NUC device
     if nucSend:
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
         if viconData:
@@ -467,7 +448,7 @@ if __name__ == "__main__":
             p_nuc.start()
 	
     
-
+    #Creation of objects for communication with CUNY Teensy device
     if teensySend:
         teensyPort = serial.Serial(teensyPort, teensyBaud, timeout=3.0)
         parent_conn_teensy,child_conn_teensy = Pipe()
@@ -475,7 +456,7 @@ if __name__ == "__main__":
         p_teensy.start()
         
         
-        
+    #Creation of objects for communication with Chadi load cell via USB Arduino
     if loadCell:
         arduinoPort = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
         parent_conn_arduino,child_conn_arduino = Pipe()
@@ -490,7 +471,7 @@ if __name__ == "__main__":
     
     
     
-
+#Create sensor objects to store and manipulate data for each sensor
     objRThigh = sensorObject("RT")
     objRShank = sensorObject("RS")
     objRHeel = sensorObject("RH")
@@ -502,12 +483,14 @@ if __name__ == "__main__":
     objLowBack = sensorObject("LB")
     objTopBack = sensorObject("LB")
 
-    #create gait detect objects for each leg
+    
+#create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
     kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff, ramping_delay_time, ramping_hold_time, ramping_slope, controller_type, front_leg_proportion, rear_leg_proportion, back_proportion, back_offset)
 
-    #create lists that can be cycles through to iterate over every object, as well as create the file data header.
+    
+#Create lists that can be cycled through to iterate over every object for exporting (and creating the dump file data header).
     if toggleFlagDict['topBack'] == True:
         objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack, objTopBack]
         stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack", "TopBack"]
@@ -533,5 +516,7 @@ if __name__ == "__main__":
     header += f"\n"
     fileDump.write(header)
 
+
+#Start program
     main_func(ip, port)
     client.close()
