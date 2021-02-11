@@ -71,9 +71,9 @@ toggleFlagDict = {
     "rThigh": True,
     "rShank": True,
     "rHeel": True,
-    "lThigh": False,
-    "lShank": False,
-    "lHeel": False,
+    "lThigh": True,
+    "lShank": True,
+    "lHeel": True,
     "lowBack": True,
     "topBack": sensor8
 }
