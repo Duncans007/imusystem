@@ -88,6 +88,21 @@ def send_to_teensy(torqueLeft, torqueRight, serialPort):
 #---------------------------------------------------------------------------------------
 
 
+def send_to_brace(gait):
+    import struct
+    import serial
+    import time
+    
+    sendStr = bytearray(struct.pack("<h", int(gait)))
+    serialPort.write(sendStr)
+
+
+
+
+
+#---------------------------------------------------------------------------------------
+
+
 
 
 # Send to NUC    
