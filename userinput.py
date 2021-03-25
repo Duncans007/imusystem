@@ -32,6 +32,10 @@ ramping_slope = 20 #Nm/s
 
 
 #ADDITIONAL DEVICES
+
+#Serial Stream to Arduino for Knee-Based Device
+
+
 #Serial Send/Receive for NUC and Simulink	
 intelNUCport = "/dev/ttyUSB0"	
 #intelNUCport = "/dev/ttyS0"	
@@ -49,9 +53,13 @@ sensor8 = False
 
 #Load cell on foot
 #Load cell plugs into arduino, which plugs into pi via USB port
+#same values used for streaming gait variables to arduino
 loadCell = True
+streamGait = False
 arduinoPort = "/dev/ttyACM0"
 arduinoBaud = 256000
+
+
 
 
 
