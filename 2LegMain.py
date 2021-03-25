@@ -445,7 +445,7 @@ if __name__ == "__main__":
             p_nuc.start()
             
     if streamGait:
-        gaitSerial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
+        gaitSerial = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
 	
     
     #Creation of objects for communication with CUNY Teensy device
