@@ -36,7 +36,7 @@ global objLHeel, objLShank, objLThigh
 global gaitDetectRight, gaitDetectLeft
 global objects
 global hip_heel_length
-global intelNUCserial
+global intelNUCserial, streamGait
 global teensySend, teensyPort
 global cuny_data
 global alpha2, SecondsToChange, loadcell_data, loadCell
@@ -444,7 +444,7 @@ if __name__ == "__main__":
             p_nuc = Process(target=async_nuc, args=(child_conn_nuc, intelNUCserial))
             p_nuc.start()
             
-    if gaitStream:
+    if streamGait:
         gaitSerial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
 	
     
