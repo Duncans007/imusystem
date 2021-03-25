@@ -114,6 +114,8 @@ def data_handler(address, *args):
     if loadCell:
         if parent_conn_arduino.poll(0):
             loadcell_data = parent_conn_arduino.recv()
+            
+    
     
 
 	
@@ -273,7 +275,9 @@ def data_handler(address, *args):
 
 
         
-        
+       if streamGait:
+           send_to_brace(gaitDetectRight.gaitStage)
+           
         
         
 
@@ -324,7 +328,7 @@ def data_handler(address, *args):
             if loadCell:
                 print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
             else:
-                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}")
+                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectRight.gaitStage}")
         
             
         fileDump.write(f"{outputString}")
