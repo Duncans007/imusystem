@@ -95,7 +95,7 @@ def data_handler(address, *args):
     global gaitDetectRight, gaitDetectLeft
     global objects
     global hip_heel_length
-    global intelNUCserial, 
+    global intelNUCserial, gaitStream
     global teensySend, teensyPort
     global parent_conn, viconData
     global cuny_data
