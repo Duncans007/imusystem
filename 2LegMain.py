@@ -95,7 +95,7 @@ def data_handler(address, *args):
     global gaitDetectRight, gaitDetectLeft
     global objects
     global hip_heel_length
-    global intelNUCserial, nucSend
+    global intelNUCserial, 
     global teensySend, teensyPort
     global parent_conn, viconData
     global cuny_data
@@ -272,16 +272,9 @@ def data_handler(address, *args):
             kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, nuc_data["R"], nuc_data["L"], nuc_data["B"])
         else:
             kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
-
-
-        
-       if streamGait:
-           send_to_brace(gaitDetectRight.gaitStage)
-           
-        
-        
-
-        
+        if streamGait:
+           send_to_brace(gaitDetectRight.gaitStage, gaitSerial)
+     
 #DATA OUTPUT -------------------------------------------------------------------------------------------------------------
 
 #Create beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
@@ -450,6 +443,9 @@ if __name__ == "__main__":
             parent_conn_nuc,child_conn_nuc = Pipe()
             p_nuc = Process(target=async_nuc, args=(child_conn_nuc, intelNUCserial))
             p_nuc.start()
+            
+    if gaitStream:
+        gaitSerial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
 	
     
     #Creation of objects for communication with CUNY Teensy device
