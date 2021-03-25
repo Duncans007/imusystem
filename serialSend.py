@@ -88,7 +88,7 @@ def send_to_teensy(torqueLeft, torqueRight, serialPort):
 #---------------------------------------------------------------------------------------
 
 
-def send_to_brace(gait):
+def send_to_brace(gait, serialPort):
     import struct
     import serial
     import time
