@@ -93,7 +93,7 @@ def send_to_brace(gait, serialPort):
     import serial
     import time
     
-    sendStr = bytearray(struct.pack("<h", int(gait)))
+    sendStr = bytearray(struct.pack("B", int(gait)))
     serialPort.write(sendStr)
 
 
