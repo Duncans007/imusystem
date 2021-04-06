@@ -61,35 +61,40 @@ class gaitDetect:
         if self.significance == 0:
 
 #detects negative to positive, aka toe off or start of swing phase
-            if self.movingAvgThigh > 0 and self.lastAvgThigh < 0 and self.gaitStage == 0:
+            if self.movingAvgThigh > 0 and self.lastAvgThigh < 0 and self.gaitStage == 1:
                 self.significance = 1
                 self.timeLastToeOff = time.time()
-                self.gaitStage = 1
+                self.gaitStage = 2
                 
 #detects positive to negative, aka heel strike or start of stance phase
-            elif self.movingAvgShank < 0 and self.lastAvgShank > 0 and self.gaitStage == 1: 
+            elif self.movingAvgShank < 0 and self.lastAvgShank > 0 and self.gaitStage == 2: 
                 self.significance = -1
                 self.timeLastHeelStrike = time.time()
                 self.gaitStage = 0
 
 #detects heel off occurrence
-#            elif np.mean(np.diff(self.movingArrHeel)) < -20 and self.gaitStage == 0:
-#                if self.lastDiffHeel <= 25 and self.lastDiffHeel >= -25:
-#                    self.timeLastHeelOff = time.time()
-#                    self.significance = 2
-#                    self.gaitStage = 1
-#            #Keep records of previous values for checking at the beginning of function
-#            self.lastDiffHeel = np.mean(np.diff(self.movingArrHeel))
+            elif np.mean(np.diff(self.movingArrHeel)) < -20 and self.gaitStage == 0:
+                if self.lastDiffHeel <= 25 and self.lastDiffHeel >= -25:
+                    self.timeLastHeelOff = time.time()
+                    self.significance = 2
+                    self.gaitStage = 1
+            #Keep records of previous values for checking at the beginning of function
+            self.lastDiffHeel = np.mean(np.diff(self.movingArrHeel))
          
 #When significance has been changed, wait the appropriate amount of time before resetting to allow for next gait update
         elif self.significance != 0:
             if time.time() - self.timeLastHeelStrike > self.eventTimer and time.time() - self.timeLastToeOff > self.eventTimer:
                 self.significance = 0
-#            if self.significance == 2:
-#                self.significance = 0
+            if self.significance == 2:
+                self.significance = 0
 
         self.lastAvgShank = self.movingAvgShank
         self.lastAvgThigh = self.movingAvgThigh
+        if (self.gaitStage == 2):
+            self.gaitOutput = 1
+        else:
+            self.gaitOutput = 0
+        end
         
 #Trkov IFAC 2017 slip detection algorithm
     def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
