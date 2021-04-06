@@ -273,7 +273,7 @@ def data_handler(address, *args):
         else:
             kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
         if streamGait:
-           send_to_brace(gaitDetectRight.gaitStage, gaitSerial)
+           send_to_brace(gaitDetectRight.gaitOutput, gaitSerial)
      
 #DATA OUTPUT -------------------------------------------------------------------------------------------------------------
 
