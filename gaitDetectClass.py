@@ -94,7 +94,6 @@ class gaitDetect:
             self.gaitOutput = 1
         else:
             self.gaitOutput = 0
-        end
         
 #Trkov IFAC 2017 slip detection algorithm
     def slipTrkov(self, pelvisAcc, forwardFootAcc, L_hh):
