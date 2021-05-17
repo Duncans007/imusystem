@@ -26,7 +26,7 @@ from variableDeclarations import *
 #Globalises all variables used inside the OSC reader b/c it is a separate process and allows variables to retain state between loops.
 #These will all be passed, rather than global... eventually.
 global timeCurrent, varType, timeStart
-global dataDict, flagDict, toggleFlagDict
+global dataDict, toggleFlagDict
 global packetReady, rPacketReady, passToAlgorithm, packetWasReady
 global fileDump
 global objRHeel, objRShank, objRThigh
@@ -61,7 +61,7 @@ timeStart = time.time()
 #Function to handle OSC input
 def data_handler(address, *args):
     global timeCurrent, varType, timeStart
-    global dataDict, flagDict, toggleFlagDict
+    global dataDict, toggleFlagDict
     global packetReady, rPacketReady, passToAlgorithm, packetWasReady
     global fileDump
     global objRHeel, objRShank, objRThigh
@@ -101,38 +101,13 @@ def data_handler(address, *args):
     if addr in addressDict:
         limb = addressDict[addr]
 
-        if varType == "r":
+        if (varType == "r") and (toggleFlagDict[limb] == True):
             dataDict[limb] = package_handler_raw(args)
-            
-            if (limb == "topBack"):
-                if (toggleFlagDict['topBack'] == True):
-                    flagDict[limb] = True
-            else:
-                flagDict[limb] = True
 
             
 #Tests if all sensors have been received before assembling packet and sending to algorithm
-        if flagDict == toggleFlagDict:                    
-            for x in flagDict:
-                flagDict[x] = False
-            
-            rPacketReady = True
-    
-    
-#Waits until full packet is assembled with all sensors, so that entire IMU state can be analyzed by algorithm at once.
-    if rPacketReady:
-        rPacketReady = False
-        
-        passToAlgorithm["rt_raw"] = dataDict["rThigh"]
-        passToAlgorithm["rs_raw"] = dataDict["rShank"]
-        passToAlgorithm["rh_raw"] = dataDict["rHeel"]
-        passToAlgorithm["lt_raw"] = dataDict["lThigh"]
-        passToAlgorithm["ls_raw"] = dataDict["lShank"]
-        passToAlgorithm["lh_raw"] = dataDict["lHeel"]
-        passToAlgorithm["b_raw"]  = dataDict["lowBack"]
-        passToAlgorithm["tb_raw"] = dataDict["topBack"]
-        
-        packetReady = True
+        if time.time() - timeLastRun > (1/50):
+            packetReady = True
         
         
         
@@ -150,29 +125,22 @@ def data_handler(address, *args):
         timeToRun = timeCurrent - timeLastRun
         
 #Update data in individual sensor objects 
-        objRThigh.newValues(passToAlgorithm['rt_raw'])
-        objRShank.newValues(passToAlgorithm['rs_raw'])
-        objRHeel.newValues(passToAlgorithm['rh_raw'])
-        objLThigh.newValues(passToAlgorithm['lt_raw'])
-        objLShank.newValues(passToAlgorithm['ls_raw'])
-        objLHeel.newValues(passToAlgorithm['lh_raw'])
-        objLowBack.newValues(passToAlgorithm['b_raw'])
-        objTopBack.newValues(passToAlgorithm['tb_raw'])
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        if toggleFlagDict['rThigh'] == True:
+            objRThigh.newValues(dataDict['rt_raw'])
+        if toggleFlagDict['rShank'] == True:
+            objRShank.newValues(dataDict['rs_raw'])
+        if toggleFlagDict['rHeel'] == True:
+            objRHeel.newValues(dataDict['rh_raw'])
+        if toggleFlagDict['lThigh'] == True:
+            objLThigh.newValues(dataDict['lt_raw'])
+        if toggleFlagDict['lShank'] == True:
+            objLShank.newValues(dataDict['ls_raw'])
+        if toggleFlagDict['lHeel'] == True:
+            objLHeel.newValues(dataDict['lh_raw'])
+        if toggleFlagDict['lowBack'] == True:
+            objLowBack.newValues(dataDict['b_raw'])
+        if toggleFlagDict['topBack'] == True:
+            objTopBack.newValues(dataDict['tb_raw'])
         
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
