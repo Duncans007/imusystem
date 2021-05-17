@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+#Importing python libraries
+from pythonosc.dispatcher import Dispatcher
+from pythonosc.osc_server import BlockingOSCUDPServer
+from multiprocessing import Process,Queue,Pipe
+import serial
+import time
+from math import sin, cos, sqrt, atan2
+import numpy as np
+import sys
+
 #Importing Custom Functions
 from gaitDetectClass import * #class gaitDetect, func testVal(shank gyZ, heel gyZ)
 from packageHandlerFunc import * #package_handler_raw(tup)
@@ -13,20 +23,8 @@ from ARDUINOreceiver import *
 from userinput import *
 from variableDeclarations import *
 
-
-#Importing python libraries
-from pythonosc.dispatcher import Dispatcher
-from pythonosc.osc_server import BlockingOSCUDPServer
-from multiprocessing import Process,Queue,Pipe
-import serial
-import time
-from math import sin, cos, sqrt, atan2
-import numpy as np
-import sys
-
-
-#Globalises all variables used inside the OSC reader b/c it is a separate process of sorts and allows variables to retain state between loops.
-#These will all be passed, rather than global eventually.
+#Globalises all variables used inside the OSC reader b/c it is a separate process and allows variables to retain state between loops.
+#These will all be passed, rather than global... eventually.
 global timeCurrent, varType, timeStart
 global dataDict, flagDict, toggleFlagDict
 global packetReady, rPacketReady, passToAlgorithm, packetWasReady
@@ -42,42 +40,20 @@ global cuny_data
 global alpha2, SecondsToChange, loadcell_data, loadCell
 
 
-#Takes input arguments and switches appropriate booleans for running.
-#Add toLower to standardsize
-#Move to userinput.py file
-if str((sys.argv)[1]) == "true":
-    nucSend = True
-if str((sys.argv)[1]) == "false":
-    nucSend = False
-if str((sys.argv)[2]) == "true":
-    teensySend = True
-if str((sys.argv)[2]) == "false":
-    teensySend = False
-if str((sys.argv)[3]) == "true":
-    viconData = True
-    teensySend = False
-    teensyPort = serial.Serial(teensyPort, teensyBaud, timeout=3.0)
-    parent_conn_teensy,child_conn_teensy = Pipe()
-    p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
-    p_teensy.start()
-if str((sys.argv)[3]) == "false":
-    viconData = False
-
 #Turns data collection for particular sensors on/off if necessary.
-#Move to userinput.py file and standardize so system can be run with any # of sensors
 toggleFlagDict = {
-    "rThigh": True,
-    "rShank": True,
-    "rHeel": True,
-    "lThigh": True,
-    "lShank": True,
-    "lHeel": True,
-    "lowBack": True,
-    "topBack": sensor8
+    "rThigh":  toggle_rThigh,
+    "rShank":  toggle_rShank,
+    "rHeel":   toggle_rHeel,
+    "lThigh":  toggle_lThigh,
+    "lShank":  toggle_lShank,
+    "lHeel":   toggle_lHeel,
+    "lowBack": toggle_lowBack,
+    "topBack": toggle_topBack
 }
 
 
-#Variable initializations that can't be offloaded to another file. (time)
+#Variable initializations that can't be offloaded to another file (time)
 timeCurrent = time.time()
 timeStart = time.time()
 
@@ -95,19 +71,15 @@ def data_handler(address, *args):
     global hip_heel_length
     global intelNUCserial, streamGait
     global teensySend, teensyPort
-    global parent_conn, viconData
+    global parent_conn
     global cuny_data
     global SecondsToChange, alpha2, loadcell_data, loadCell
 
     
-#Pull data from [CUNY teensy / Rutgers VICON / Chadi Load Cell] if enabled
+#Pull data from [CUNY teensy / Chadi Load Cell] if enabled
     if teensySend:
         if parent_conn_teensy.poll(0):
             cuny_data = parent_conn_teensy.recv()
-        
-    if viconData:
-        if parent_conn_nuc.poll(0):
-            nuc_data = parent_conn_nuc.recv()
             
     if loadCell:
         if parent_conn_arduino.poll(0):
@@ -266,10 +238,9 @@ def data_handler(address, *args):
         #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
         #if (time.time() - timeStart > SecondsToChange):
         #    kneelingDetect.alpha = alpha2
-        if viconData:
-            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorqueFromVicon(objRThigh, objRShank, objLThigh, objLShank, nuc_data["R"], nuc_data["L"], nuc_data["B"])
-        else:
-            kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+        
+        kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+        
         if streamGait:
            send_to_brace(gaitDetectLeft.gaitOutput, gaitSerial)
      
@@ -300,9 +271,6 @@ def data_handler(address, *args):
         #for x in objects:
         #    outputString += f"{x.gravAngleSmoothed}\t"
         #    outputString += f"{x.angleFromGravity}\t\t"
-        if viconData:
-            torqueROG = 0
-            torqueLOG = 0
 
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         
@@ -385,12 +353,6 @@ def data_handler(address, *args):
                 send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
             else:
                 send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
-                
-        elif viconData:
-            if addGravityToTorque:
-                send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
-            else:
-                send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
             
 #-----------------------------------------------------
 
@@ -432,27 +394,22 @@ def main_func(ip, port):
     
 
 if __name__ == "__main__":
-    #Variable initializations
+#Variable initializations
     
     #Creation of objects for communication with Rutgers NUC device
     if nucSend:
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
-        if viconData:
-            parent_conn_nuc,child_conn_nuc = Pipe()
-            p_nuc = Process(target=async_nuc, args=(child_conn_nuc, intelNUCserial))
-            p_nuc.start()
-            
+    
+    #Creation of objects to stream gait variables to knee device arduino
     if streamGait:
         gaitSerial = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
 	
-    
     #Creation of objects for communication with CUNY Teensy device
     if teensySend:
         teensyPort = serial.Serial(teensyPort, teensyBaud, timeout=3.0)
         parent_conn_teensy,child_conn_teensy = Pipe()
         p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
         p_teensy.start()
-        
         
     #Creation of objects for communication with Chadi load cell via USB Arduino
     if loadCell:
@@ -485,20 +442,48 @@ if __name__ == "__main__":
 #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
+    
+    #Change so that each detection is a different function!
+    #Only activate necessary function.
+    #Most of these variables can be directly imported into the function on initialization anyways, by importing the userinput file
     kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff, ramping_delay_time, ramping_hold_time, ramping_slope, controller_type, front_leg_proportion, rear_leg_proportion, back_proportion, back_offset)
 
     
 #Create lists that can be cycled through to iterate over every object for exporting (and creating the dump file data header).
+    objects = []
+    stringObjects = []
+    
+    if toggleFlagDict['rThigh'] == True:
+        objects.append(objRThigh)
+        stringObjects.append("RThigh")    
+    if toggleFlagDict['rShank'] == True:
+        objects.append(objRShank)
+        stringObjects.append("RShank")    
+    if toggleFlagDict['rHeel'] == True:
+        objects.append(objRHeel)
+        stringObjects.append("RHeel")    
+    if toggleFlagDict['lThigh'] == True:
+        objects.append(objLThigh)
+        stringObjects.append("LThigh")    
+    if toggleFlagDict['lShank'] == True:
+        objects.append(objLShank)
+        stringObjects.append("LShank")    
+    if toggleFlagDict['lHeel'] == True:
+        objects.append(objLHeel)
+        stringObjects.append("LHeel")    
+    if toggleFlagDict['lowBack'] == True:
+        objects.append(objLowBack)
+        stringObjects.append("LowBack")    
     if toggleFlagDict['topBack'] == True:
-        objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack, objTopBack]
-        stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack", "TopBack"]
-    else:
-        objects = [objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel, objLowBack]
-        stringObjects = ["RThigh", "RShank", "RHeel", "LThigh", "LShank", "LHeel", "LowBack"]
+        objects.append(objTopBack)
+        stringObjects.append("TopBack")
+        
+        
         
     stringAxes = ["x","y","z"]
     #stringSensors = ["gy","ac","mg"]
     stringSensors = ["gy","ac"]
+    
     #Create formatted file header
     fileDump = open("algDump.txt", "w+")
     header = "time\ttimeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
