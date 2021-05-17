@@ -47,15 +47,14 @@ teensyPort = "/dev/ttyACM0"
 #teensyPort = "/dev/ttyS0"
 teensyBaud = 115200	
 
-
 #8th sensor - upper back or head depending on application (listed in output file as upper back)
 sensor8 = False
 
 #Load cell on foot
 #Load cell plugs into arduino, which plugs into pi via USB port
 #same values used for streaming gait variables to arduino
-loadCell = True
-streamGait = False
+loadCell = False #stream loadcell variables from arduino
+streamGait = False #stream gait variables to arduino
 arduinoPort = "/dev/ttyACM0"
 arduinoBaud = 256000
 
