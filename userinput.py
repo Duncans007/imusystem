@@ -1,8 +1,21 @@
 #!/usr/bin/env python3	
 
+#Activate/deactivate individual sensor recording
+#Note that disabling some (e.g. shank) will cause some detectors to not work
+toggle_rThigh  = True
+toggle_rShank  = True
+toggle_rHeel   = True
+toggle_lThigh  = True
+toggle_lShank  = True
+toggle_lHeel   = True
+toggle_lowBack = True
+toggle_topBack = True
+
+
 #Configure Sensor Calibration Times
 sensorCalibTime = 2 #Calib time to eliminate gyro noise.
 angleCalibTime = 2 #Calib time (after finishing sensorCalibTime) to zero angle measurements.
+
 
 #Torque Controller Options: 
 # "pid" - DS developed, uses knee angle and thigh ang. vel.
@@ -31,24 +44,22 @@ ramping_hold_time = 5 #seconds
 ramping_slope = 20 #Nm/s	
 
 
+
 #ADDITIONAL DEVICES
 
-#Serial Stream to Arduino for Knee-Based Device
-
-
 #Serial Send/Receive for NUC and Simulink	
+nucSend = False
 intelNUCport = "/dev/ttyUSB0"	
 #intelNUCport = "/dev/ttyS0"	
 intelNUCbaud = 115200	
 
 
 #Serial Send/Receive for CUNY Teensy	
+teensySend = False
 teensyPort = "/dev/ttyACM0"	
 #teensyPort = "/dev/ttyS0"
 teensyBaud = 115200	
 
-#8th sensor - upper back or head depending on application (listed in output file as upper back)
-sensor8 = False
 
 #Load cell on foot
 #Load cell plugs into arduino, which plugs into pi via USB port
