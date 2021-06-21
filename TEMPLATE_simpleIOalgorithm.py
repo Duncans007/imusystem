@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #Name algorithm and define inputs
 def algorithmName(alg_input_1, alg_input_2):
     
