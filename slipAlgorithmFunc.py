@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 def slipAlgorithm(pelvisAcc, forwardFootAcc, L_hh):
     #Update notes: double check that L_hh pulls from userinput.py
 
