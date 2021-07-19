@@ -9,18 +9,14 @@ packetWasReady = True
 ip = "localhost"
 port = 6565
 
-nucSend = True
-teensySend = True
-viconData = True
-
 dataDict = {
-    "rThigh":  [],
-    "rShank":  [],
-    "rHeel":  [],
-    "lThigh": [],
-    "lShank": [],
-    "lHeel": [],
-    "lowBack":  [],
+    "rThigh":  [0,0,0,0,0,0,0,0,0],
+    "rShank":  [0,0,0,0,0,0,0,0,0],
+    "rHeel":  [0,0,0,0,0,0,0,0,0],
+    "lThigh": [0,0,0,0,0,0,0,0,0],
+    "lShank": [0,0,0,0,0,0,0,0,0],
+    "lHeel": [0,0,0,0,0,0,0,0,0],
+    "lowBack":  [0,0,0,0,0,0,0,0,0],
     "topBack": [0,0,0,0,0,0,0,0,0]
 }
 
