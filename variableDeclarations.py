@@ -5,6 +5,7 @@
 packetReady = False
 rPacketReady = False
 packetWasReady = True
+timeLastRun = 0;
 
 ip = "localhost"
 port = 6565
