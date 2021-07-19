@@ -9,10 +9,6 @@ packetWasReady = True
 ip = "localhost"
 port = 6565
 
-nucSend = True
-teensySend = True
-viconData = True
-
 dataDict = {
     "rThigh":  [],
     "rShank":  [],
