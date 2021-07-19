@@ -10,4 +10,4 @@ sleep 1
 
 sleep 6
 
-./2LegMain.py $1 $2 $3 #>/dev/null
+./variableSensorMain.py $1 $2 $3 #>/dev/null
