@@ -127,21 +127,21 @@ def data_handler(address, *args):
         
 #Update data in individual sensor objects 
         if toggleFlagDict['rThigh'] == True:
-            objRThigh.newValues(dataDict['rt_raw'])
+            objRThigh.newValues(dataDict['rThigh'])
         if toggleFlagDict['rShank'] == True:
-            objRShank.newValues(dataDict['rs_raw'])
+            objRShank.newValues(dataDict['rShank'])
         if toggleFlagDict['rHeel'] == True:
-            objRHeel.newValues(dataDict['rh_raw'])
+            objRHeel.newValues(dataDict['rHeel'])
         if toggleFlagDict['lThigh'] == True:
-            objLThigh.newValues(dataDict['lt_raw'])
+            objLThigh.newValues(dataDict['lThigh'])
         if toggleFlagDict['lShank'] == True:
-            objLShank.newValues(dataDict['ls_raw'])
+            objLShank.newValues(dataDict['lShank'])
         if toggleFlagDict['lHeel'] == True:
-            objLHeel.newValues(dataDict['lh_raw'])
+            objLHeel.newValues(dataDict['lHeel'])
         if toggleFlagDict['lowBack'] == True:
-            objLowBack.newValues(dataDict['b_raw'])
+            objLowBack.newValues(dataDict['lowBack'])
         if toggleFlagDict['topBack'] == True:
-            objTopBack.newValues(dataDict['tb_raw'])
+            objTopBack.newValues(dataDict['topBack'])
         
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
 
