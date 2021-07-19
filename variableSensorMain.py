@@ -37,7 +37,7 @@ global hip_heel_length
 global intelNUCserial, streamGait
 global teensySend, teensyPort
 global cuny_data
-global alpha2, SecondsToChange, loadcell_data, loadCell
+global alpha2, SecondsToChange, loadcell_data, loadCell, timeLastRun
 
 
 #Turns data collection for particular sensors on/off if necessary.
@@ -55,7 +55,8 @@ toggleFlagDict = {
 
 #Variable initializations that can't be offloaded to another file (time)
 timeCurrent = time.time()
-timeStart = time.time()
+timeStart = timeCurrent
+timeLastRun = timeCurrent
 
 
 #Function to handle OSC input
@@ -73,7 +74,7 @@ def data_handler(address, *args):
     global teensySend, teensyPort
     global parent_conn
     global cuny_data
-    global SecondsToChange, alpha2, loadcell_data, loadCell
+    global SecondsToChange, alpha2, loadcell_data, loadCell, timeLastRun
 
     
 #Pull data from [CUNY teensy / Chadi Load Cell] if enabled
