@@ -9,6 +9,7 @@ import time
 from math import sin, cos, sqrt, atan2
 import numpy as np
 import sys
+import time
 
 #Importing Custom Functions
 from gaitDetectClass import * #class gaitDetect, func testVal(shank gyZ, heel gyZ)
@@ -38,6 +39,7 @@ global intelNUCserial, streamGait
 global teensySend, teensyPort
 global cuny_data
 global alpha2, SecondsToChange, loadcell_data, loadCell, timeLastRun
+global calcTime
 
 
 #Turns data collection for particular sensors on/off if necessary.
@@ -51,6 +53,8 @@ toggleFlagDict = {
     "lowBack": toggle_lowBack,
     "topBack": toggle_topBack
 }
+
+calcTime = 0
 
 
 #Variable initializations that can't be offloaded to another file (time)
@@ -75,6 +79,7 @@ def data_handler(address, *args):
     global parent_conn
     global cuny_data
     global SecondsToChange, alpha2, loadcell_data, loadCell, timeLastRun
+    global calcTime
 
     
 #Pull data from [CUNY teensy / Chadi Load Cell] if enabled
@@ -103,12 +108,28 @@ def data_handler(address, *args):
         limb = addressDict[addr]
 
         if (varType == "r") and (toggleFlagDict[limb] == True):
-            dataDict[limb] = package_handler_raw(args)
+
+            if limb == 'rThigh':
+                objRThigh.newValues(package_handler_raw(args))
+            if limb == 'rShank':
+                objRShank.newValues(package_handler_raw(args))
+            if limb == 'rHeel':
+                objRHeel.newValues(package_handler_raw(args))
+            if limb == 'lThigh':
+                objLThigh.newValues(package_handler_raw(args))
+            if limb == 'lShank':
+                objLShank.newValues(package_handler_raw(args))
+            if limb == 'lHeel':
+                objLHeel.newValues(package_handler_raw(args))
+            if limb == 'lowBack':
+                objLowBack.newValues(package_handler_raw(args))
+            if limb == 'topBack':
+                objTopBack.newValues(package_handler_raw(args))
 
             
-#Tests if all sensors have been received before assembling packet and sending to algorithm
-        if time.time() - timeLastRun > (1/50):
-            packetReady = True
+#Auto-sends packet every 1/50 seconds regardless of packet completion status
+    if time.time() - timeLastRun > (1/50 - calcTime):
+        packetReady = True
         
         
         
@@ -125,26 +146,8 @@ def data_handler(address, *args):
         timeCurrent = time.time()
         timeToRun = timeCurrent - timeLastRun
         
-#Update data in individual sensor objects 
-        if toggleFlagDict['rThigh'] == True:
-            objRThigh.newValues(dataDict['rThigh'])
-        if toggleFlagDict['rShank'] == True:
-            objRShank.newValues(dataDict['rShank'])
-        if toggleFlagDict['rHeel'] == True:
-            objRHeel.newValues(dataDict['rHeel'])
-        if toggleFlagDict['lThigh'] == True:
-            objLThigh.newValues(dataDict['lThigh'])
-        if toggleFlagDict['lShank'] == True:
-            objLShank.newValues(dataDict['lShank'])
-        if toggleFlagDict['lHeel'] == True:
-            objLHeel.newValues(dataDict['lHeel'])
-        if toggleFlagDict['lowBack'] == True:
-            objLowBack.newValues(dataDict['lowBack'])
-        if toggleFlagDict['topBack'] == True:
-            objTopBack.newValues(dataDict['topBack'])
-        
 #RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
-
+        tic = time.perf_counter()
 #Calibrations - subject must stand still in a natural standing position. Whatever position sensors are in is zero position.
 #Gyroscope calibration (function included in sensor object)
         if (time.time() - timeStart) < sensorCalibTime:
@@ -322,7 +325,8 @@ def data_handler(address, *args):
                 send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
             else:
                 send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
-            
+        toc = time.perf_counter()
+        calcTime = toc-tic
 #-----------------------------------------------------
 
 
