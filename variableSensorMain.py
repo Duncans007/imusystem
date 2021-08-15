@@ -54,7 +54,7 @@ toggleFlagDict = {
     "topBack": toggle_topBack
 }
 
-calcTime = 0
+calcTime = [0]
 
 
 #Variable initializations that can't be offloaded to another file (time)
@@ -128,7 +128,7 @@ def data_handler(address, *args):
 
             
 #Auto-sends packet every 1/50 seconds regardless of packet completion status
-    if (time.time() - timeCurrent) > (0.02 - calcTime):
+    if (time.time() - timeCurrent) > (0.02 - (sum(calcTime)/len(calcTime))):
         packetReady = True
         
         
@@ -326,7 +326,9 @@ def data_handler(address, *args):
             else:
                 send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
         toc = time.perf_counter()
-        calcTime = toc-tic
+        calcTime.append(toc-tic)
+        if len(calcTime) > 20:
+            calcTime.pop(0)
 #-----------------------------------------------------
 
 
