@@ -259,7 +259,7 @@ def data_handler(address, *args):
             if loadCell:
                 print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
             else:
-                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectLeft.gaitStage}")
+                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectLeft.gaitStage}\t{timeLastRun}\t{timeCurrent}\t{timeToRun}\t{calcTime}")
         
             
         fileDump.write(f"{outputString}")
@@ -459,7 +459,7 @@ if __name__ == "__main__":
     
     #Create formatted file header
     fileDump = open("algDump.txt", "w+")
-    header = "time\ttimeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
+    header = "time\timeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
     for x in stringObjects:
         for y in stringSensors:
             for z in stringAxes:
