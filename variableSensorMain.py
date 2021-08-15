@@ -259,7 +259,7 @@ def data_handler(address, *args):
             if loadCell:
                 print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
             else:
-                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectLeft.gaitStage}\t{calcTime}")
+                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectLeft.gaitStage}\t{sum(calcTime)/len(calcTime)}")
         
             
         fileDump.write(f"{outputString}")
