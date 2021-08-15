@@ -128,7 +128,7 @@ def data_handler(address, *args):
 
             
 #Auto-sends packet every 1/50 seconds regardless of packet completion status
-    if time.time() - timeLastRun > (1/50 - calcTime):
+    if (time.time() - timeLastRun) > (0.02):
         packetReady = True
         
         
@@ -139,7 +139,7 @@ def data_handler(address, *args):
 #If sensor orientations change, they can be changed in the code below.
         
 #When complete system state is ready, run calculations
-    if packetReady:
+    #if packetReady:
         packetWasReady = True
         packetReady = False
         timeLastRun = timeCurrent
