@@ -126,7 +126,7 @@ def data_handler(address, *args):
             if limb == 'topBack':
                 objTopBack.newValues(package_handler_raw(args))
 
-    print(time.time()-timeCurrent)
+
 #Auto-sends packet every 1/50 seconds regardless of packet completion status
     if (time.time() - timeCurrent) > (0.02 - (sum(calcTime)/len(calcTime))):
         
@@ -140,73 +140,59 @@ def data_handler(address, *args):
         timeLastRun = timeCurrent
         timeCurrent = time.time()
         timeToRun = timeCurrent - timeLastRun
-        
-#RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
         tic = time.perf_counter()
+
+
+#RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
+        
 #Calibrations - subject must stand still in a natural standing position. Whatever position sensors are in is zero position.
 #Gyroscope calibration (function included in sensor object)
+        t1 = time.time()
+
         if (time.time() - timeStart) < sensorCalibTime:
-            objRThigh.getCalib()
-            objRShank.getCalib()
-            objRHeel.getCalib()
+            for obj in objects:
+                obj.getCalib()
 
-            objLThigh.getCalib()
-            objLShank.getCalib()
-            objLHeel.getCalib()
-            
-            objLowBack.getCalib()
-            if toggleFlagDict['topBack'] == True:
-                objTopBack.getCalib()
-
-#Run angle zeroing (function included in sensor object)
         elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-            objRThigh.angleCalib()
-            objRShank.angleCalib()
-            objRHeel.angleCalib()
+            #Run angle zeroing (function included in sensor object)
+            for obj in objects:
+                obj.getCalib()
             
-            objLThigh.angleCalib()
-            objLShank.angleCalib()
-            objLHeel.angleCalib()
-
-            objLowBack.angleCalib()
-            if toggleFlagDict['topBack'] == True:
-                objTopBack.angleCalib()
-
         else:
-    
-#Run angle calculations for each individual sensor (function included in sensor object)
-            objRThigh.angleCalc()
-            objRShank.angleCalc()
-            objRHeel.angleCalc()
+            #Run angle calculations for each individual sensor (function included in sensor object)
+            for obj in objects:
+                obj.angleCalc()
 
-            objLThigh.angleCalc()
-            objLShank.angleCalc()
-            objLHeel.angleCalc()
-            
-            objLowBack.angleCalc()
-            if toggleFlagDict['topBack'] == True:
-                objTopBack.angleCalc()
-
-            
+        t2 = time.time()
+        print(t2-t1)
 #-----------------------------------------------------------
 #NO CALCULATIONS BEFORE ANGLECALC() OTHERWISE THEY WILL RUN USING RAW DATA INSTEAD OF PROPER UNITS
 
 #Algorithms and secondary angle calculations
 	
 #Right and Left Gait Detection
+        t1 = time.time()
         gaitDetectRight.testVal(objRThigh.gyZ, objRShank.gyZ, objRHeel.gyZ)
         gaitDetectLeft.testVal(objLThigh.gyZ, objLShank.gyZ, objLHeel.gyZ)
+        t2 = time.time()
+        print(t2-t1)
 
 #Slip Algorithm - Calculates Slip Indicator from Trkov IFAC 2017 paper
+        t1 = time.time()
         slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngleZeroed * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngleZeroed * .01745))), hip_heel_length)
         slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngleZeroed * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngleZeroed * .01745))), hip_heel_length)
+        t2 = time.time()
+        print(t2-t1)
 
 #Run Kneeling Detection Algorithm
         #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
         #if (time.time() - timeStart > SecondsToChange):
         #    kneelingDetect.alpha = alpha2
         
+        t1 = time.time()
         kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+        t2 = time.time()
+        print(t2-t1)
         
         if streamGait:
            send_to_brace(gaitDetectLeft.gaitOutput, gaitSerial)
