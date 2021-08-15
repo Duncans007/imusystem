@@ -128,7 +128,7 @@ def data_handler(address, *args):
 
             
 #Auto-sends packet every 1/50 seconds regardless of packet completion status
-    if (time.time() - timeLastRun) > (0.02):
+    if (time.time() - timeCurrent) > (0.02):
         packetReady = True
         
         
