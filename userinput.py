@@ -1,5 +1,8 @@
 #!/usr/bin/env python3	
 
+#Frequency that the system outputs at (Hz)(recommended max 100)
+processing_frequency = 50
+
 #Activate/deactivate individual sensor recording
 #Note that disabling some (e.g. shank) will cause some detectors to not work
 toggle_rThigh  = True

@@ -81,8 +81,8 @@ def data_handler(address, *args):
     global SecondsToChange, alpha2, loadcell_data, loadCell, timeLastRun
     global calcTime
 
-    
-#Pull data from [CUNY teensy / Chadi Load Cell] if enabled
+###########################################################################################
+#Pull data from [CUNY teensy / Chadi Load Cell] if enabled----------------------------------------------------------------------
     if teensySend:
         if parent_conn_teensy.poll(0):
             cuny_data = parent_conn_teensy.recv()
@@ -90,12 +90,10 @@ def data_handler(address, *args):
     if loadCell:
         if parent_conn_arduino.poll(0):
             loadcell_data = parent_conn_arduino.recv()
-            
-    
-    
 
-	
-#Collects variable type and sensor address as numbers
+###########################################################################################
+#PULL DATA FROM NOTOCHORD-----------------------------------------------------------------------------------------------------------------------------
+#Collects variable type and sensor address
     out = []
     varType = address[10]
     addr = ''
@@ -182,77 +180,42 @@ def data_handler(address, *args):
                     objTopBack.angleCalc()
 
 
-#Auto-sends packet every 1/50 seconds regardless of packet completion status
-    if (time.time() - timeCurrent) > (0.02):
+###########################################################################################
+#Auto-sends packet every 1/50 seconds regardless of packet completion status-----------------------------------------------------------------
+    if (time.time() - timeCurrent) >= (1/processing_frequency):
         
         
         
-        
-#----------------------------------------------------------------------------------------------------------------#    
+###########################################################################################
+#Algorithms and secondary angle calculations-------------------------------------------------------------------------------------------------
 #Code is broken into reader above and algorithms below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
-#If sensor orientations change, they can be changed in the code below.
 
+#Timers
         timeLastRun = timeCurrent
         timeCurrent = time.time()
         timeToRun = timeCurrent - timeLastRun
         tic = time.perf_counter()
 
-
-#RUN CALCULATIONS -------------------------------------------------------------------------------------------------------------
-        
-#Calibrations - subject must stand still in a natural standing position. Whatever position sensors are in is zero position.
-#Gyroscope calibration (function included in sensor object)
-        #t1 = time.time()
-
-        #if (time.time() - timeStart) < sensorCalibTime:
-        #    for obj in objects:
-        #        obj.getCalib()
-
-        #elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-        #    #Run angle zeroing (function included in sensor object)
-        #    for obj in objects:
-        #        obj.getCalib()
-            
-        #else:
-        #    #Run angle calculations for each individual sensor (function included in sensor object)
-        #    for obj in objects:
-        #        obj.angleCalc()
-
-        #t2 = time.time()
-        #print(t2-t1)
-#-----------------------------------------------------------
-#NO CALCULATIONS BEFORE ANGLECALC() OTHERWISE THEY WILL RUN USING RAW DATA INSTEAD OF PROPER UNITS
-
-#Algorithms and secondary angle calculations
-	
 #Right and Left Gait Detection
-        t1 = time.time()
         gaitDetectRight.testVal(objRThigh.gyZ, objRShank.gyZ, objRHeel.gyZ)
         gaitDetectLeft.testVal(objLThigh.gyZ, objLShank.gyZ, objLHeel.gyZ)
-        t2 = time.time()
-        print(t2-t1)
 
 #Slip Algorithm - Calculates Slip Indicator from Trkov IFAC 2017 paper
-        t1 = time.time()
         slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngleZeroed * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngleZeroed * .01745))), hip_heel_length)
         slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngleZeroed * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngleZeroed * .01745))), hip_heel_length)
-        t2 = time.time()
-        print(t2-t1)
 
-#Run Kneeling Detection Algorithm
+#Run Kneeling Detection Algorithm and torque estimator
         #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
         #if (time.time() - timeStart > SecondsToChange):
         #    kneelingDetect.alpha = alpha2
-        
-        t1 = time.time()
-        kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
-        t2 = time.time()
-        print(t2-t1)
+        #kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+
+
+###########################################################################################
+#DATA OUTPUT -------------------------------------------------------------------------------------------------------------
 
         if streamGait:
            send_to_brace(gaitDetectLeft.gaitOutput, gaitSerial)
-     
-#DATA OUTPUT -------------------------------------------------------------------------------------------------------------
 
 #Create beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
         outputString = f"{time.time() - timeStart}\t{timeToRun}\t{gaitDetectRight.gaitStage}\t{gaitDetectLeft.gaitStage}\t{slipRight}\t{slipLeft}\t{legForward}\t\t"
@@ -276,9 +239,6 @@ def data_handler(address, *args):
 			
             outputString += f"\t"
 
-        #for x in objects:
-        #    outputString += f"{x.gravAngleSmoothed}\t"
-        #    outputString += f"{x.angleFromGravity}\t\t"
 
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         
@@ -295,30 +255,14 @@ def data_handler(address, *args):
             if loadCell:
                 print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
             else:
-                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectLeft.gaitStage}\t{sum(calcTime)/len(calcTime)}")
+                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectLeft.gaitStage}")
         
             
         fileDump.write(f"{outputString}")
 		
-
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-#SERIAL SEND--------------------------------------------
+  
+###########################################################################################        
+#SERIAL SEND---------------------------------------------------------------------------------------------------
 #IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
 #[ 111, time,
 #  LHAX, LHAY, LHAZ, LHGX, LHGY, LHGZ, LHAngle,      RHAX, RHAY, RHAZ, RHGX, RHGY, RHGZ, RHAngle,
@@ -349,10 +293,7 @@ def data_handler(address, *args):
                     
                     
             print(f"Read Rate: {1/timeToRun}") #print(serialArr)
-            #print(serialArr)
 
-            #print(f"Read Rate: {1/timeToRun}") #print(serialArr)
-            #print([objLowBack.zAngle, objLThigh.zAngle, objRThigh.zAngle])
             print("%9.5f %9.5f %9.5f" %(1.0/timeToRun, kneelingTorqueEstimationL, kneelingTorqueEstimationR))
             send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------
@@ -362,12 +303,6 @@ def data_handler(address, *args):
             else:
                 send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
         
-        
-        
-        toc = time.perf_counter()
-        calcTime.append(toc-tic)
-        if len(calcTime) > 100:
-            calcTime.pop(0)
 #-----------------------------------------------------
 
 
@@ -376,7 +311,7 @@ def data_handler(address, *args):
 
 
 
-
+###########################################################################################
 #Handles any OSC messages that aren't picked up by dataHandler (doesn't do anything with them.)
 def default_handler(address, *args):
     out = 'DEFAULT '
@@ -388,8 +323,8 @@ def default_handler(address, *args):
     
     
     
-    
-#Sets up OSC server
+###########################################################################################
+#Set up OSC server
 def main_func(ip, port):
     dispatcher = Dispatcher()
     dispatcher.map("/Chordata/r*", data_handler)
@@ -406,38 +341,33 @@ def main_func(ip, port):
     
     
     
-
+###########################################################################################
+#Setup
 if __name__ == "__main__":
 #Variable initializations
     
-    #Creation of objects for communication with Rutgers NUC device
+#Creation of objects for communication with Rutgers NUC device
     if nucSend:
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
     
-    #Creation of objects to stream gait variables to knee device arduino
+#Creation of objects to stream gait variables to knee device arduino
     if streamGait:
         gaitSerial = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
 	
-    #Creation of objects for communication with CUNY Teensy device
+#Creation of objects for communication with CUNY Teensy device
     if teensySend:
         teensyPort = serial.Serial(teensyPort, teensyBaud, timeout=3.0)
         parent_conn_teensy,child_conn_teensy = Pipe()
         p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
         p_teensy.start()
         
-    #Creation of objects for communication with Chadi load cell via USB Arduino
+#Creation of objects for communication with Chadi load cell via USB Arduino
     if loadCell:
         arduinoPort = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
         parent_conn_arduino,child_conn_arduino = Pipe()
         p_arduino = Process(target=async_arduino, args=(child_conn_arduino, arduinoPort))
         p_arduino.start()
         loadcell_data = 0
-    
-    
-    
-    
-    
-    
     
     
 #Create sensor objects to store and manipulate data for each sensor
@@ -457,9 +387,7 @@ if __name__ == "__main__":
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
     
-    #Change so that each detection is a different function!
-    #Only activate necessary function.
-    #Most of these variables can be directly imported into the function on initialization anyways, by importing the userinput file
+#TODO: redo kneeling detect object
     kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff, ramping_delay_time, ramping_hold_time, ramping_slope, controller_type, front_leg_proportion, rear_leg_proportion, back_proportion, back_offset)
 
     
@@ -492,13 +420,12 @@ if __name__ == "__main__":
         objects.append(objTopBack)
         stringObjects.append("TopBack")
         
-        
-        
     stringAxes = ["x","y","z"]
     #stringSensors = ["gy","ac","mg"]
     stringSensors = ["gy","ac"]
     
-    #Create formatted file header
+
+#Create formatted file header
     fileDump = open("algDump.txt", "w+")
     header = "time\timeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
     for x in stringObjects:
