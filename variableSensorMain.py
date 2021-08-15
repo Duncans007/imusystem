@@ -325,9 +325,12 @@ def data_handler(address, *args):
                 send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
             else:
                 send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
+        
+        
+        
         toc = time.perf_counter()
         calcTime.append(toc-tic)
-        if len(calcTime) > 20:
+        if len(calcTime) > 100:
             calcTime.pop(0)
 #-----------------------------------------------------
 
