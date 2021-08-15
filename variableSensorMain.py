@@ -67,7 +67,7 @@ timeLastRun = timeCurrent
 def data_handler(address, *args):
     global timeCurrent, varType, timeStart
     global dataDict, toggleFlagDict
-    global packetReady, rPacketReady, passToAlgorithm, packetWasReady
+    global passToAlgorithm, packetWasReady
     global fileDump
     global objRHeel, objRShank, objRThigh
     global objLHeel, objLShank, objLThigh
@@ -126,10 +126,9 @@ def data_handler(address, *args):
             if limb == 'topBack':
                 objTopBack.newValues(package_handler_raw(args))
 
-            
+    print(time.time()-timeCurrent)
 #Auto-sends packet every 1/50 seconds regardless of packet completion status
     if (time.time() - timeCurrent) > (0.02 - (sum(calcTime)/len(calcTime))):
-        packetReady = True
         
         
         
@@ -137,11 +136,7 @@ def data_handler(address, *args):
 #----------------------------------------------------------------------------------------------------------------#    
 #Code is broken into reader above and algorithms below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
 #If sensor orientations change, they can be changed in the code below.
-        
-#When complete system state is ready, run calculations
-    #if packetReady:
-        packetWasReady = True
-        packetReady = False
+
         timeLastRun = timeCurrent
         timeCurrent = time.time()
         timeToRun = timeCurrent - timeLastRun
