@@ -111,20 +111,75 @@ def data_handler(address, *args):
 
             if limb == 'rThigh':
                 objRThigh.newValues(package_handler_raw(args))
+                if (time.time() - timeStart) < sensorCalibTime:
+                    objRThigh.getCalib()
+                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+                    objRThigh.getCalib()
+                else:
+                    objRThigh.angleCalc()
+            
             if limb == 'rShank':
                 objRShank.newValues(package_handler_raw(args))
+                if (time.time() - timeStart) < sensorCalibTime:
+                    objRShank.getCalib()
+                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+                    objRShank.getCalib()
+                else:
+                    objRShank.angleCalc()
+            
             if limb == 'rHeel':
                 objRHeel.newValues(package_handler_raw(args))
+                if (time.time() - timeStart) < sensorCalibTime:
+                    objRHeel.getCalib()
+                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+                    objRHeel.getCalib()
+                else:
+                    objRHeel.angleCalc()
+            
             if limb == 'lThigh':
                 objLThigh.newValues(package_handler_raw(args))
+                if (time.time() - timeStart) < sensorCalibTime:
+                    objLThigh.getCalib()
+                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+                    objLThigh.getCalib()
+                else:
+                    objLThigh.angleCalc()
+            
             if limb == 'lShank':
                 objLShank.newValues(package_handler_raw(args))
+                if (time.time() - timeStart) < sensorCalibTime:
+                    objLShank.getCalib()
+                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+                    objLShank.getCalib()
+                else:
+                    objLShank.angleCalc()
+            
             if limb == 'lHeel':
                 objLHeel.newValues(package_handler_raw(args))
+                if (time.time() - timeStart) < sensorCalibTime:
+                    objLHeel.getCalib()
+                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+                    objLHeel.getCalib()
+                else:
+                    objLHeel.angleCalc()
+            
             if limb == 'lowBack':
                 objLowBack.newValues(package_handler_raw(args))
+                if (time.time() - timeStart) < sensorCalibTime:
+                    objLowBack.getCalib()
+                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+                    objLowBack.getCalib()
+                else:
+                    objLowBack.angleCalc()
+            
             if limb == 'topBack':
                 objTopBack.newValues(package_handler_raw(args))
+                if (time.time() - timeStart) < sensorCalibTime:
+                    objTopBack.getCalib()
+                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+                    objTopBack.getCalib()
+                else:
+                    objTopBack.angleCalc()
 
 
 #Auto-sends packet every 1/50 seconds regardless of packet completion status
@@ -147,24 +202,24 @@ def data_handler(address, *args):
         
 #Calibrations - subject must stand still in a natural standing position. Whatever position sensors are in is zero position.
 #Gyroscope calibration (function included in sensor object)
-        t1 = time.time()
+        #t1 = time.time()
 
-        if (time.time() - timeStart) < sensorCalibTime:
-            for obj in objects:
-                obj.getCalib()
+        #if (time.time() - timeStart) < sensorCalibTime:
+        #    for obj in objects:
+        #        obj.getCalib()
 
-        elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-            #Run angle zeroing (function included in sensor object)
-            for obj in objects:
-                obj.getCalib()
+        #elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
+        #    #Run angle zeroing (function included in sensor object)
+        #    for obj in objects:
+        #        obj.getCalib()
             
-        else:
-            #Run angle calculations for each individual sensor (function included in sensor object)
-            for obj in objects:
-                obj.angleCalc()
+        #else:
+        #    #Run angle calculations for each individual sensor (function included in sensor object)
+        #    for obj in objects:
+        #        obj.angleCalc()
 
-        t2 = time.time()
-        print(t2-t1)
+        #t2 = time.time()
+        #print(t2-t1)
 #-----------------------------------------------------------
 #NO CALCULATIONS BEFORE ANGLECALC() OTHERWISE THEY WILL RUN USING RAW DATA INSTEAD OF PROPER UNITS
 
@@ -193,7 +248,7 @@ def data_handler(address, *args):
         kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
         t2 = time.time()
         print(t2-t1)
-        
+
         if streamGait:
            send_to_brace(gaitDetectLeft.gaitOutput, gaitSerial)
      
