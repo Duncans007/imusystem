@@ -128,7 +128,7 @@ def data_handler(address, *args):
 
             
 #Auto-sends packet every 1/50 seconds regardless of packet completion status
-    if (time.time() - timeCurrent) > (0.02):
+    if (time.time() - timeCurrent) > (0.02 - calcTime):
         packetReady = True
         
         
@@ -259,7 +259,7 @@ def data_handler(address, *args):
             if loadCell:
                 print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
             else:
-                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectLeft.gaitStage}\t{timeLastRun}\t{timeCurrent}\t{timeToRun}\t{calcTime}")
+                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectLeft.gaitStage}\t{calcTime}")
         
             
         fileDump.write(f"{outputString}")
