@@ -205,10 +205,10 @@ def data_handler(address, *args):
         slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngleZeroed * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngleZeroed * .01745))), hip_heel_length)
 
 #Run Kneeling Detection Algorithm and torque estimator
-        legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
+        #legForward, kneeAngleR, kneeAngleL = kneelingDetect.kneelingDetection(objRThigh, objRShank, objRHeel, objLThigh, objLShank, objLHeel)
         #if (time.time() - timeStart > SecondsToChange):
         #    kneelingDetect.alpha = alpha2
-        #kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
+        kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
 
 
 ###########################################################################################
