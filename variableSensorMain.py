@@ -27,19 +27,12 @@ from variableDeclarations import *
 #Globalises all variables used inside the OSC reader b/c it is a separate process and allows variables to retain state between loops.
 #These will all be passed, rather than global... eventually.
 global timeCurrent, varType, timeStart
-global dataDict, toggleFlagDict
-global packetReady, rPacketReady, passToAlgorithm, packetWasReady
-global fileDump
-global objRHeel, objRShank, objRThigh
-global objLHeel, objLShank, objLThigh
-global gaitDetectRight, gaitDetectLeft
-global objects
+global toggleFlagDict, fileDump
+global objRHeel, objRShank, objRThigh, objLHeel, objLShank, objLThigh
+global gaitDetectRight, gaitDetectLeft, objects
 global hip_heel_length
-global intelNUCserial, streamGait
-global teensySend, teensyPort
-global cuny_data
+global intelNUCserial, streamGait, teensySend, teensyPort, cuny_data
 global alpha2, SecondsToChange, loadcell_data, loadCell, timeLastRun
-global calcTime
 
 
 #Turns data collection for particular sensors on/off if necessary.
@@ -54,7 +47,6 @@ toggleFlagDict = {
     "topBack": toggle_topBack
 }
 
-calcTime = [0]
 
 
 #Variable initializations that can't be offloaded to another file (time)
@@ -66,20 +58,12 @@ timeLastRun = timeCurrent
 #Function to handle OSC input
 def data_handler(address, *args):
     global timeCurrent, varType, timeStart
-    global dataDict, toggleFlagDict
-    global passToAlgorithm, packetWasReady
-    global fileDump
-    global objRHeel, objRShank, objRThigh
-    global objLHeel, objLShank, objLThigh
-    global gaitDetectRight, gaitDetectLeft
-    global objects
+    global toggleFlagDict, fileDump
+    global objRHeel, objRShank, objRThigh, objLHeel, objLShank, objLThigh
+    global gaitDetectRight, gaitDetectLeft, objects
     global hip_heel_length
-    global intelNUCserial, streamGait
-    global teensySend, teensyPort
-    global parent_conn
-    global cuny_data
-    global SecondsToChange, alpha2, loadcell_data, loadCell, timeLastRun
-    global calcTime
+    global intelNUCserial, streamGait, teensySend, teensyPort, cuny_data
+    global alpha2, SecondsToChange, loadcell_data, loadCell, timeLastRun
 
 ###########################################################################################
 #Pull data from [CUNY teensy / Chadi Load Cell] if enabled----------------------------------------------------------------------
