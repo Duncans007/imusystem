@@ -31,8 +31,8 @@ class algorithmName:
     
     
 #To insert into main code:
-# under "if __name__ == "__main__": Variable initializations", insert object creation --> [ objectName = algorithmName(init_variables) ]
+#(4) line insertions in total:
+# under "Setup">"Variable initializations", insert object creation --> [ objectName = algorithmName(init_variables) ]
 # under "algorithms and secondary angle calculations", insert function call --> [ output = objectName.input_new_values_and_run_calculation(input) ]
-#Add output to file
-# immediately before "header += f"\n"  fileDump.write(header)", add column title --> [ header += f"\tTITLE" ]
-# under "DATA OUTPUT ----------", before "fileDump.write(f"{outputString}")", add output --> [ outputString += f"\t{output} ]
+# under "Setup">"Create formatted file header" immediately before "header += f"\n"  fileDump.write(header)", add column title --> [ header += f"\tTITLE" ]
+# under "DATA OUTPUT", before "fileDump.write(f"{outputString}")", add output --> [ outputString += f"\t{output} ]
