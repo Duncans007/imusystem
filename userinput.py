@@ -37,8 +37,6 @@ NMKG = 0.25 #Approximate torque per subject unit weight (Nm/kg)
 
 #YU&SU Controller Proportionality Constants	
 alpha = .1	
-alpha2 = 0.15	
-SecondsToChange = 1
 
 
 #Ramping Specific Constants	
@@ -88,20 +86,5 @@ arduinoBaud = 256000
 
 
 
-#Low Back Angle Proportionality (EXPERIMENTAL)
-back_proportion = 1 #0 degrees or usual operation
-#back_proportion = 0.3432 #10 degrees
-#back_proportion = 0.4456 #20 degrees
-
-
-#PID controller constants (UNUSED)
-front_leg_proportion = 1;
-rear_leg_proportion = 1;
-
 
 hip_heel_length = 1 #meters	
-
-
-#[LEGACY] Back offset - used for configuring torque to slopes
-#Has been auto-implemented
-back_offset = 0
