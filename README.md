@@ -4,8 +4,9 @@
 
 Putting on the System:
 
-1. There are 7x k-ceptors (sensors), 7x cables, 1x hub, 1x Raspberry Pi, 1x battery.
-    There is 1x extra optional k-ceptor that can be enabled in userinput.py by toggling sensor8 to True.
+1. There are 8x k-ceptors (sensors), 8x cables, 1x hub, 1x Raspberry Pi, 1x battery.
+    All k-ceptors can be toggled on/off in the userinput.py configuration file.
+    !!! Be aware that turning certain sensors off (e.g. shank) may cause some detections to fail.
 2. Hub, Pi, Battery attach to back brace with velcro.
 3. Sensors each have designated locations. All information is on label. 
     
@@ -154,13 +155,9 @@ sudo chmod 777 *.py
 Running the Algorithm:
 
 1. Use the included run.sh file to start both the Notochord and algorithm at the same time.
-    run.sh takes 3 True/False arguments.
-    
-        1. T/F send serial data to Simulink (configured for Rutgers NUC)
-        
-        2. T/F send/receive data to device microcontroller (configured for CUNY Teensy)
-        
-        3. T/F receive and use L_THIGH_ANGLE, R_THIGH_ANGLE, LOW_BACK_ANGLE
+
+    Navigate to the imusystem directory and run the file using:
+    ./run.sh
 
 
 .
@@ -168,7 +165,7 @@ Running the Algorithm:
 
 Configuring the Algorithm:
 
-1. Open userinput.py
+1. Open userinput.py using
     nano imusystem/userinput.py
     
     
@@ -202,10 +199,6 @@ Serial Communication:
         
         ="/dev/ttyACM0" (USB Microcontroller, ex. arduino)
         
-        
-Additional Sensors:
-
-    sensor8 (True/False. Enables top back sensor which connects to port 5 - middle top. Blocks program if enabled without sensor.)
 
 ----------------------------------------------------------------------------
 
@@ -216,14 +209,12 @@ Running the data through the Blender processing greatly improves the accuracy of
 To take advantage of the higher send rate, I had to write my own algorithm to manually convert the raw values to angles. This algorithm is fairly accurate, but has some limitation to get that accuracy without writing a full sensor fusion algorithm.
 The Chordata roadmap estimates that its functions will be reprogrammed to be used more easily natively before the end of 2020
 
-
-The slip algorithm itself works well but has false positives sometimes, particularly if the toe is pointed directly at the floor and the accelerometer reading is distorted due to gravity.
-
 ----------------------------------------------------------------------------
 
-SERIAL SEND/RECEIVE PROTOCOLS
+ADDING ALGORITHMS
 
-
-----------------------------------------------------------------------------
-
-Troubleshooting:
+Two files with the TEMPLATE_ prefix are included to add detection algorithms.
+To use, make a copy of the file, change the title, and follow the included instructions.
+simpleIO can be used for detection algorithms that only use information from a single time frame.
+continuous can be used for detection algorithsm that use information over a range of time.
+When finished writing the function/object, follow the instructions at the bottom of the file to add appropriate calls in variableSensorMain.py
