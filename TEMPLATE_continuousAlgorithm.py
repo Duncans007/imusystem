@@ -30,7 +30,7 @@ class algorithmName:
         return mean(self.movingAvgArr)
     
     
-#To insert into main code:
+#To insert into main code (file variableSensorMain.py):
 #(4) line insertions in total:
 # under "Setup">"Variable initializations", insert object creation --> [ objectName = algorithmName(init_variables) ]
 # under "algorithms and secondary angle calculations", insert function call --> [ output = objectName.input_new_values_and_run_calculation(input) ]
