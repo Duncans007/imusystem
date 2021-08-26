@@ -165,7 +165,7 @@ def data_handler(address, *args):
 
 
 ###########################################################################################
-#Auto-sends packet every 1/50 seconds regardless of packet completion status-----------------------------------------------------------------
+#Auto-sends packet regardless of packet completion status, configurable in userinput-----------------------------------------------------------------
     if (time.time() - timeCurrent) >= (1/processing_frequency):
         
         
@@ -178,7 +178,6 @@ def data_handler(address, *args):
         timeLastRun = timeCurrent
         timeCurrent = time.time()
         timeToRun = timeCurrent - timeLastRun
-        tic = time.perf_counter()
 
 #Right and Left Gait Detection
         gaitDetectRight.testVal(objRThigh.gyZ, objRShank.gyZ, objRHeel.gyZ)
@@ -195,8 +194,7 @@ def data_handler(address, *args):
 ###########################################################################################
 #DATA OUTPUT -------------------------------------------------------------------------------------------------------------
 
-        if streamGait:
-           send_to_brace(gaitDetectLeft.gaitOutput, gaitSerial)
+        
 
 #Create beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
         outputString = f"{time.time() - timeStart}\t{timeToRun}\t{gaitDetectRight.gaitStage}\t{gaitDetectLeft.gaitStage}\t{slipRight}\t{slipLeft}\t{legForward}\t\t"
@@ -265,13 +263,10 @@ def data_handler(address, *args):
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [int(x.acX_norm/2), int(x.acY_norm/2), int(x.acZ_norm/2), int(x.gyX_norm/2), int(x.gyY_norm/2), int(x.gyZ_norm/2), int(x.zAngleZeroed * 80)]
             serialArr += [int(gaitDetectRight.gaitStage), int(gaitDetectLeft.gaitStage), int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationL * 500), int(kneelingTorqueEstimationR * 500)]
-            #serialArr += [gaitDetectRight.gaitStage, gaitDetectLeft.gaitStage, int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationR * 500)]
-            
             
             if teensySend:
                 for i in cuny_data.items():
                     serialArr.append(int(i[1]))
-                    
                     
             print(f"Read Rate: {1/timeToRun}") #print(serialArr)
 
@@ -281,6 +276,8 @@ def data_handler(address, *args):
         if teensySend:
             send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
         
+        if streamGait:
+           send_to_brace(gaitDetectLeft.gaitOutput, gaitSerial)
 #-----------------------------------------------------
 
 
