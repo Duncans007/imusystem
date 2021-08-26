@@ -279,10 +279,7 @@ def data_handler(address, *args):
             send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------
         if teensySend:
-            if addGravityToTorque:
-                send_to_teensy(kneelingTorqueEstimationL + cuny_data["ActTqL"], kneelingTorqueEstimationR + cuny_data["ActTqR"], teensyPort)
-            else:
-                send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
+            send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
         
 #-----------------------------------------------------
 
