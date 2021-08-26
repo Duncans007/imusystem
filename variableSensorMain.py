@@ -270,7 +270,7 @@ def data_handler(address, *args):
                     
             print(f"Read Rate: {1/timeToRun}") #print(serialArr)
 
-            print("%9.5f %9.5f %9.5f" %(1.0/timeToRun, kneelingTorqueEstimationL, kneelingTorqueEstimationR))
+            #print("%9.5f %9.5f %9.5f" %(1.0/timeToRun, kneelingTorqueEstimationL, kneelingTorqueEstimationR))
             send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------
         if teensySend:
