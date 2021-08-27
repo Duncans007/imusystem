@@ -1,5 +1,11 @@
 # imusystem
 
+Main File: variableSensorMain.py
+
+User Config: userinput.py
+
+Run File: run.sh
+
 ----------------------------------------------------------------------------
 
 Putting on the System:
