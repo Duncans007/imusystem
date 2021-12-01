@@ -82,7 +82,9 @@ class sensorObject:
         self.roll_calib_arr = []
         self.acc_pitch_off = 0
         self.pitch_calib_arr = []
-        self.counter = 0
+
+        self.pitch_calib_val = 0
+        self.roll_calib_val = 0
 
         
         
@@ -96,7 +98,6 @@ class sensorObject:
 #Function to dump new values from sensors
     def newValues(self, valueArray):
         outArray = []
-        self.counter += 1
         
         if self.limbCode == "RT" or self.limbCode == "RS":
             outArray = valueArray
@@ -133,7 +134,9 @@ class sensorObject:
         if len(self.pitch_calib_arr) < 100:
             self.pitch_calib_arr.append(self.zAngle)
             self.roll_calib_arr.append(self.xAngle)
-        elif len(self.pitch_calib_arr) == 100 and self.pitch_calib_arr == 0:
+        elif len(self.pitch_calib_arr) == 100:
+            self.pitch_calib_arr.append(self.zAngle)
+            self.roll_calib_arr.append(self.xAngle)
             self.pitch_calib_val = np.mean( self.pitch_calib_arr )
             self.roll_calib_val = np.mean( self.roll_calib_arr )
         else:
