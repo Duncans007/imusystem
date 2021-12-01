@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import math
 import time
+import numpy as np
 
 class kneelingDetection:
     def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType):
@@ -288,6 +289,7 @@ class kneelingDetection:
         #mass - kilograms of subject
         #angVel and kneeAngle are for leg with device. angVel is for thigh.
         #Knee angles oriented with staight leg at 0 degrees
+        torqueCutoff = 35 #N*m
         
         
         if (self.torqueWindow("RIGHT")):
@@ -379,7 +381,6 @@ class kneelingDetection:
         
     def kneelingDetection(self):
         #Knee angles oriented with staight leg at 180 degrees
-        import numpy as np
         
         #sets kneel start time when the switch from not kneeling to kneeling occurs
         if (self.isKneeling == True) and (self.wasKneeling == False):
@@ -415,17 +416,7 @@ class kneelingDetection:
         
         R_thighR_shankL_angV = self.shankLAngV - self.thighRAngV
         L_thighL_shankR_angV = self.shankRAngV - self.thighLAngV
-        
-        
-        
-        
-        
-    #Implement early kneeling down detection via gyroscopes
-        
-        
-        
-        
-        
+
         
         
     #Test if angle is past a rather large and easy to determine threshold (60 degrees from straight)

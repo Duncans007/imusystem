@@ -57,24 +57,15 @@ timeLastRun = timeCurrent
 
 #Function to handle OSC input
 def data_handler(address, *args):
-    global timeCurrent, varType, timeStart
-    global toggleFlagDict, fileDump
-    global objRHeel, objRShank, objRThigh, objLHeel, objLShank, objLThigh
-    global gaitDetectRight, gaitDetectLeft, objects
-    global hip_heel_length
-    global intelNUCserial, streamGait, teensySend, teensyPort, cuny_data
-    global alpha2, SecondsToChange, loadcell_data, loadCell, timeLastRun
-
-###########################################################################################
-#Pull data from [Chadi Load Cell] if enabled----------------------------------------------------------------------
+    ###########################################################################################
+    #Pull data from [Chadi Load Cell] if enabled----------------------------------------------------------------------
     if loadCell:
         if parent_conn_arduino.poll(0):
             loadcell_data = parent_conn_arduino.recv()
 
-###########################################################################################
-#PULL DATA FROM NOTOCHORD-----------------------------------------------------------------------------------------------------------------------------
-#Collects variable type and sensor address
-    out = []
+    ###########################################################################################
+    #PULL DATA FROM NOTOCHORD-----------------------------------------------------------------------------------------------------------------------------
+    #Collects variable type and sensor address
     varType = address[10]
     addr = ''
     addr += str(address[len(address) - 3])
@@ -114,14 +105,14 @@ def data_handler(address, *args):
 
 
     ###########################################################################################
-    #Auto-sends packet regardless of packet completion status, configurable in userinput-----------------------------------------------------------------
+    # Runs calculations every [processing_frequency] with whatever values are present -----------------------------------------------------------------
     if (time.time() - timeCurrent) >= (1/processing_frequency):
         
         
         
     ###########################################################################################
-    #Algorithms and secondary angle calculations-------------------------------------------------------------------------------------------------
-    #Code is broken into reader above and algorithms below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
+        #DETECTION ALGORITHMS AND OTHER SECONDARY CALCS -------------------------------------------------------------------------------------------------
+        #Code is broken into reader above and algorithms below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
 
         #Timers
         timeLastRun = timeCurrent
@@ -140,16 +131,13 @@ def data_handler(address, *args):
         kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
 
 
-###########################################################################################
-#DATA OUTPUT -------------------------------------------------------------------------------------------------------------
+    ###########################################################################################
+        #DATA OUTPUT (FILE) -------------------------------------------------------------------------------------------------------------
 
-        
-
-#Create beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
+        #Create beginning of output string - time, time between measurements, right gait stage, left gait stage, left slip detector, right slip detector
         outputString = f"{time.time() - timeStart}\t{timeToRun}\t{gaitDetectRight.gaitStage}\t{gaitDetectLeft.gaitStage}\t{slipRight}\t{slipLeft}\t{legForward}\t\t"
 
-
-#Cycle through all sensor objects to append formatted version of every sensor's raw data to output string
+        #Cycle through all sensor objects to append formatted version of every sensor's raw data to output string
         for x in objects:
             outputString += f"{x.gyX}\t"
             outputString += f"{x.gyY}\t"
@@ -168,45 +156,49 @@ def data_handler(address, *args):
 			
             outputString += f"\t"
 
-
+        # Generate end of output string
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
-
-        # Add loadcell values to output string if connected and enabled
         if loadCell:
             outputString += f"\t{loadcell_data[0]}\t"
-
         outputString += f"\n"
-		
+
+        # Add output string to file
+        fileDump.write(f"{outputString}")
+
+
+    ###########################################################################################
+        # DATA OUTPUT (CONSOLE) -------------------------------------------------------------------------------------------------------------
+
+
+		# Print easy-reading values to terminal
         if not nucSend:
             if loadCell:
-                print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
+                print(f"Read Rate: {np.round(1/timeToRun, 2)}\t{loadcell_data}")
             else:
                 ttr = time.time() - tic
-                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{objRShank.xAngleZeroed}\t{objRThigh.xAngleZeroed}\t{ttr}")
+                print(f"Read Rate: {np.round(1/timeToRun, 2)}\t{np.round(kneeAngleR, 2)}\t{np.round(kneeAngleL, 2)}\t{np.round(objRThigh.xAngleZeroed, 2)}\t{np.round(ttr, 5)}")
 
-        # Write output to file
-        fileDump.write(f"{outputString}")
-		
-  
-###########################################################################################        
-#SERIAL SEND---------------------------------------------------------------------------------------------------
-#IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
-#[ 111, time,
-#  LHAX, LHAY, LHAZ, LHGX, LHGY, LHGZ, LHAngle,      RHAX, RHAY, RHAZ, RHGX, RHGY, RHGZ, RHAngle,
-#  LSAX, LSAY, LSAZ, LSGX, LSGY, LSGZ, LSAngle,      RSAX, RSAY, RSAZ, RSGX, RSGY, RSGZ, RSAngle,
-#  LTAX, LTAY, LTAZ, LTGX, LTGY, LTGZ, LTAngle,      RTAX, RTAY, RTAZ, RTGX, RTGY, RTGZ, RTAngle,
-#  LBAX, LBAY, LBAZ, LBGX, LBGY, LBGZ, LBAngle,
-#  gaitL, gaitR, slipL, slipR, TorqueL, TorqueR ]
 
-#To extract values:
-#Torque = x * 0.002
-#Angle = x * .0125
-#Accelerometer = x * 0.002394
-#Gyroscope = x * 0.07
-#Magnetometer = x * 0.00014
+    ###########################################################################################
+        # DATA OUTPUT (SERIAL SEND) ---------------------------------------------------------------------------------------------------
 
+        #IMPORTANT: msgArray NEW FORMAT IN ACCORDANCE WITH ALBORZ COMMUNICATION PROTOCOL
+        #[ 111, time,
+        #  LHAX, LHAY, LHAZ, LHGX, LHGY, LHGZ, LHAngle,      RHAX, RHAY, RHAZ, RHGX, RHGY, RHGZ, RHAngle,
+        #  LSAX, LSAY, LSAZ, LSGX, LSGY, LSGZ, LSAngle,      RSAX, RSAY, RSAZ, RSGX, RSGY, RSGZ, RSAngle,
+        #  LTAX, LTAY, LTAZ, LTGX, LTGY, LTGZ, LTAngle,      RTAX, RTAY, RTAZ, RTGX, RTGY, RTGZ, RTAngle,
+        #  LBAX, LBAY, LBAZ, LBGX, LBGY, LBGZ, LBAngle,
+        #  gaitL, gaitR, slipL, slipR, TorqueL, TorqueR ]
+
+        #To extract values:
+        #Torque = x * 0.002
+        #Angle = x * .0125
+        #Accelerometer = x * 0.002394
+        #Gyroscope = x * 0.07
+        #Magnetometer = x * 0.00014
+
+        # Compile and send data to MatLab Simulink program
         if nucSend:
-            #serialArr = [time.time() - timeStart]
             serialArr = [1.0/timeToRun]
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [int(x.acX_norm/2), int(x.acY_norm/2), int(x.acZ_norm/2), int(x.gyX_norm/2), int(x.gyY_norm/2), int(x.gyZ_norm/2), int(x.zAngleZeroed * 80)]
@@ -216,11 +208,14 @@ def data_handler(address, *args):
 
             #print("%9.5f %9.5f %9.5f" %(1.0/timeToRun, kneelingTorqueEstimationL, kneelingTorqueEstimationR))
             send_over_serial(serialArr, intelNUCserial)
-#-----------------------------------------------------
+
+###########################################################################################
+    # DATA OUTPUT (Stream perturbed leg gait variables to brace arduino) ---------------------------------------------------------------------------------------------------
         
         if streamGait:
            send_to_brace(gaitDetectLeft.gaitOutput, gaitSerial)
-#-----------------------------------------------------
+
+## End of main reader function
 
 
 
@@ -263,15 +258,15 @@ def main_func(ip, port):
 if __name__ == "__main__":
 #Variable initializations
     
-#Creation of objects for communication with Rutgers NUC device
+    #Creation of objects for communication with Rutgers NUC device (MATLAB Simulink)
     if nucSend:
         intelNUCserial = serial.Serial(intelNUCport, intelNUCbaud, timeout=3.0)
     
-#Creation of objects to stream gait variables to knee device arduino
+    #Creation of objects to stream gait variables to knee device arduino
     if streamGait:
         gaitSerial = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
         
-#Creation of objects for communication with Chadi load cell via USB Arduino
+    #Creation of objects for receiving data from Chadi load cell via USB Arduino
     if loadCell:
         arduinoPort = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
         parent_conn_arduino,child_conn_arduino = Pipe()
@@ -280,7 +275,7 @@ if __name__ == "__main__":
         loadcell_data = 0
     
     
-#Create sensor objects to store and manipulate data for each sensor
+    #Create sensor objects to store and manipulate data for each sensor
     objRThigh = sensorObject("RT")
     objRShank = sensorObject("RS")
     objRHeel = sensorObject("RH")
@@ -293,15 +288,15 @@ if __name__ == "__main__":
     objTopBack = sensorObject("LB")
 
     
-#create gait detect objects for each leg
+    #create gait detect objects for each leg
     gaitDetectRight = gaitDetect()
     gaitDetectLeft = gaitDetect()
     
-#TODO: redo kneeling detect object
+    #TODO: redo kneeling detect object
     kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff, ramping_delay_time, ramping_hold_time, ramping_slope, controller_type)
 
     
-#Create lists that can be cycled through to iterate over every object for exporting (and creating the dump file data header).
+    #Create lists that can be cycled through to iterate over every object for exporting (and creating the dump file data header).
     objects = []
     stringObjects = []
     
@@ -331,11 +326,11 @@ if __name__ == "__main__":
         stringObjects.append("TopBack")
         
     stringAxes = ["x","y","z"]
-    #stringSensors = ["gy","ac","mg"]
+    #stringSensors = ["gy","ac","mg"] # Use in place of below line if adding magnetometer readings to file output
     stringSensors = ["gy","ac"]
     
 
-#Create formatted file header
+    #Create formatted file header and write to file
     fileDump = open("algDump.txt", "w+")
     header = "time\ttimeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
     for x in stringObjects:
@@ -346,11 +341,10 @@ if __name__ == "__main__":
         header += f"\t"
 
     header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL"
-
     header += f"\n"
     fileDump.write(header)
 
 
-#Start program
+    #Start execution
     main_func(ip, port)
     client.close()
