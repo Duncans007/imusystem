@@ -365,7 +365,7 @@ if __name__ == "__main__":
     gaitDetectLeft = gaitDetect()
     
 #TODO: redo kneeling detect object
-    kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff, ramping_delay_time, ramping_hold_time, ramping_slope, controller_type, front_leg_proportion, rear_leg_proportion, back_proportion, back_offset)
+    kneelingDetect = kneelingDetection(NMKG, mass, height, alpha, torqueCutoff, ramping_delay_time, ramping_hold_time, ramping_slope, controller_type)
 
     
 #Create lists that can be cycled through to iterate over every object for exporting (and creating the dump file data header).
