@@ -12,12 +12,8 @@ toggle_lThigh  = True
 toggle_lShank  = True
 toggle_lHeel   = True
 toggle_lowBack = True
-toggle_topBack = True
+toggle_topBack = False
 
-
-#Configure Sensor Calibration Times
-sensorCalibTime = 2 #Calib time to eliminate gyro noise.
-angleCalibTime = 2 #Calib time (after finishing sensorCalibTime) to zero angle measurements.
 
 #Hip to heel length for Trkov slip detection (m)
 hip_heel_length = 1
@@ -33,7 +29,7 @@ controller_type = "trkov"
 #General Torque Controller Parameters	
 mass = 68 #Subject mass (kg)
 height = 1.80 #Subject height (m)
-torqueCutoff = 30 #Maximum allowable torque (Nm	)
+torqueCutoff = 30 #Maximum allowable torque (Nm	) - pass to kneeling object
 NMKG = 0.25 #Approximate torque per subject unit weight (Nm/kg)
 
 #YU&SU Controller Proportionality Constants	
@@ -52,15 +48,9 @@ intelNUCport = "/dev/ttyUSB0"
 #intelNUCport = "/dev/ttyS0"	
 intelNUCbaud = 115200	
 
-#Serial Send/Receive for CUNY Teensy	
-teensySend = False
-teensyPort = "/dev/ttyACM0"	
-#teensyPort = "/dev/ttyS0"
-teensyBaud = 115200	
-
 #Load cell on foot
 #Connects to arduino, which plugs into pi via USB port
-#same values used for streaming gait variables to arduino
+#Configure arduinoPort/arduinoBaud, values are used for both loadCell and streamGait
 loadCell = False #stream loadcell variables from arduino
 
 #Arduino Gait Stream
@@ -69,7 +59,5 @@ loadCell = False #stream loadcell variables from arduino
 #Data can easily be captured using putty or other simple software
 streamGait = False #stream gait variables to arduino
 
-#loadCell and streamGait will both be on the same port if only one is plugged in
-#if both are plugged in, further configuration is required
 arduinoPort = "/dev/ttyACM0"
 arduinoBaud = 256000
