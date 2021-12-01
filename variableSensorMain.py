@@ -24,16 +24,6 @@ from ARDUINOreceiver import *
 from userinput import *
 from variableDeclarations import *
 
-#Globalises all variables used inside the OSC reader b/c it is a separate process and allows variables to retain state between loops.
-#These will all be passed, rather than global... eventually.
-global timeCurrent, varType, timeStart
-global toggleFlagDict, fileDump
-global objRHeel, objRShank, objRThigh, objLHeel, objLShank, objLThigh
-global gaitDetectRight, gaitDetectLeft, objects
-global hip_heel_length
-global intelNUCserial, streamGait, teensySend, teensyPort, cuny_data
-global alpha2, SecondsToChange, loadcell_data, loadCell, timeLastRun
-
 
 #Turns data collection for particular sensors on/off if necessary.
 toggleFlagDict = {
@@ -57,6 +47,14 @@ timeLastRun = timeCurrent
 
 #Function to handle OSC input
 def data_handler(address, *args):
+    global timeCurrent, varType, timeStart
+    global toggleFlagDict, fileDump
+    global objRHeel, objRShank, objRThigh, objLHeel, objLShank, objLThigh
+    global gaitDetectRight, gaitDetectLeft, objects
+    global hip_heel_length
+    global intelNUCserial, streamGait, teensySend, teensyPort, cuny_data
+    global timeLastRun
+
     ###########################################################################################
     #Pull data from [Chadi Load Cell] if enabled----------------------------------------------------------------------
     if loadCell:
@@ -66,6 +64,7 @@ def data_handler(address, *args):
     ###########################################################################################
     #PULL DATA FROM NOTOCHORD-----------------------------------------------------------------------------------------------------------------------------
     #Collects variable type and sensor address
+    out = []
     varType = address[10]
     addr = ''
     addr += str(address[len(address) - 3])
