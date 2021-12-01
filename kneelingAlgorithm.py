@@ -156,7 +156,7 @@ class kneelingDetection:
         
     def torqueTrkov(self):
         #Right
-        d1r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_HAT * math.sin(math.radians(-self.loBackAng-self.backOffset))
+        d1r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_HAT * math.sin(math.radians(-self.loBackAng))
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleR))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleL))
         
@@ -168,7 +168,7 @@ class kneelingDetection:
             TqR = self.torqueCutoff
         
         #Left
-        d1r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_HAT * math.sin(math.radians(-self.loBackAng-self.backOffset))
+        d1r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_HAT * math.sin(math.radians(-self.loBackAng))
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleL))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleR))
         
