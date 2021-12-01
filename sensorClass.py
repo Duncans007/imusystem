@@ -133,7 +133,7 @@ class sensorObject:
         if len(self.pitch_calib_arr) < 100:
             self.pitch_calib_arr.append(self.zAngle)
             self.roll_calib_arr.append(self.xAngle)
-        elif len(self.pitch_calib_arr) == 100:
+        elif len(self.pitch_calib_arr) == 100 and self.pitch_calib_arr == 0:
             self.pitch_calib_val = np.mean( self.pitch_calib_arr )
             self.roll_calib_val = np.mean( self.roll_calib_arr )
         else:
