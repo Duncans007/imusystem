@@ -106,7 +106,7 @@ class kneelingDetection:
         self.thighLAngV  = lThigh.gyZ
         self.shankLAngV  = lShank.gyZ
         
-        self.loBackAng = loBack.zAngleZeroed * self.back_proportion
+        self.loBackAng = loBack.zAngleZeroed
         
         if (self.legForward == "L"):
             self.lastLeg = "L"
@@ -142,53 +142,6 @@ class kneelingDetection:
         if self.controllerType == "trkov":
             torqueL, torqueR = self.torqueTrkov()
         
-            
-        return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    def getTorqueFromVicon(self, rThigh, rShank, lThigh, lShank, RTA, LTA, BA):
-        
-        self.thighAngleR = RTA
-        self.shankAngleR = rShank.zAngleZeroed
-        
-        self.thighAngleL = LTA
-        self.shankAngleL = lShank.zAngleZeroed
-        
-        self.thighRAngV  = rThigh.gyZ
-        self.shankRAngV  = rShank.gyZ
-        
-        self.thighLAngV  = lThigh.gyZ
-        self.shankLAngV  = lShank.gyZ
-        
-        self.loBackAng = BA
-        
-        if (self.legForward == "L"):
-            self.lastLeg = "L"
-        if (self.legForward == "R"):
-            self.lastLeg = "R"
-        if (self.legForward == "2"):
-            self.lastLeg = "2"
-        
-        self.kneeAngleL = self.thighAngleL - self.shankAngleL
-        self.kneeAngleR = self.thighAngleR - self.shankAngleR
-
-        self.kneelingDetection()
-        
-        #torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
-        torqueL = self.torqueYuSu("LEFT", self.thighAngleL, self.loBackAng)
-        torqueR = self.torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
             
         return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
     
