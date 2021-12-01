@@ -83,6 +83,7 @@ def data_handler(address, *args):
     addr = ''
     addr += str(address[len(address) - 3])
     addr += str(address[len(address) - 1])
+	tic = time.time()
     
     
 #Takes in individual datapoints and assembles into easily indexable dictionary packages.
@@ -234,7 +235,8 @@ def data_handler(address, *args):
             if loadCell:
                 print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
             else:
-                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{gaitDetectLeft.gaitStage}")
+                ttr = time.time() - tic
+				print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{ttr}")
         
             
         fileDump.write(f"{outputString}")
