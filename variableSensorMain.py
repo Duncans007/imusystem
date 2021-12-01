@@ -83,7 +83,7 @@ def data_handler(address, *args):
     addr = ''
     addr += str(address[len(address) - 3])
     addr += str(address[len(address) - 1])
-	tic = time.time()
+    tic = time.time()
     
     
 #Takes in individual datapoints and assembles into easily indexable dictionary packages.
