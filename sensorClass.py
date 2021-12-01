@@ -218,11 +218,11 @@ class sensorObject:
         self.x = x_new
         self.P = (np.eye(4) - K.dot(self.C)).dot(self.P)
 
-        self.zAngle = np.degrees(self.x[0][0])
-        self.zAngleZeroed = np.degrees(self.x[0][0])
+        self.zAngle = np.degrees(self.x[2][0])
+        self.zAngleZeroed = np.degrees(self.x[2][0])
 
-        self.xAngle = np.degrees(self.x[2][0])
-        self.xAngleZeroed = np.degrees(self.x[2][0])
+        self.xAngle = np.degrees(self.x[0][0])
+        self.xAngleZeroed = np.degrees(self.x[0][0])
 
 #----------------------------------- ---------------------------------------------------------------
 
