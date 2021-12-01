@@ -1,9 +1,10 @@
 import numpy as np
+import time
+import math
 
 
 class sensorObject:
     def __init__(self, limbCode):
-        import time
         self.limbCode = limbCode
         #State Values from Sensors initialized at 0
         self.gyX = 0
@@ -29,57 +30,58 @@ class sensorObject:
         self.mgX_norm = 0
         self.mgY_norm = 0
         self.mgZ_norm = 0
-        
-        self.gyX_avg = 0
-        self.gyY_avg = 0
-        self.gyZ_avg = 0
-        
-        self.gyX_calib_arr = []
-        self.gyY_calib_arr = []
-        self.gyZ_calib_arr = []
-        
-        self.gyX_calib = 0
-        self.gyY_calib = 0
-        self.gyZ_calib = 0
-        
-        self.gyX_range = 5
-        self.gyY_range = 5
-        self.gyZ_range = 5
-        
+
         self.gyConversion = 0.07
         self.acConversion = 0.000244 * 9.81
         self.mgConversion = 0.00014
-        
-        #angleCalc() variables
-        self.timeToRun = 0
-        self.timeToRun_arr = []
-        self.timeToRun_avg = 0
-        self.timeLastValue = time.time()
-        self.currentTime = time.time()
-        
-        self.zAngleChangeArray = [0]
-        self.zAngleChangeArrayLimit = 5
-        self.zAngleArray = [0]
-        self.zAngleArrayLimit = 50
-        self.wasStanding = False
-        self.calibVal = .1  #How much gravity can affect angle during walking
+
         self.zAngle = 0
-        self.gravAngleWindow = 0
+        self.zAngleZeroed = 0
+
+        self.xAngle = 0
+        self.xAngleZeroed = 0
         
         #angularAcceleration() variables
         self.gyZarray = [0]
         self.angularAcceleration = 0
         self.angularAccelerationMovingAvgAccuracy = 2
-        
-        #gravityVectorAngle() variables
-        self.angleFromGravity = 0
-        self.gravAngleArray = []
-        self.gravAngleSmoothed = 0
-        self.gravAngleArrayLimit = 3
-        
-        self.zAngleZeroed = 0
-        self.angleCalibInt = 0
-        self.angleCalibArray = []
+
+
+        #angleCalc with kalman filter
+        self.lastRunTime
+        self.Q_coeff = 0.0000001
+        self.Q = np.array([[1, 0, 0, 0],
+                           [0, 1, 0, 0],
+                           [0, 0, 1, 0],
+                           [0, 0, 0, 1]]) * self.Q_coeff
+
+        self.R_coeff = 0.001
+        self.R = np.array([[1, 0],
+                           [0, 1]]) * self.R_coeff
+
+        self.C = np.array([[1, 0, 0, 0],
+                           [0, 0, 1, 0]])
+
+        self.x = np.transpose(np.array([[0, 0, 0, 0]]))
+
+        self.P = np.array([[1, 0, 0, 0],
+                           [0, 1, 0, 0],
+                           [0, 0, 1, 0],
+                           [0, 0, 0, 1]])
+
+        self.acc_x = [0, 0]
+        self.acc_y = [0, 0]
+        self.acc_z = [0, 0]
+
+        self.acc_angle_roll = [0]
+        self.acc_angle_pitch = [0]
+        self.roll_dot_arr = [0]
+        self.pitch_dot_arr = [0]
+
+        self.acc_roll_off = 0
+        self.roll_calib_arr = []
+        self.acc_pitch_off = 0
+        self.pitch_calib_arr = []
 
         
         
@@ -124,169 +126,105 @@ class sensorObject:
         self.mgZ = outArray[8]
         
         self.conversions()
-        
-        
-#-------------------------------------------------------------------------------------------------- 
+        self.angleCalc()
 
-
-
-#Run instead of angleCalc() for first X seconds of the script. Use if time < X: else:
-    def getCalib(self):
-        self.gyX_calib_arr.append(self.gyX)
-        self.gyY_calib_arr.append(self.gyY)
-        self.gyZ_calib_arr.append(self.gyZ)
-        
-        self.gyX_calib = sum(self.gyX_calib_arr)/len(self.gyX_calib_arr)
-        self.gyY_calib = sum(self.gyY_calib_arr)/len(self.gyY_calib_arr)
-        self.gyZ_calib = sum(self.gyZ_calib_arr)/len(self.gyZ_calib_arr)
-
-        
-        
-        
-#--------------------------------------------------------------------------------------------------        
+#--------------------------------------------------------------------------------------------------
     def angularAccCalc(self):
-        import time
-        import numpy as np
         self.gyZarray.append(self.gyZ)
         
-#Keep gyroscope array limited
+        #Keep gyroscope array limited
         while len(self.gyZarray) > self.angularAccelerationMovingAvgAccuracy:
             self.gyZarray.pop(0)
             
-#Take derivative of array
+        #Take derivative of array
         diff_arr = np.diff(self.gyZarray)
         
-#Averages the differences from diff() function.
+        #Averages the differences from diff() function.
         try:
             self.angularAcceleration = np.mean(diff_arr)
         except:
             self.angularAcceleration = 0
             
         return self.angularAcceleration
-    
-    
-#--------------------------------------------------------------------------------------------------      
-    
-    
-    def angleCalib(self):
-        self.angleCalc()
-        self.angleCalibArray.append(self.zAngle)
-        if len(self.angleCalibArray) <= 50:
-            self.angleCalibInt = sum(self.angleCalibArray)/len(self.angleCalibArray)
-        else:
-            self.angleCalibInt = sum(self.angleCalibArray[-50:])/50
-
-    
-
-    
-#--------------------------------------------------------------------------------------------------    
 
 
 
 
-
-#Angle Calcluation function        
     def angleCalc(self):
-        import time
-        import numpy as np
-        import math
-        self.timeLastValue = self.currentTime
-        self.currentTime = time.time()
-        self.timeToRun = self.currentTime - self.timeLastValue
-        self.timeToRun_arr.append(self.timeToRun)
-        if (len(self.timeToRun_arr)>50):
-            self.timeToRun_arr.pop(0)
-        
-        self.timeToRun_avg = np.mean(self.timeToRun_arr)
-        
-        self.gravityVectorAngle()
-        self.angularAccCalc()
-        
-#Integrates gyroscope to get angle. Includes drift.
-        zAngleChange = (self.gyZ-self.gyZ_calib) * self.timeToRun_avg
-        
-#Keeps track of previous values. Used when standing is turned off to make up for the 4-5 frame delay.
-        self.zAngleChangeArray.append(zAngleChange)
-        
-#Limits number of previous values kept
-        if len(self.zAngleChangeArray) > self.zAngleChangeArrayLimit:
-            self.zAngleChangeArray.pop(0)
-            
-    #manually set perturbation range for now, later set using calibration function
-        if (self.gyZ < (self.gyZ_calib + self.gyZ_range) and self.gyZ > (self.gyZ_calib - self.gyZ_range)) and (self.gyY < (self.gyY_calib + self.gyY_range) and self.gyY > (self.gyY_calib - self.gyY_range)) and (self.gyX < (self.gyZ_calib + self.gyZ_range) and self.gyX > (self.gyZ_calib - self.gyZ_range)):
-        #if (math.sqrt((self.gyX ** 2) + (self.gyY ** 2) + (self.gyZ ** 2)) < 20):
-            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 10
-            if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
-                self.zAngle -= proportionality
-            elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
-                self.zAngle += proportionality
-            self.zAngle += zAngleChange
-        else:
-            proportionality = abs(self.gravAngleSmoothed - self.zAngle) / 100
-            if self.zAngle > self.gravAngleSmoothed + self.gravAngleWindow:
-                self.zAngle -= proportionality
-            elif self.zAngle < self.gravAngleSmoothed - self.gravAngleWindow:
-                self.zAngle += proportionality
-            self.zAngle += zAngleChange
-        
-        
-        self.zAngleZeroed = self.zAngle - self.angleCalibInt
-    #Keeps short array of values. Not currently used.
-        self.zAngleArray.append(self.zAngle)
-    
-        if len(self.zAngleArray) > self.zAngleArrayLimit:
-            self.zAngleArray.pop(0)
-            
-        return self.zAngle
-    
-    
-    
-    
-    
-    
-#--------------------------------------------------------------------------------------------------
+        # Used to update state of object with new values
+        # Returns roll and pitch and updates system
+        # Unpack inputs
+        self.acc_x.append(self.acX)
+        self.acc_y.append(self.acY)
+        self.acc_z.append(self.acZ)
+        self.acc_x.pop(0)
+        self.acc_y.pop(0)
+        self.acc_z.pop(0)
+        acc_x_mean = np.mean(self.acc_x)
+        acc_y_mean = np.mean(self.acc_y)
+        acc_z_mean = np.mean(self.acc_z)
 
+        gyro_x = np.radians(self.gyX)
+        gyro_y = np.radians(self.gyY)
+        gyro_z = np.radians(self.gyZ)
+        roll_current = self.x[0][0]
+        pitch_current = self.x[2][0]
 
+        # Get adn update time since last calculation
+        dt = time.time() - self.lastRunTime
+        self.lastRunTime = time.time()
 
+        # Calculate accelerometer angles
+        accel_roll = -np.arctan2(acc_z_mean, np.sqrt((acc_y_mean * acc_y_mean) + (acc_x_mean * acc_x_mean)))
+        accel_pitch = np.arctan2(-acc_x_mean, np.sqrt((acc_z_mean * acc_z_mean) + (acc_y_mean * acc_y_mean)))
 
+        self.acc_angle_roll.append(np.degrees(accel_roll))
+        self.acc_angle_pitch.append(np.degrees(accel_pitch))
 
-#Gravity vector calculations function
-    def gravityVectorAngle(self):
-        import math
-        import numpy as np
-        
-    #On all sensors gravity is depicted as approximately -9.81
-        g = -9.81
-    #Pythagorean theorem for acceleration vector magnitude (should be approximately -9.81 if not moving.)
-        magnitude = ((self.acX ** 2) + (self.acY ** 2)) ** 0.5
-        
-        #Originally used to resize acceleration vector to be of the same magnitude as the gravity vector for easier comparison. Messes up extra while moving though.
-        #ratio = abs(magnitude / g)
-        
-    #Apply dot product to system in 2 steps to find the angle between where gravity is and should be.
-        #dotProd = (g * magnitude) / (abs(g * magnitude))
-        #self.angleFromGravity = math.degrees(math.acos(dotProd))
-        
-        tanVal = -math.atan2(self.acX, -self.acY)
-        self.angleFromGravity = math.degrees(tanVal)
-        
-    #Populates and minimizes array of values to smooth curve. Usually set around 2-3 frames to minimize time delay while still smoothing peaks as much as possible.
-    #2-3 frames adds up to .04-.06 seconds delay total, halved and averaged comes out to a .025 second (or approximately 1 frame) delay due to this method of smoothing.
-        self.gravAngleArray.append(self.angleFromGravity)
-        if len(self.gravAngleArray) > self.gravAngleArrayLimit:
-            self.gravAngleArray.pop(0)
-        
-    #Take mean of populated array, save to object.
-        self.gravAngleSmoothed = np.mean(self.gravAngleArray)
-        
-        
-        
-        
-        
-        
-        
-        
-#--------------------------------------------------------------------------------------------------
+        # Get euler angle derivatives of input gyroscope values
+        roll_dot = gyro_x \
+                   + (np.sin(roll_current) * np.tan(pitch_current) * gyro_z) \
+                   + (np.cos(roll_current) * np.tan(pitch_current) * gyro_y)
+        pitch_dot = np.cos(roll_current) * gyro_z - np.sin(roll_current) * gyro_y
+
+        self.roll_dot_arr.append(np.degrees(roll_dot))
+        self.pitch_dot_arr.append(np.degrees(pitch_dot))
+
+        # Calculate A and B arrays based on time step
+        A = np.array([[1, -dt, 0, 0],
+                      [0, 1, 0, 0],
+                      [0, 0, 1, -dt],
+                      [0, 0, 0, 1]])
+
+        B = np.array([[dt, 0],
+                      [0, 0],
+                      [0, dt],
+                      [0, 0]])
+
+        # Assemble input matrices
+        measured_input = np.transpose(np.array([[roll_dot, pitch_dot]]))
+        acceleration_estimates = np.transpose(np.array([[accel_roll, accel_pitch]]))
+
+        # Prediction equations
+        x_new = (A.dot(self.x)) + (B.dot(measured_input))
+        self.P = A.dot(self.P.dot(np.transpose(A))) + self.Q
+
+        # Update equations
+        y_new = acceleration_estimates - self.C.dot(x_new)
+        S = self.C.dot(self.P.dot(np.transpose(self.C))) + self.R
+        K = self.P.dot(np.transpose(self.C).dot(np.linalg.inv(S)))
+        x_new = x_new + K.dot(y_new)
+
+        self.x = x_new
+        self.P = (np.eye(4) - K.dot(self.C)).dot(self.P)
+
+        self.zAngle = np.degrees(self.x[0][0])
+        self.zAngleZeroed = np.degrees(self.x[0][0])
+
+        self.xAngle = np.degrees(self.x[2][0])
+        self.xAngleZeroed = np.degrees(self.x[2][0])
+
+#----------------------------------- ---------------------------------------------------------------
 
 
 

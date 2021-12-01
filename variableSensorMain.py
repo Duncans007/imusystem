@@ -66,11 +66,7 @@ def data_handler(address, *args):
     global alpha2, SecondsToChange, loadcell_data, loadCell, timeLastRun
 
 ###########################################################################################
-#Pull data from [CUNY teensy / Chadi Load Cell] if enabled----------------------------------------------------------------------
-    if teensySend:
-        if parent_conn_teensy.poll(0):
-            cuny_data = parent_conn_teensy.recv()
-            
+#Pull data from [Chadi Load Cell] if enabled----------------------------------------------------------------------
     if loadCell:
         if parent_conn_arduino.poll(0):
             loadcell_data = parent_conn_arduino.recv()
@@ -86,7 +82,7 @@ def data_handler(address, *args):
     tic = time.time()
     
     
-#Takes in individual datapoints and assembles into easily indexable dictionary packages.
+    #Takes in individual datapoints and assembles into easily indexable dictionary packages.
     if addr in addressDict:
         limb = addressDict[addr]
 
@@ -94,101 +90,53 @@ def data_handler(address, *args):
 
             if limb == 'rThigh':
                 objRThigh.newValues(package_handler_raw(args))
-                if (time.time() - timeStart) < sensorCalibTime:
-                    objRThigh.getCalib()
-                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-                    objRThigh.getCalib()
-                else:
-                    objRThigh.angleCalc()
             
             if limb == 'rShank':
                 objRShank.newValues(package_handler_raw(args))
-                if (time.time() - timeStart) < sensorCalibTime:
-                    objRShank.getCalib()
-                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-                    objRShank.getCalib()
-                else:
-                    objRShank.angleCalc()
             
             if limb == 'rHeel':
                 objRHeel.newValues(package_handler_raw(args))
-                if (time.time() - timeStart) < sensorCalibTime:
-                    objRHeel.getCalib()
-                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-                    objRHeel.getCalib()
-                else:
-                    objRHeel.angleCalc()
             
             if limb == 'lThigh':
                 objLThigh.newValues(package_handler_raw(args))
-                if (time.time() - timeStart) < sensorCalibTime:
-                    objLThigh.getCalib()
-                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-                    objLThigh.getCalib()
-                else:
-                    objLThigh.angleCalc()
             
             if limb == 'lShank':
                 objLShank.newValues(package_handler_raw(args))
-                if (time.time() - timeStart) < sensorCalibTime:
-                    objLShank.getCalib()
-                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-                    objLShank.getCalib()
-                else:
-                    objLShank.angleCalc()
             
             if limb == 'lHeel':
                 objLHeel.newValues(package_handler_raw(args))
-                if (time.time() - timeStart) < sensorCalibTime:
-                    objLHeel.getCalib()
-                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-                    objLHeel.getCalib()
-                else:
-                    objLHeel.angleCalc()
             
             if limb == 'lowBack':
                 objLowBack.newValues(package_handler_raw(args))
-                if (time.time() - timeStart) < sensorCalibTime:
-                    objLowBack.getCalib()
-                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-                    objLowBack.getCalib()
-                else:
-                    objLowBack.angleCalc()
             
             if limb == 'topBack':
                 objTopBack.newValues(package_handler_raw(args))
-                if (time.time() - timeStart) < sensorCalibTime:
-                    objTopBack.getCalib()
-                elif (time.time() - timeStart >= sensorCalibTime) and (time.time() - timeStart < sensorCalibTime + angleCalibTime):
-                    objTopBack.getCalib()
-                else:
-                    objTopBack.angleCalc()
 
 
-###########################################################################################
-#Auto-sends packet regardless of packet completion status, configurable in userinput-----------------------------------------------------------------
+    ###########################################################################################
+    #Auto-sends packet regardless of packet completion status, configurable in userinput-----------------------------------------------------------------
     if (time.time() - timeCurrent) >= (1/processing_frequency):
         
         
         
-###########################################################################################
-#Algorithms and secondary angle calculations-------------------------------------------------------------------------------------------------
-#Code is broken into reader above and algorithms below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
+    ###########################################################################################
+    #Algorithms and secondary angle calculations-------------------------------------------------------------------------------------------------
+    #Code is broken into reader above and algorithms below for increased customization and ease of changing algorithm. Everything below this line is almost entirely customizable.
 
-#Timers
+        #Timers
         timeLastRun = timeCurrent
         timeCurrent = time.time()
         timeToRun = timeCurrent - timeLastRun
 
-#Right and Left Gait Detection
+        #Right and Left Gait Detection
         gaitDetectRight.testVal(objRThigh.gyZ, objRShank.gyZ, objRHeel.gyZ)
         gaitDetectLeft.testVal(objLThigh.gyZ, objLShank.gyZ, objLHeel.gyZ)
 
-#Slip Algorithm - Calculates Slip Indicator from Trkov IFAC 2017 paper
+        #Slip Algorithm - Calculates Slip Indicator from Trkov IFAC 2017 paper
         slipRight = gaitDetectRight.slipTrkov(objLowBack.acX, ((objRHeel.acX * np.cos(objRHeel.zAngleZeroed * .01745)) - (objRHeel.acY * np.sin(objRHeel.zAngleZeroed * .01745))), hip_heel_length)
         slipLeft = gaitDetectLeft.slipTrkov(objLowBack.acX, ((objLHeel.acX * np.cos(objLHeel.zAngleZeroed * .01745)) - (objLHeel.acY * np.sin(objLHeel.zAngleZeroed * .01745))), hip_heel_length)
 
-#Run Kneeling Detection Algorithm and torque estimator
+        #Run Kneeling Detection Algorithm and torque estimator
         kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
 
 
@@ -221,24 +169,21 @@ def data_handler(address, *args):
 
 
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
-        
+
+        # Add loadcell values to output string if connected and enabled
         if loadCell:
             outputString += f"\t{loadcell_data[0]}\t"
-        
-        if teensySend:
-            for x in cuny_data.values():
-                outputString += f"{x}\t"
 
         outputString += f"\n"
 		
-        if nucSend == False:
+        if not nucSend:
             if loadCell:
                 print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
             else:
                 ttr = time.time() - tic
-                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{ttr}")
+                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{objRShank.xAngle}\t{objRThigh.xAngle}\t{ttr}")
         
-            
+        # Write output to file
         fileDump.write(f"{outputString}")
 		
   
@@ -265,18 +210,12 @@ def data_handler(address, *args):
             for x in [objLHeel, objRHeel, objLShank, objRShank, objLThigh, objRThigh, objLowBack]:
                 serialArr += [int(x.acX_norm/2), int(x.acY_norm/2), int(x.acZ_norm/2), int(x.gyX_norm/2), int(x.gyY_norm/2), int(x.gyZ_norm/2), int(x.zAngleZeroed * 80)]
             serialArr += [int(gaitDetectRight.gaitStage), int(gaitDetectLeft.gaitStage), int(slipRight/(10**32)), int(slipLeft/(10**32)), int(kneelingTorqueEstimationL * 500), int(kneelingTorqueEstimationR * 500)]
-            
-            if teensySend:
-                for i in cuny_data.items():
-                    serialArr.append(int(i[1]))
                     
             print(f"Read Rate: {1/timeToRun}") #print(serialArr)
 
             #print("%9.5f %9.5f %9.5f" %(1.0/timeToRun, kneelingTorqueEstimationL, kneelingTorqueEstimationR))
             send_over_serial(serialArr, intelNUCserial)
 #-----------------------------------------------------
-        if teensySend:
-            send_to_teensy(kneelingTorqueEstimationL, kneelingTorqueEstimationR, teensyPort)
         
         if streamGait:
            send_to_brace(gaitDetectLeft.gaitOutput, gaitSerial)
