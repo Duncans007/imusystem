@@ -48,7 +48,7 @@ class sensorObject:
 
 
         #angleCalc with kalman filter
-        self.lastRunTime
+        self.lastRunTime = 0
         self.Q_coeff = 0.0000001
         self.Q = np.array([[1, 0, 0, 0],
                            [0, 1, 0, 0],
