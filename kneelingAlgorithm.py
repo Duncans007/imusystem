@@ -3,16 +3,13 @@ import math
 import time
 
 class kneelingDetection:
-    def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType, front_pid_proportion, rear_pid_proportion, back_proportion, back_offset):
+    def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType):
         self.NMKG = NMKG
         self.mass = mass
         self.height = height
         self.alpha = alpha
         self.torqueCutoff = torqueCutoff
         self.controllerType = torqueType
-        self.front_pid_proportion = front_pid_proportion
-        self.rear_pid_proportion = rear_pid_proportion
-        self.back_proportion = back_proportion
         
         #Inputs updated on the first loop
         self.thighAngleR = 0
@@ -87,7 +84,6 @@ class kneelingDetection:
         self.L_HAT = height * .52 * .374
         self.L_T_distal = self.L_T * .567
         self.L_T_proximal = self.L_T * .433
-        self.backOffset = back_offset
     
     
     
@@ -357,15 +353,6 @@ class kneelingDetection:
                 torqueOutputL = torqueCutoff
         else:
             torqueOutputL = 0
-        
-        
-        #if self.legForward[0] == "R":
-        #    torqueOutputR = torqueOutputR * self.front_pid_proportion
-        #    torqueOutputL = torqueOutputR * self.rear_pid_proportion
-            
-        #if self.legForward[0] == "L":
-        #    torqueOutputR = torqueOutputR * self.rear_pid_proportion
-        #    torqueOutputL = torqueOutputR * self.front_pid_proportion
         
 
         return torqueOutputL, torqueOutputR
