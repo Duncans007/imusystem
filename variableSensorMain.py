@@ -160,6 +160,7 @@ def data_handler(address, *args):
             outputString += f"{x.acZ}\t"
 
             outputString += f"{x.zAngleZeroed}\t"
+            outputString += f"{x.xAngleZeroed}\t"
 
             #outputString += f"{x.mgX}\t"
             #outputString += f"{x.mgY}\t"
@@ -269,13 +270,6 @@ if __name__ == "__main__":
 #Creation of objects to stream gait variables to knee device arduino
     if streamGait:
         gaitSerial = serial.Serial(arduinoPort, arduinoBaud, timeout=3.0)
-	
-#Creation of objects for communication with CUNY Teensy device
-    if teensySend:
-        teensyPort = serial.Serial(teensyPort, teensyBaud, timeout=3.0)
-        parent_conn_teensy,child_conn_teensy = Pipe()
-        p_teensy = Process(target=async_teensy, args=(child_conn_teensy, teensyPort))
-        p_teensy.start()
         
 #Creation of objects for communication with Chadi load cell via USB Arduino
     if loadCell:
@@ -348,7 +342,7 @@ if __name__ == "__main__":
         for y in stringSensors:
             for z in stringAxes:
                 header += f"{y}/{z}/{x}\t"
-        header += f"Angle/{x}\t"
+        header += f"zAngle/{x}\txAngle/{x}\t"
         header += f"\t"
 
     header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL"
