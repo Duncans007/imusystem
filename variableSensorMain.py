@@ -337,7 +337,7 @@ if __name__ == "__main__":
 
 #Create formatted file header
     fileDump = open("algDump.txt", "w+")
-    header = "time\timeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
+    header = "time\ttimeToRun\tgaitStageR\tgaitStageL\tslipR\tslipL\tKneelingIndicator\t\t"
     for x in stringObjects:
         for y in stringSensors:
             for z in stringAxes:
