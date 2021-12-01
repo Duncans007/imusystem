@@ -82,6 +82,7 @@ class sensorObject:
         self.roll_calib_arr = []
         self.acc_pitch_off = 0
         self.pitch_calib_arr = []
+        self.counter = 0
 
         
         
@@ -95,6 +96,7 @@ class sensorObject:
 #Function to dump new values from sensors
     def newValues(self, valueArray):
         outArray = []
+        self.counter += 1
         
         if self.limbCode == "RT" or self.limbCode == "RS":
             outArray = valueArray
@@ -127,6 +129,16 @@ class sensorObject:
         
         self.conversions()
         self.angleCalc()
+
+        if len(self.pitch_calib_arr) < 100:
+            self.pitch_calib_arr.append(self.zAngle)
+            self.roll_calib_arr.append(self.xAngle)
+        elif len(self.pitch_calib_arr) == 100:
+            self.pitch_calib_val = np.mean( self.pitch_calib_arr )
+            self.roll_calib_val = np.mean( self.roll_calib_arr )
+        else:
+            self.zAngleZeroed -= self.pitch_calib_val
+            self.xAngleZeroed -= self.roll_calib_val
 
 #--------------------------------------------------------------------------------------------------
     def angularAccCalc(self):

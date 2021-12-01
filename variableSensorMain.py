@@ -181,8 +181,8 @@ def data_handler(address, *args):
                 print(f"Read Rate: {1/timeToRun}\t{loadcell_data}")
             else:
                 ttr = time.time() - tic
-                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{objRShank.xAngle}\t{objRThigh.xAngle}\t{ttr}")
-        
+                print(f"Read Rate: {1/timeToRun}\t{kneeAngleR}\t{kneeAngleL}\t{objRShank.xAngleZeroed}\t{objRThigh.xAngleZeroed}\t{ttr}")
+
         # Write output to file
         fileDump.write(f"{outputString}")
 		
