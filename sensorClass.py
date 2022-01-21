@@ -1,5 +1,9 @@
-import numpy as np
+# This file contains a class for storing and processing the values in an individual sensor.
+# The class takes in unprocessed, unsigned ints from the Notochord and converts them to understandable units.
+# It contains functions for calibrating based on sensor inputs and automatically applies the calibration values, however the calibration functions must be specified from the main file.
+# It uses a filter (originally complimentary, updated to kalman) filter to determine sensor angles in 2 dimensions (pitch and roll)
 
+import numpy as np
 
 class sensorObject:
     def __init__(self, limbCode):
