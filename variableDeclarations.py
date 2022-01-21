@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# This file initializes a number of variables that were needlessly bloating the main file.
 
 
 packetReady = False
