@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# This function is used to receive and send data to the device provided for kneeling research by CUNY.
+
 from multiprocessing import Process,Pipe
 from serialSend import *
 

@@ -1,3 +1,8 @@
+# This file compiles a number of functions for sending data over serial with various packet types.
+# Serial packet structure is defined and commented within each function.
+
+
+
 def receive_from_teensy(serialPort):
     import struct
 #[ 165, 90, LENGTH(101),
