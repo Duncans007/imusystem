@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 import math
 import time
+import numpy as np
 
 class kneelingDetection:
-    def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType, front_pid_proportion, rear_pid_proportion, back_proportion, back_offset):
+    def __init__(self, NMKG, mass, height, alpha, torqueCutoff, rampDelay, rampHold, rampSlope, torqueType):
         self.NMKG = NMKG
         self.mass = mass
         self.height = height
         self.alpha = alpha
         self.torqueCutoff = torqueCutoff
         self.controllerType = torqueType
-        self.front_pid_proportion = front_pid_proportion
-        self.rear_pid_proportion = rear_pid_proportion
-        self.back_proportion = back_proportion
         
         #Inputs updated on the first loop
         self.thighAngleR = 0
@@ -87,7 +85,6 @@ class kneelingDetection:
         self.L_HAT = height * .52 * .374
         self.L_T_distal = self.L_T * .567
         self.L_T_proximal = self.L_T * .433
-        self.backOffset = back_offset
     
     
     
@@ -110,7 +107,7 @@ class kneelingDetection:
         self.thighLAngV  = lThigh.gyZ
         self.shankLAngV  = lShank.gyZ
         
-        self.loBackAng = loBack.zAngleZeroed * self.back_proportion
+        self.loBackAng = loBack.zAngleZeroed
         
         if (self.legForward == "L"):
             self.lastLeg = "L"
@@ -153,53 +150,6 @@ class kneelingDetection:
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    def getTorqueFromVicon(self, rThigh, rShank, lThigh, lShank, RTA, LTA, BA):
-        
-        self.thighAngleR = RTA
-        self.shankAngleR = rShank.zAngleZeroed
-        
-        self.thighAngleL = LTA
-        self.shankAngleL = lShank.zAngleZeroed
-        
-        self.thighRAngV  = rThigh.gyZ
-        self.shankRAngV  = rShank.gyZ
-        
-        self.thighLAngV  = lThigh.gyZ
-        self.shankLAngV  = lShank.gyZ
-        
-        self.loBackAng = BA
-        
-        if (self.legForward == "L"):
-            self.lastLeg = "L"
-        if (self.legForward == "R"):
-            self.lastLeg = "R"
-        if (self.legForward == "2"):
-            self.lastLeg = "2"
-        
-        self.kneeAngleL = self.thighAngleL - self.shankAngleL
-        self.kneeAngleR = self.thighAngleR - self.shankAngleR
-
-        self.kneelingDetection()
-        
-        #torqueL, torqueR = self.torqueEstimation(self.kneeAngleR, self.thighRAngV, self.kneeAngleL, self.thighLAngV)
-        torqueL = self.torqueYuSu("LEFT", self.thighAngleL, self.loBackAng)
-        torqueR = self.torqueYuSu("RIGHT", self.thighAngleR, self.loBackAng)
-            
-        return torqueR, torqueL, self.kneeAngleR, self.kneeAngleL, self.legForward
-    
-    
-    
-    
-    
         
         
         
@@ -207,7 +157,7 @@ class kneelingDetection:
         
     def torqueTrkov(self):
         #Right
-        d1r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_HAT * math.sin(math.radians(-self.loBackAng-self.backOffset))
+        d1r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_HAT * math.sin(math.radians(-self.loBackAng))
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleR))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleR)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleL))
         
@@ -219,7 +169,7 @@ class kneelingDetection:
             TqR = self.torqueCutoff
         
         #Left
-        d1r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_HAT * math.sin(math.radians(-self.loBackAng-self.backOffset))
+        d1r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_HAT * math.sin(math.radians(-self.loBackAng))
         d2r = self.L_T_distal * math.sin(math.radians(self.thighAngleL))
         d3r = self.L_T * math.sin(math.radians(self.thighAngleL)) - self.L_T_proximal * math.sin(math.radians(self.thighAngleR))
         
@@ -339,6 +289,7 @@ class kneelingDetection:
         #mass - kilograms of subject
         #angVel and kneeAngle are for leg with device. angVel is for thigh.
         #Knee angles oriented with staight leg at 0 degrees
+        torqueCutoff = 35 #N*m
         
         
         if (self.torqueWindow("RIGHT")):
@@ -357,15 +308,6 @@ class kneelingDetection:
                 torqueOutputL = torqueCutoff
         else:
             torqueOutputL = 0
-        
-        
-        #if self.legForward[0] == "R":
-        #    torqueOutputR = torqueOutputR * self.front_pid_proportion
-        #    torqueOutputL = torqueOutputR * self.rear_pid_proportion
-            
-        #if self.legForward[0] == "L":
-        #    torqueOutputR = torqueOutputR * self.rear_pid_proportion
-        #    torqueOutputL = torqueOutputR * self.front_pid_proportion
         
 
         return torqueOutputL, torqueOutputR
@@ -439,7 +381,6 @@ class kneelingDetection:
         
     def kneelingDetection(self):
         #Knee angles oriented with staight leg at 180 degrees
-        import numpy as np
         
         #sets kneel start time when the switch from not kneeling to kneeling occurs
         if (self.isKneeling == True) and (self.wasKneeling == False):
@@ -475,17 +416,7 @@ class kneelingDetection:
         
         R_thighR_shankL_angV = self.shankLAngV - self.thighRAngV
         L_thighL_shankR_angV = self.shankRAngV - self.thighLAngV
-        
-        
-        
-        
-        
-    #Implement early kneeling down detection via gyroscopes
-        
-        
-        
-        
-        
+
         
         
     #Test if angle is past a rather large and easy to determine threshold (60 degrees from straight)
