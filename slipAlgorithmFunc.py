@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+
+# This function provides instantaneous output for the slip detectionalgorithm researched and presented in Trkov "sensor based slip detection..." IEEE '19
+
 def slipAlgorithm(pelvisAcc, forwardFootAcc, L_hh):
     
-    #Constants from paper Trkov "sensor based slip detection..." IEEE '19
     slip_constant = 2.83 #or 1.87
     beta = 2.718
     gamma = 40 #-562 or -377 #deg/s	
