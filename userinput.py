@@ -61,3 +61,35 @@ streamGait = False #stream gait variables to arduino
 
 arduinoPort = "/dev/ttyACM0"
 arduinoBaud = 256000
+
+
+
+#LIVE DETECTION OBJECTS
+
+#RMS
+enable_rms = True
+
+rms_thresh = 300
+rms_output_type = "value" # "boolean" or "value"
+
+rms_window_frames = 10
+rms_butter_frames = 50
+
+
+#DTW
+enable_dtw = True
+
+dtw_loss_thresh=300
+dtw_output_type = "value" # "boolean" or "value"
+
+dtw_source_object_save = '' # if not filled in, dtw does not run.
+dtw_store_frames=20
+
+#warping limits
+q1lim = 1
+q2lim = 5
+
+
+
+if dtw_source_object_save == '':
+    enable_dtw = False

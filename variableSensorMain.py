@@ -24,6 +24,10 @@ from ARDUINOreceiver import *
 from userinput import *
 from variableDeclarations import *
 
+from live_detect.live_dtw_detection import *
+from live_detect.live_rms_detection import *
+from live_detect.store_SrcSignal import *
+
 
 #Turns data collection for particular sensors on/off if necessary.
 toggleFlagDict = {
@@ -129,6 +133,13 @@ def data_handler(address, *args):
         #Run Kneeling Detection Algorithm and torque estimator
         kneelingTorqueEstimationR, kneelingTorqueEstimationL, kneeAngleR, kneeAngleL, legForward = kneelingDetect.getTorque(objRThigh, objRShank, objLThigh, objLShank, objLowBack)
 
+        #Trip Algorithms
+        #RMS detector:
+        rms_out = detector_rms.update(objLowBack.gyZ, timeCurrent, output_type=rms_output_type)
+
+        #DTW detector:
+        dtw_out = detector_dtw.update(objLowBack.gyZ, timeCurrent, gaitDetectRight.gaitStage, output_type=dtw_output_type)
+
 
     ###########################################################################################
         #DATA OUTPUT (FILE) -------------------------------------------------------------------------------------------------------------
@@ -159,6 +170,13 @@ def data_handler(address, *args):
         outputString += f"{kneeAngleR}\t{kneeAngleL}\t{kneelingTorqueEstimationR}\t{kneelingTorqueEstimationL}"
         if loadCell:
             outputString += f"\t{loadcell_data[0]}\t"
+
+
+        if enable_rms:
+            outputString += f"{rms_out}\t"
+        if enable_dtw:
+            outputString += f"{dtw_out}\t"
+
         outputString += f"\n"
 
         # Add output string to file
@@ -272,8 +290,20 @@ if __name__ == "__main__":
         p_arduino = Process(target=async_arduino, args=(child_conn_arduino, arduinoPort))
         p_arduino.start()
         loadcell_data = 0
-    
-    
+
+
+    #Creation of objects for live trip detection (rms, dtw)
+    if enable_rms:
+        detector_rms = detect_rms(window_frames_rms=rms_window_frames, window_frames_butter=rms_butter_frames, rms_thresh=rms_thresh)
+
+    if enable_dtw:
+        source_sig = SrcSignal()
+        source_sig.load_src(dtw_source_object_save)
+        detector_dtw = detect_dtw(source_sig, detect_thresh=dtw_loss_thresh, store_frames=dtw_store_frames)
+        detector_dtw.q1lim=q1lim
+        detector_dtw.q2lim=q2lim
+
+
     #Create sensor objects to store and manipulate data for each sensor
     objRThigh = sensorObject("RT")
     objRShank = sensorObject("RS")
@@ -339,7 +369,9 @@ if __name__ == "__main__":
         header += f"zAngle/{x}\txAngle/{x}\t"
         header += f"\t"
 
-    header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL"
+    header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL\t"
+    header += f"detect_rms\tdetect_dtw"
+
     header += f"\n"
     fileDump.write(header)
 
