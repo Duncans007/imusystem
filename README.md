@@ -127,8 +127,15 @@ controller_type (pid, yusu, ramp, trkov)
 
 IMU system can send and receive over serial to communicate with a variety of devices:
 
-1) Send to a MATLAB receiver over a RS232 cable connected with the Raspberry Pi GPIO.
-2) Send to or receive from an Arduino for device control or sensor readings respectively.
+1) Send to a MATLAB receiver over a [USB-TTL](https://www.adafruit.com/product/954) cable connected with the Raspberry Pi GPIO.
+        To use MATLAB receiver:
+                Connect USB-TTL cable to host USB port and Raspberry Pi GPIO
+                    Black -> Ground
+                    Orange -> 5V power
+                    White -> RX
+                    Green -> TX
+                Run imusystem/rutgers_simulink/sample_simulink.slx on host computer.
+3) Send to or receive from an Arduino for device control or sensor readings respectively.
 
 This can be further configured using the options given below:
 
