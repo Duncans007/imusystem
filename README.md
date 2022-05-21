@@ -21,8 +21,8 @@ Run File: run.sh
 - pythonosc
 - numpy
 - scipy
--   only for live trip detection methods (DTW, RMS)
--   Note as of today - may/21/2022 - scipy is not on the pi. [See this stackoverflow summary.](https://raspberrypi.stackexchange.com/questions/8644/how-do-i-download-the-python-libraries-without-a-direct-internet-connection-on-m)
+    - only for live trip detection methods (DTW, RMS)
+    - Note as of today - may/21/2022 - scipy is not on the pi. [See this stackoverflow summary.](https://raspberrypi.stackexchange.com/questions/8644/how-do-i-download-the-python-libraries-without-a-direct-internet-connection-on-m)
 - [Chordata Notochord](https://gitlab.com/chordata/notochord) is not a Python dependency. The "notochord" folder must be placed in the same directory as the "imusystem" folder.
 
 ## Putting on the System:
