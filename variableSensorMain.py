@@ -24,9 +24,11 @@ from ARDUINOreceiver import *
 from userinput import *
 from variableDeclarations import *
 
-from live_detect.live_dtw_detection import *
-from live_detect.live_rms_detection import *
-from live_detect.store_SrcSignal import *
+if enable_dtw:
+	from live_detect.live_dtw_detection import *
+	from live_detect.store_SrcSignal import *
+if enable_rms:
+	from live_detect.live_rms_detection import *
 
 
 #Turns data collection for particular sensors on/off if necessary.
@@ -135,10 +137,12 @@ def data_handler(address, *args):
 
         #Trip Algorithms
         #RMS detector:
-        rms_out = detector_rms.update(objLowBack.gyZ, timeCurrent, output_type=rms_output_type)
+		is enable_rms:
+        	rms_out = detector_rms.update(objLowBack.gyZ, timeCurrent, output_type=rms_output_type)
 
         #DTW detector:
-        dtw_out = detector_dtw.update(objLowBack.gyZ, timeCurrent, gaitDetectRight.gaitStage, output_type=dtw_output_type)
+        if enable_dtw:
+			dtw_out = detector_dtw.update(objLowBack.gyZ, timeCurrent, gaitDetectRight.gaitStage, output_type=dtw_output_type)
 
 
     ###########################################################################################
@@ -370,7 +374,10 @@ if __name__ == "__main__":
         header += f"\t"
 
     header += f"KneeAngleR\tKneeAngleL\tKneeTorqueR\tKneeTorqueL\t"
-    header += f"detect_rms\tdetect_dtw"
+    if enable_rms:
+	    header += f"detect_rms\t
+	if enable_dtw:
+		header += f"detect_dtw\t"
 
     header += f"\n"
     fileDump.write(header)
